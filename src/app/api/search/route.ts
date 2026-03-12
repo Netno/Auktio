@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { generateQueryEmbedding } from "@/lib/embeddings";
+import {
+  buildSwedishWordRoots as buildWordRoots,
+  extractSwedishQueryTerms as extractQueryTerms,
+  normalizeSearchText as normalizeText,
+  normalizeSwedishSearchQuery as normalizeSearchQuery,
+} from "@/lib/search-language";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
   SearchParams,
@@ -81,12 +87,39 @@ type DetectedAuctionHouse = {
   aliases: string[];
 };
 
-function normalizeText(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/["'.,!?():;/\\-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
+  if (!queryTerms.length) {
+    return 0;
+  }
+
+  const titleTokens = normalizeText(lot.title ?? "")
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
+  const categoryTokens = normalizeText((lot.categories ?? []).join(" "))
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
+  const descriptionTokens = normalizeText(lot.description ?? "")
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
+
+  const matchesTerm = (tokens: string[], term: string) =>
+    tokens.some((token) => token === term || token.endsWith(term));
+
+  let score = 0;
+  for (const term of queryTerms) {
+    if (matchesTerm(titleTokens, term)) {
+      score += 4;
+    } else if (matchesTerm(categoryTokens, term)) {
+      score += 2;
+    } else if (matchesTerm(descriptionTokens, term)) {
+      score += 1;
+    }
+  }
+
+  return score;
 }
 
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
@@ -214,6 +247,11 @@ function isLotActive(row: SearchRow) {
   if (row.availability != null) return false;
   if (!row.end_time) return true;
   return new Date(row.end_time).getTime() > Date.now();
+}
+
+function getDefaultSort(status: SearchStatus, query?: string): SortOption {
+  if (query?.trim()) return "relevance";
+  return status === "ended" ? "recently-ended" : "ending-soon";
 }
 
 function getStatusWindowCountFromRows(
@@ -381,7 +419,9 @@ export async function GET(request: NextRequest) {
     maxPrice: searchParams.get("maxPrice")
       ? Number(searchParams.get("maxPrice"))
       : undefined,
-    sortBy: (searchParams.get("sort") as SortOption) ?? "ending-soon",
+    sortBy:
+      (searchParams.get("sort") as SortOption) ??
+      getDefaultSort(status, searchParams.get("q") ?? undefined),
     activeOnly: status === "active",
     page: Math.max(1, Number(searchParams.get("page")) || 1),
     pageSize: Math.min(
@@ -399,9 +439,12 @@ export async function GET(request: NextRequest) {
         detectedHouseMatch.matchedAlias,
       )
     : params.query?.trim();
+  const normalizedEffectiveQuery = effectiveQuery
+    ? normalizeSearchQuery(effectiveQuery)
+    : undefined;
   const effectiveParams: SearchParams = {
     ...params,
-    query: effectiveQuery || undefined,
+    query: normalizedEffectiveQuery || effectiveQuery || undefined,
     houseId: params.houseId ?? detectedHouseMatch?.house.id,
   };
 
@@ -547,10 +590,39 @@ export async function GET(request: NextRequest) {
     // For vector mode: sort by semantic relevance, paginate client-side
     let lots, resultTotal;
     if (useRelevanceSort) {
-      const idOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
-      sortLots(allRows, params.sortBy ?? "ending-soon", idOrder);
-      resultTotal = allRows.length;
-      lots = allRows.slice(offset, offset + params.pageSize!);
+      const queryTerms = extractQueryTerms(effectiveParams.query ?? "");
+      const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
+      let rankedRows = allRows;
+
+      if (queryTerms.length > 0) {
+        const lexicalMatches = allRows
+          .map((lot) => ({
+            lot,
+            lexicalScore: getLexicalScore(lot, queryTerms),
+          }))
+          .filter((entry) => entry.lexicalScore > 0)
+          .sort((a, b) => {
+            if (b.lexicalScore !== a.lexicalScore) {
+              return b.lexicalScore - a.lexicalScore;
+            }
+            return (
+              (vectorOrder.get(a.lot.id) ?? Number.MAX_SAFE_INTEGER) -
+              (vectorOrder.get(b.lot.id) ?? Number.MAX_SAFE_INTEGER)
+            );
+          })
+          .map((entry) => entry.lot);
+
+        if (lexicalMatches.length > 0) {
+          rankedRows = lexicalMatches;
+        }
+      }
+
+      const relevanceOrder = new Map(
+        rankedRows.map((lot, idx) => [lot.id, idx]),
+      );
+      sortLots(rankedRows, params.sortBy ?? "relevance", relevanceOrder);
+      resultTotal = rankedRows.length;
+      lots = rankedRows.slice(offset, offset + params.pageSize!);
     } else {
       lots = allRows;
       resultTotal = count ?? 0;

@@ -15,6 +15,7 @@ interface FilterBarProps {
   selectedCategories: string[];
   selectedCity: string;
   selectedHouseId: string;
+  hasQuery: boolean;
   hasBids: boolean;
   status: SearchStatus;
   minPrice: number | undefined;
@@ -44,6 +45,7 @@ export function FilterBar({
   selectedCategories,
   selectedCity,
   selectedHouseId,
+  hasQuery,
   hasBids,
   status,
   minPrice,
@@ -120,6 +122,7 @@ export function FilterBar({
     (a.label ?? a.value).localeCompare(b.label ?? b.value, "sv-SE"),
   );
   const sortOptions = [
+    ...(hasQuery ? [{ value: "relevance", label: "Relevans" }] : []),
     ...(status !== "ended"
       ? [{ value: "ending-soon", label: "Kortast tid kvar" }]
       : []),

@@ -67,6 +67,10 @@ function getDefaultSortForStatus(status: SearchStatus): SortOption {
   return status === "ended" ? "recently-ended" : "ending-soon";
 }
 
+function getDefaultSort(status: SearchStatus, query: string): SortOption {
+  return query.trim() ? "relevance" : getDefaultSortForStatus(status);
+}
+
 export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -112,12 +116,16 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   });
   const [sortBy, setSortByState] = useState<SortOption>(
     (searchParams.get("sort") as SortOption) ??
-      getDefaultSortForStatus(
+      getDefaultSort(
         ((searchParams.get("status") as SearchStatus | null) ??
           (searchParams.get("activeOnly") === "false"
             ? "all"
             : DEFAULT_STATUS)) as SearchStatus,
+        searchParams.get("q") ?? "",
       ),
+  );
+  const [sortIsManual, setSortIsManual] = useState(
+    Boolean(searchParams.get("sort")),
   );
   const [page, setPageState] = useState(Number(searchParams.get("page")) || 1);
   const pageSize = 40;
@@ -202,7 +210,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         urlParams.set("maxPrice", String(params.maxPrice));
       if (params.maxPrice != null)
         requestParams.set("maxPrice", String(params.maxPrice));
-      if (params.sortBy !== getDefaultSortForStatus(params.status)) {
+      if (params.sortBy !== getDefaultSort(params.status, params.query)) {
         urlParams.set("sort", params.sortBy);
         requestParams.set("sort", params.sortBy);
       }
@@ -269,6 +277,11 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     options?.lotIds,
   ]);
 
+  useEffect(() => {
+    if (sortIsManual) return;
+    setSortByState(getDefaultSort(status, debouncedQuery));
+  }, [debouncedQuery, status, sortIsManual]);
+
   // Actions
   const setQuery = (q: string) => {
     setQueryState(q);
@@ -317,6 +330,9 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setError(null);
     setStatusState(nextStatus);
     setSortByState((currentSort) => {
+      if (!sortIsManual) {
+        return getDefaultSort(nextStatus, debouncedQuery);
+      }
       if (nextStatus === "ended" && currentSort === "ending-soon") {
         return "recently-ended";
       }
@@ -329,6 +345,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   };
 
   const setSortBy = (sort: SortOption) => {
+    setSortIsManual(true);
     setSortByState(sort);
     setPageState(1);
   };
@@ -344,7 +361,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setMinPriceState(undefined);
     setMaxPriceState(undefined);
     setStatusState(DEFAULT_STATUS);
-    setSortByState(getDefaultSortForStatus(DEFAULT_STATUS));
+    setSortIsManual(false);
+    setSortByState(getDefaultSort(DEFAULT_STATUS, ""));
     setPageState(1);
   };
 

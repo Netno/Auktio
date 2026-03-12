@@ -243,6 +243,7 @@ function HomePage() {
           selectedCategories={selectedCategories}
           selectedCity={selectedCity}
           selectedHouseId={selectedHouseId}
+          hasQuery={Boolean(query.trim())}
           hasBids={hasBids}
           status={status}
           minPrice={minPrice}
