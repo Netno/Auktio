@@ -15,6 +15,7 @@ interface FilterBarProps {
   selectedCategories: string[];
   selectedCity: string;
   selectedHouseId: string;
+  hasBids: boolean;
   status: SearchStatus;
   minPrice: number | undefined;
   maxPrice: number | undefined;
@@ -26,6 +27,7 @@ interface FilterBarProps {
   onSetStatus: (status: SearchStatus) => void;
   onSetCity: (city: string) => void;
   onSetHouseId: (id: string) => void;
+  onSetHasBids: (value: boolean) => void;
   onSetMinPrice: (v: number | undefined) => void;
   onSetMaxPrice: (v: number | undefined) => void;
   onSetSort: (sort: SortOption) => void;
@@ -42,6 +44,7 @@ export function FilterBar({
   selectedCategories,
   selectedCity,
   selectedHouseId,
+  hasBids,
   status,
   minPrice,
   maxPrice,
@@ -53,6 +56,7 @@ export function FilterBar({
   onSetStatus,
   onSetCity,
   onSetHouseId,
+  onSetHasBids,
   onSetMinPrice,
   onSetMaxPrice,
   onSetSort,
@@ -258,6 +262,22 @@ export function FilterBar({
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Has bids */}
+          <div>
+            <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
+              Budstatus
+            </label>
+            <label className="flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm text-brand-900 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hasBids}
+                onChange={(e) => onSetHasBids(e.target.checked)}
+                className="h-4 w-4 rounded border-brand-300 text-brand-900 focus:ring-brand-300"
+              />
+              <span>Har bud</span>
+            </label>
           </div>
 
           {/* Price range slider */}

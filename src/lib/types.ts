@@ -96,6 +96,7 @@ export interface SearchParams {
   categories?: string[];
   city?: string;
   houseId?: string;
+  hasBids?: boolean;
   minPrice?: number;
   maxPrice?: number;
   sortBy?: SortOption;

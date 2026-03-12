@@ -280,6 +280,10 @@ function applySearchCriteria(
     query = query.eq("house_id", params.houseId);
   }
 
+  if (params.hasBids) {
+    query = query.or("current_bid.gt.0,sold_price.gt.0");
+  }
+
   if (params.minPrice != null) {
     query = query.gte("current_bid", params.minPrice);
   }
@@ -356,6 +360,7 @@ export async function GET(request: NextRequest) {
     categories: searchParams.get("categories")?.split(",").filter(Boolean),
     city: searchParams.get("city") ?? undefined,
     houseId: searchParams.get("houseId") ?? undefined,
+    hasBids: searchParams.get("hasBids") === "true",
     minPrice: searchParams.get("minPrice")
       ? Number(searchParams.get("minPrice"))
       : undefined,

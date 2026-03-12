@@ -31,6 +31,7 @@ interface UseSearchReturn {
   selectedCategories: string[];
   selectedCity: string;
   selectedHouseId: string;
+  hasBids: boolean;
   minPrice: number | undefined;
   maxPrice: number | undefined;
   searchMode: SearchMode;
@@ -46,6 +47,7 @@ interface UseSearchReturn {
   toggleCategory: (cat: string) => void;
   setCity: (city: string) => void;
   setHouseId: (id: string) => void;
+  setHasBids: (value: boolean) => void;
   setMinPrice: (v: number | undefined) => void;
   setMaxPrice: (v: number | undefined) => void;
   setSortBy: (sort: SortOption) => void;
@@ -75,6 +77,9 @@ export function useSearch(): UseSearchReturn {
   const [selectedCity, setCityState] = useState(searchParams.get("city") ?? "");
   const [selectedHouseId, setHouseIdState] = useState(
     searchParams.get("houseId") ?? "",
+  );
+  const [hasBids, setHasBidsState] = useState(
+    searchParams.get("hasBids") === "true",
   );
   const [minPrice, setMinPriceState] = useState<number | undefined>(
     searchParams.get("minPrice")
@@ -149,6 +154,7 @@ export function useSearch(): UseSearchReturn {
       categories: string[];
       city: string;
       houseId: string;
+      hasBids: boolean;
       minPrice: number | undefined;
       maxPrice: number | undefined;
       sortBy: SortOption;
@@ -167,6 +173,7 @@ export function useSearch(): UseSearchReturn {
         urlParams.set("categories", params.categories.join(","));
       if (params.city) urlParams.set("city", params.city);
       if (params.houseId) urlParams.set("houseId", params.houseId);
+      if (params.hasBids) urlParams.set("hasBids", "true");
       if (params.minPrice != null)
         urlParams.set("minPrice", String(params.minPrice));
       if (params.maxPrice != null)
@@ -212,6 +219,7 @@ export function useSearch(): UseSearchReturn {
       categories: selectedCategories,
       city: selectedCity,
       houseId: selectedHouseId,
+      hasBids,
       minPrice,
       maxPrice,
       sortBy,
@@ -224,6 +232,7 @@ export function useSearch(): UseSearchReturn {
     selectedCategories,
     selectedCity,
     selectedHouseId,
+    hasBids,
     minPrice,
     maxPrice,
     sortBy,
@@ -256,6 +265,11 @@ export function useSearch(): UseSearchReturn {
 
   const setMinPrice = (v: number | undefined) => {
     setMinPriceState(v);
+    setPageState(1);
+  };
+
+  const setHasBids = (value: boolean) => {
+    setHasBidsState(value);
     setPageState(1);
   };
 
@@ -297,6 +311,7 @@ export function useSearch(): UseSearchReturn {
     setCategories([]);
     setCityState("");
     setHouseIdState("");
+    setHasBidsState(false);
     setMinPriceState(undefined);
     setMaxPriceState(undefined);
     setStatusState(DEFAULT_STATUS);
@@ -317,6 +332,7 @@ export function useSearch(): UseSearchReturn {
     selectedCategories,
     selectedCity,
     selectedHouseId,
+    hasBids,
     minPrice,
     maxPrice,
     sortBy,
@@ -328,6 +344,7 @@ export function useSearch(): UseSearchReturn {
     toggleCategory,
     setCity,
     setHouseId,
+    setHasBids,
     setMinPrice,
     setMaxPrice,
     setSortBy,
