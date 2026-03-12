@@ -215,7 +215,7 @@ export function FilterBar({
 
       {/* Expanded filter panel */}
       {expandedFilters && (
-        <div className="grid grid-cols-1 gap-4 rounded-xl border border-brand-200/60 bg-white p-4 shadow-card animate-fade-in md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 rounded-xl border border-brand-200/60 bg-white p-4 shadow-card animate-fade-in md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.9fr)_auto]">
           {/* Categories */}
           <div className="md:col-span-3">
             <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-brand-400">
@@ -264,24 +264,51 @@ export function FilterBar({
             </select>
           </div>
 
-          {/* Has bids */}
+          {/* City */}
           <div>
+            <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
+              Stad
+            </label>
+            <select
+              value={selectedCity}
+              onChange={(e) => onSetCity(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-brand-200 bg-brand-50
+                text-sm text-brand-900 outline-none"
+            >
+              <option value="">Alla städer</option>
+              {cityFacets.map((city) => (
+                <option key={city.value} value={city.value}>
+                  {city.value} ({city.count})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Has bids */}
+          <div className="md:min-w-[140px]">
             <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
               Budstatus
             </label>
-            <label className="flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm text-brand-900 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={hasBids}
-                onChange={(e) => onSetHasBids(e.target.checked)}
-                className="h-4 w-4 rounded border-brand-300 text-brand-900 focus:ring-brand-300"
+            <button
+              type="button"
+              onClick={() => onSetHasBids(!hasBids)}
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                hasBids
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300"
+              }`}
+            >
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${
+                  hasBids ? "bg-white" : "bg-brand-300"
+                }`}
               />
               <span>Har bud</span>
-            </label>
+            </button>
           </div>
 
           {/* Price range slider */}
-          <div>
+          <div className="md:col-span-3">
             <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
               Prisintervall
             </label>
@@ -325,26 +352,6 @@ export function FilterBar({
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* City */}
-          <div>
-            <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
-              Stad
-            </label>
-            <select
-              value={selectedCity}
-              onChange={(e) => onSetCity(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-brand-200 bg-brand-50
-                text-sm text-brand-900 outline-none"
-            >
-              <option value="">Alla städer</option>
-              {cityFacets.map((city) => (
-                <option key={city.value} value={city.value}>
-                  {city.value} ({city.count})
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       )}
