@@ -13,6 +13,7 @@ import type {
 const PAGE_SIZE_DEFAULT = 40;
 const PAGE_SIZE_MAX = 100;
 const FACET_BATCH_SIZE = 1000;
+const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 
 /** 60 requests per minute per IP */
 const RATE_LIMIT_CONFIG = { maxRequests: 60, windowMs: 60_000 };
@@ -268,6 +269,14 @@ function applySearchCriteria(
     }
   }
 
+  if (params.lotIds) {
+    if (params.lotIds.length > 0) {
+      query = query.in("id", params.lotIds);
+    } else {
+      query = query.eq("id", -1);
+    }
+  }
+
   if (params.categories?.length) {
     query = query.overlaps("categories", params.categories);
   }
@@ -355,8 +364,13 @@ export async function GET(request: NextRequest) {
         : "active";
   const params: SearchParams = {
     query: searchParams.get("q") ?? undefined,
-    searchMode: (searchParams.get("mode") as SearchMode) ?? "keyword",
+    searchMode: (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
     status,
+    lotIds: searchParams
+      .get("ids")
+      ?.split(",")
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value)),
     categories: searchParams.get("categories")?.split(",").filter(Boolean),
     city: searchParams.get("city") ?? undefined,
     houseId: searchParams.get("houseId") ?? undefined,

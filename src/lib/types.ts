@@ -93,6 +93,7 @@ export interface SearchParams {
   query?: string;
   searchMode?: SearchMode;
   status?: SearchStatus;
+  lotIds?: number[];
   categories?: string[];
   city?: string;
   houseId?: string;

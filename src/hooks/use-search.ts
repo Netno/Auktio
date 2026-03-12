@@ -11,6 +11,10 @@ import type {
   FacetCount,
 } from "@/lib/types";
 
+interface UseSearchOptions {
+  lotIds?: number[];
+}
+
 interface UseSearchReturn {
   // State
   lots: Lot[];
@@ -57,12 +61,13 @@ interface UseSearchReturn {
 
 const QUERY_DEBOUNCE_MS = 500;
 const DEFAULT_STATUS: SearchStatus = "active";
+const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 
 function getDefaultSortForStatus(status: SearchStatus): SortOption {
   return status === "ended" ? "recently-ended" : "ending-soon";
 }
 
-export function useSearch(): UseSearchReturn {
+export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -92,7 +97,7 @@ export function useSearch(): UseSearchReturn {
       : undefined,
   );
   const [searchMode, setSearchModeState] = useState<SearchMode>(
-    (searchParams.get("mode") as SearchMode) ?? "keyword",
+    (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
   );
   const [status, setStatusState] = useState<SearchStatus>(() => {
     const statusParam = searchParams.get("status") as SearchStatus | null;
@@ -151,6 +156,7 @@ export function useSearch(): UseSearchReturn {
       query: string;
       searchMode: SearchMode;
       status: SearchStatus;
+      lotIds?: number[];
       categories: string[];
       city: string;
       houseId: string;
@@ -164,28 +170,49 @@ export function useSearch(): UseSearchReturn {
       setError(null);
 
       const urlParams = new URLSearchParams();
+      const requestParams = new URLSearchParams();
       if (params.query) urlParams.set("q", params.query);
-      if (params.searchMode !== "keyword")
+      if (params.query) requestParams.set("q", params.query);
+      if (params.searchMode !== DEFAULT_SEARCH_MODE)
         urlParams.set("mode", params.searchMode);
+      if (params.searchMode !== DEFAULT_SEARCH_MODE)
+        requestParams.set("mode", params.searchMode);
       if (params.status !== DEFAULT_STATUS)
         urlParams.set("status", params.status);
+      if (params.status !== DEFAULT_STATUS)
+        requestParams.set("status", params.status);
+      if (params.lotIds) {
+        requestParams.set("ids", params.lotIds.join(","));
+      }
       if (params.categories.length)
         urlParams.set("categories", params.categories.join(","));
+      if (params.categories.length)
+        requestParams.set("categories", params.categories.join(","));
       if (params.city) urlParams.set("city", params.city);
+      if (params.city) requestParams.set("city", params.city);
       if (params.houseId) urlParams.set("houseId", params.houseId);
+      if (params.houseId) requestParams.set("houseId", params.houseId);
       if (params.hasBids) urlParams.set("hasBids", "true");
+      if (params.hasBids) requestParams.set("hasBids", "true");
       if (params.minPrice != null)
         urlParams.set("minPrice", String(params.minPrice));
+      if (params.minPrice != null)
+        requestParams.set("minPrice", String(params.minPrice));
       if (params.maxPrice != null)
         urlParams.set("maxPrice", String(params.maxPrice));
+      if (params.maxPrice != null)
+        requestParams.set("maxPrice", String(params.maxPrice));
       if (params.sortBy !== getDefaultSortForStatus(params.status)) {
         urlParams.set("sort", params.sortBy);
+        requestParams.set("sort", params.sortBy);
       }
       if (params.page > 1) urlParams.set("page", String(params.page));
+      if (params.page > 1) requestParams.set("page", String(params.page));
       urlParams.set("pageSize", String(pageSize));
+      requestParams.set("pageSize", String(pageSize));
 
       try {
-        const res = await fetch(`/api/search?${urlParams.toString()}`);
+        const res = await fetch(`/api/search?${requestParams.toString()}`);
         if (!res.ok) throw new Error(`Search failed: ${res.status}`);
 
         const data: SearchResponse = await res.json();
@@ -216,6 +243,7 @@ export function useSearch(): UseSearchReturn {
       query: debouncedQuery,
       searchMode,
       status,
+      lotIds: options?.lotIds,
       categories: selectedCategories,
       city: selectedCity,
       houseId: selectedHouseId,
@@ -238,6 +266,7 @@ export function useSearch(): UseSearchReturn {
     sortBy,
     page,
     fetchResults,
+    options?.lotIds,
   ]);
 
   // Actions

@@ -137,7 +137,12 @@ function buildAiSuggestedQueries(params: {
 
 function HomePage() {
   const [showFavsOnly, setShowFavsOnly] = useState(false);
-  const { toggleFavorite, isFavorite, count: favCount } = useFavorites();
+  const {
+    favorites,
+    toggleFavorite,
+    isFavorite,
+    count: favCount,
+  } = useFavorites();
   const {
     lots,
     total,
@@ -168,7 +173,9 @@ function HomePage() {
     setSortBy,
     setPage,
     clearFilters,
-  } = useSearch();
+  } = useSearch({
+    lotIds: showFavsOnly ? Array.from(favorites) : undefined,
+  });
 
   const activeFilterCount =
     selectedCategories.length +
@@ -180,10 +187,7 @@ function HomePage() {
     (maxPrice != null ? 1 : 0) +
     (showFavsOnly ? 1 : 0);
 
-  // Filter to favorites if active
-  const displayLots = showFavsOnly
-    ? lots.filter((l) => isFavorite(l.id))
-    : lots;
+  const displayLots = lots;
   const soldPriceCount = displayLots.filter(
     (lot) => lot.soldPrice != null,
   ).length;

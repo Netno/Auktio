@@ -2,14 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import {
-  Heart,
-  Gavel,
-  ChevronLeft,
-  ChevronRight,
-  MapPin,
-  ExternalLink,
-} from "lucide-react";
+import { Heart, Gavel, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { timeLeft, formatSEK, imgSize } from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
@@ -41,9 +34,6 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
   const mapQuery = [lot.city, lot.country, lot.houseName]
     .filter(Boolean)
     .join(", ");
-  const googleMapsUrl = mapQuery
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
-    : undefined;
   const googleMapsEmbedUrl = mapQuery
     ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=11&output=embed`
     : undefined;
@@ -81,9 +71,10 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
       href={lot.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group h-full flex flex-col bg-white rounded-xl border border-brand-200/60 shadow-card
-        hover:shadow-elevated hover:-translate-y-[3px] hover:border-brand-300/60
-        transition-all duration-300 overflow-hidden animate-slide-up cursor-pointer"
+      className={`group relative flex h-full flex-col overflow-visible rounded-xl border border-brand-200/60 bg-white shadow-card animate-slide-up cursor-pointer isolate
+        transition-all duration-300 hover:-translate-y-[3px] hover:border-brand-300/60 hover:shadow-elevated ${
+          showLocationOverlay ? "z-40" : "z-0 hover:z-10"
+        }`}
     >
       {/* Image */}
       <div
@@ -196,7 +187,7 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
       </div>
 
       {/* Info */}
-      <div className="p-4 pb-5 flex flex-1 flex-col">
+      <div className="relative flex flex-1 flex-col p-4 pb-5 overflow-visible">
         <div>
           <div className="flex items-center gap-1 text-[11px] font-medium text-brand-400 uppercase tracking-wider mb-1.5">
             {lot.houseLogoUrl && (
@@ -221,9 +212,9 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
                   <span>{locationLabel}</span>
                 </span>
 
-                {showLocationOverlay && googleMapsEmbedUrl && googleMapsUrl && (
+                {showLocationOverlay && googleMapsEmbedUrl && (
                   <div
-                    className="absolute left-0 top-full z-20 mt-2 w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur"
+                    className="absolute left-0 top-[calc(100%-2px)] z-30 w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -244,17 +235,6 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />
-                    <div className="px-3 py-2">
-                      <a
-                        href={googleMapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-sky-700"
-                      >
-                        <ExternalLink size={12} />
-                        <span>Öppna större karta</span>
-                      </a>
-                    </div>
                   </div>
                 )}
               </div>
