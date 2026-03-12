@@ -12,6 +12,7 @@ import type {
 
 const PAGE_SIZE_DEFAULT = 40;
 const PAGE_SIZE_MAX = 100;
+const FACET_BATCH_SIZE = 1000;
 
 /** 60 requests per minute per IP */
 const RATE_LIMIT_CONFIG = { maxRequests: 60, windowMs: 60_000 };
@@ -290,6 +291,36 @@ function applySearchCriteria(
   return query;
 }
 
+async function fetchAllRows<T>(
+  buildQuery: () => any,
+  batchSize = FACET_BATCH_SIZE,
+): Promise<T[]> {
+  const rows: T[] = [];
+  let offset = 0;
+
+  while (true) {
+    const { data, error } = await buildQuery().range(
+      offset,
+      offset + batchSize - 1,
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    const batch = (data ?? []) as T[];
+    rows.push(...batch);
+
+    if (batch.length < batchSize) {
+      break;
+    }
+
+    offset += batchSize;
+  }
+
+  return rows;
+}
+
 /**
  * GET /api/search?q=...&categories=...&city=...&sort=...&page=...
  *
@@ -535,13 +566,13 @@ export async function GET(request: NextRequest) {
 }
 
 async function getCategoryFacets(supabase: any, status: SearchStatus) {
-  let query = supabase.from("auc_lots").select("categories");
-  query = applyStatusFilter(query, status, new Date().toISOString());
-
-  const { data } = await query;
+  const data = await fetchAllRows<{ categories: string[] | null }>(() => {
+    let query = supabase.from("auc_lots").select("categories");
+    return applyStatusFilter(query, status, new Date().toISOString());
+  });
 
   const counts: Record<string, number> = {};
-  for (const row of data ?? []) {
+  for (const row of data) {
     for (const category of row.categories ?? []) {
       counts[category] = (counts[category] || 0) + 1;
     }
@@ -553,14 +584,17 @@ async function getCategoryFacets(supabase: any, status: SearchStatus) {
 }
 
 async function getCityFacets(supabase: any, status: SearchStatus) {
-  let query = supabase.from("auc_lots").select("city").not("city", "is", null);
-  query = applyStatusFilter(query, status, new Date().toISOString());
-
-  const { data } = await query;
+  const data = await fetchAllRows<{ city: string }>(() => {
+    let query = supabase
+      .from("auc_lots")
+      .select("city")
+      .not("city", "is", null);
+    return applyStatusFilter(query, status, new Date().toISOString());
+  });
 
   // Count manually since Supabase doesn't support GROUP BY easily
   const counts: Record<string, number> = {};
-  for (const row of data ?? []) {
+  for (const row of data) {
     counts[row.city] = (counts[row.city] || 0) + 1;
   }
   return Object.entries(counts)
@@ -569,17 +603,20 @@ async function getCityFacets(supabase: any, status: SearchStatus) {
 }
 
 async function getHouseFacets(supabase: any, status: SearchStatus) {
-  let query = supabase
-    .from("auc_lots")
-    .select("house_id, auc_auction_houses(name)")
-    .not("house_id", "is", null);
+  const data = await fetchAllRows<{
+    house_id: string;
+    auc_auction_houses?: { name?: string | null } | null;
+  }>(() => {
+    let query = supabase
+      .from("auc_lots")
+      .select("house_id, auc_auction_houses(name)")
+      .not("house_id", "is", null);
 
-  query = applyStatusFilter(query, status, new Date().toISOString());
-
-  const { data } = await query;
+    return applyStatusFilter(query, status, new Date().toISOString());
+  });
 
   const counts: Record<string, { name: string; count: number }> = {};
-  for (const row of data ?? []) {
+  for (const row of data) {
     const houseId = row.house_id;
     if (!counts[houseId]) {
       counts[houseId] = {
