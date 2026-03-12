@@ -2,7 +2,14 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import { Heart, Gavel, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import {
+  Heart,
+  Gavel,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  ExternalLink,
+} from "lucide-react";
 import { timeLeft, formatSEK, imgSize } from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
@@ -16,6 +23,7 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
+  const [showLocationOverlay, setShowLocationOverlay] = useState(false);
   const tl = lot.endTime ? timeLeft(lot.endTime) : null;
 
   const images = lot.images?.length
@@ -27,6 +35,14 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
     ? imgSize(images[imgIndex], "med")
     : undefined;
   const showCountryCode = Boolean(lot.country && lot.country !== "SE");
+  const locationLabel = [lot.city, showCountryCode ? lot.country : undefined]
+    .filter(Boolean)
+    .join(", ");
+  const googleMapsUrl = locationLabel
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        [lot.city, lot.country, lot.houseName].filter(Boolean).join(", "),
+      )}`
+    : undefined;
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
     : lot.currentBid != null
@@ -189,18 +205,52 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
               />
             )}
             <span>{lot.houseName ?? "Auktionshus"}</span>
-            {lot.city && (
-              <>
+            {locationLabel && (
+              <div className="relative">
                 <span>·</span>
-                <MapPin size={10} className="inline shrink-0" />
-                <span>{lot.city}</span>
-              </>
-            )}
-            {showCountryCode && (
-              <>
-                <span>·</span>
-                <span>{lot.country}</span>
-              </>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowLocationOverlay((current) => !current);
+                  }}
+                  onMouseLeave={() => {
+                    if (!showLocationOverlay) return;
+                  }}
+                  className="ml-1 inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold normal-case tracking-normal text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-900"
+                  aria-label={`Visa plats för ${lot.title}`}
+                >
+                  <MapPin size={10} className="shrink-0" />
+                  <span>{locationLabel}</span>
+                </button>
+
+                {showLocationOverlay && googleMapsUrl && (
+                  <div
+                    className="absolute left-0 top-full z-20 mt-2 w-52 rounded-xl border border-sky-200 bg-sky-50/95 p-3 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onMouseLeave={() => setShowLocationOverlay(false)}
+                  >
+                    <div className="mb-1.5 font-semibold text-sky-950">
+                      Finns i {locationLabel}
+                    </div>
+                    <div className="mb-3 text-sky-800/80">
+                      Visa platsen direkt i Google Maps.
+                    </div>
+                    <a
+                      href={googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-sky-700"
+                    >
+                      <ExternalLink size={12} />
+                      <span>Öppna i Google Maps</span>
+                    </a>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
