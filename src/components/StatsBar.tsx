@@ -59,10 +59,10 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
   ];
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-brand-200/40 bg-white px-5 py-3 shadow-card">
+    <div className="mb-4 grid gap-2 rounded-xl border border-brand-200/40 bg-white px-4 py-3 shadow-card sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:px-5">
       {stats.map((stat, i) => (
-        <div key={stat.label} className="flex items-center gap-5">
-          <div className="flex items-baseline gap-1.5">
+        <div key={stat.label} className="flex items-center gap-3 sm:gap-5">
+          <div className="flex min-w-0 items-baseline gap-1.5">
             <span className="font-semibold text-sm text-brand-900">
               {stat.num}
             </span>

@@ -173,7 +173,7 @@ export function FilterBar({
           <div className="hidden md:block" />
         )}
 
-        <div className="flex gap-2 items-center shrink-0 md:justify-self-end">
+        <div className="flex flex-wrap items-center gap-2 md:justify-self-end md:justify-end">
           <button
             onClick={onClearFilters}
             disabled={!hasClearableFilters}
@@ -200,7 +200,7 @@ export function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => onSetSort(e.target.value as SortOption)}
-            className="px-3 py-1.5 rounded-lg border border-brand-200 bg-white
+            className="min-w-[9rem] max-w-full px-3 py-1.5 rounded-lg border border-brand-200 bg-white
               text-[12px] text-brand-600 outline-none cursor-pointer"
           >
             {sortOptions.map((option) => (
@@ -295,7 +295,7 @@ export function FilterBar({
             <button
               type="button"
               onClick={() => onSetHasBids(!hasBids)}
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+              className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
                 hasBids
                   ? "border-brand-900 bg-brand-900 text-white"
                   : "border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300"

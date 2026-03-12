@@ -220,7 +220,7 @@ function HomePage() {
         onSearchModeChange={setSearchMode}
       />
 
-      <main className="max-w-[1360px] mx-auto px-6 pb-20">
+      <main className="mx-auto max-w-[1360px] px-4 pb-20 sm:px-6">
         <StatsBar
           lots={displayLots}
           total={total}
@@ -232,7 +232,7 @@ function HomePage() {
           status === "ended" &&
           soldPriceCount === 0 &&
           displayLots.length > 0 && (
-            <div className="mb-6 rounded-xl border border-brand-200 bg-white px-5 py-4 text-sm text-brand-600 shadow-card">
+            <div className="mb-6 rounded-xl border border-brand-200 bg-white px-4 py-4 text-sm text-brand-600 shadow-card sm:px-5">
               Slutpriser saknas i nuvarande feed-data för de här objekten.
               Därför visar vi sista kända bud i stället för faktiskt klubbslag
               när slutpris inte finns tillgängligt.

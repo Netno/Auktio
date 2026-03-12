@@ -48,57 +48,66 @@ export function Pagination({
     "flex items-center justify-center rounded-lg border text-sm font-medium transition-colors";
 
   return (
-    <div
-      className={`flex items-center justify-center gap-1.5 ${className ?? "mt-10"}`}
-    >
-      {/* Prev */}
-      <button
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
-        className={`${btn} w-9 h-9 border-brand-200 bg-white text-brand-600
+    <div className={`${className ?? "mt-10"}`}>
+      <div className="flex items-center justify-center gap-1.5">
+        {/* Prev */}
+        <button
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+          className={`${btn} h-10 min-w-10 border-brand-200 bg-white px-2 text-brand-600
           disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand-50`}
-      >
-        <ChevronLeft size={16} />
-      </button>
+        >
+          <ChevronLeft size={16} />
+        </button>
 
-      {/* Page numbers */}
-      {pages.map((p, idx) =>
-        p === "…" ? (
-          <span
-            key={`ellipsis-${idx}`}
-            className="w-9 h-9 flex items-center justify-center text-brand-400 text-sm select-none"
-          >
-            …
-          </span>
-        ) : (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className={`${btn} w-9 h-9 ${
-              p === page
-                ? "bg-brand-900 border-brand-900 text-white"
-                : "border-brand-200 bg-white text-brand-600 hover:bg-brand-50"
-            }`}
-          >
-            {p}
-          </button>
-        ),
-      )}
+        {/* Page numbers */}
+        <div className="hidden items-center gap-1.5 sm:flex">
+          {pages.map((p, idx) =>
+            p === "…" ? (
+              <span
+                key={`ellipsis-${idx}`}
+                className="w-9 h-9 flex items-center justify-center text-brand-400 text-sm select-none"
+              >
+                …
+              </span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => onPageChange(p)}
+                className={`${btn} w-9 h-9 ${
+                  p === page
+                    ? "bg-brand-900 border-brand-900 text-white"
+                    : "border-brand-200 bg-white text-brand-600 hover:bg-brand-50"
+                }`}
+              >
+                {p}
+              </button>
+            ),
+          )}
+        </div>
 
-      {/* Next */}
-      <button
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
-        className={`${btn} w-9 h-9 border-brand-200 bg-white text-brand-600
+        <span className="flex h-10 min-w-[4.25rem] items-center justify-center rounded-lg border border-brand-200 bg-white px-3 text-sm font-medium text-brand-700 sm:hidden">
+          {page} / {totalPages}
+        </span>
+
+        {/* Next */}
+        <button
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages}
+          className={`${btn} h-10 min-w-10 border-brand-200 bg-white px-2 text-brand-600
           disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand-50`}
-      >
-        <ChevronRight size={16} />
-      </button>
+        >
+          <ChevronRight size={16} />
+        </button>
 
-      {/* Summary */}
-      <span className="ml-3 text-xs text-brand-400">
+        <span className="ml-2 hidden text-xs text-brand-400 sm:inline">
+          Sida {page} av {totalPages}
+        </span>
+      </div>
+
+      <div className="mt-2 text-center text-xs text-brand-400 sm:hidden">
         Sida {page} av {totalPages}
-      </span>
+      </div>
     </div>
   );
 }

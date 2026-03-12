@@ -522,6 +522,14 @@ async function generateAnswer(
 ): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+  const now = new Date();
+  const currentDateIso = now.toISOString();
+  const currentDateSwedish = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Stockholm",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(now);
 
   // Build context block from retrieved lots
   const contextBlock = contextLots
@@ -548,6 +556,8 @@ Du har tillgång till ett urval av aktuella auktionsföremål som kontext.
 
 REGLER:
 - Svara ALLTID på svenska
+- Idag är ${currentDateSwedish} (Stockholmstid). Om du använder ord som "idag", "imorgon", "i dag" eller nämner dagens datum måste du utgå exakt från detta datum
+- Du får ALDRIG hitta på ett annat aktuellt datum än ${currentDateSwedish}
 - Basera dina svar på de föremål som finns i kontexten
 - Referera till specifika föremål med deras titel och auktionshus
 - Om du rekommenderar föremål, förklara VARFÖR de matchar frågan
@@ -566,7 +576,10 @@ FORMAT:
 - Håll svaret under 300 ord
 - Avsluta gärna med ett relevant tips eller förslag`;
 
-  const userPrompt = `KONTEXT — Aktuella auktionsföremål:
+  const userPrompt = `DAGENS DATUM: ${currentDateSwedish}
+TIDSANKARE (ISO): ${currentDateIso}
+
+KONTEXT — Aktuella auktionsföremål:
 
 ${contextBlock}
 

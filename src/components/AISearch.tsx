@@ -131,12 +131,12 @@ export function AISearch({ suggestedQueries }: AISearchProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-50 flex items-center gap-2
-          px-5 py-3 rounded-full shadow-elevated-lg transition-all duration-300
+          px-4 py-3 rounded-full shadow-elevated-lg transition-all duration-300 sm:px-5
           ${
             isOpen
               ? "bg-brand-900 text-white scale-95"
               : "bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:shadow-[0_12px_40px_rgba(196,93,62,0.3)] hover:scale-105"
-          }`}
+          } max-sm:bottom-4 max-sm:left-4 max-sm:right-4 max-sm:justify-center`}
       >
         {isOpen ? (
           <>
@@ -153,9 +153,10 @@ export function AISearch({ suggestedQueries }: AISearchProps) {
 
       {/* Chat panel */}
       <div
-        className={`fixed bottom-20 right-6 z-50 w-[440px] max-h-[600px]
+        className={`fixed bottom-20 right-6 z-50 flex max-h-[600px] w-[440px]
           bg-white rounded-2xl shadow-elevated-lg border border-brand-200
-          flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right
+          flex-col overflow-hidden transition-all duration-300 origin-bottom-right
+          max-sm:bottom-[5.25rem] max-sm:left-4 max-sm:right-4 max-sm:w-auto max-sm:max-h-[min(70vh,42rem)]
           ${isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0 pointer-events-none"}`}
       >
         {/* Header */}
@@ -187,7 +188,7 @@ export function AISearch({ suggestedQueries }: AISearchProps) {
         </div>
 
         {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-[300px]">
+        <div className="min-h-[280px] flex-1 overflow-y-auto px-4 py-4 space-y-4 sm:min-h-[300px]">
           {messages.length === 0 ? (
             <EmptyState
               onSelectQuery={(q) => sendMessage(q)}
