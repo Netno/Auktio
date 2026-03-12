@@ -519,7 +519,7 @@ export async function GET(request: NextRequest) {
         availability: row.availability,
         url: row.url,
         houseId: row.house_id,
-        houseName: row.auc_auction_houses?.name,
+        houseName: row.auc_auction_houses?.name ?? undefined,
         houseLogoUrl: row.auc_auction_houses?.logo_url ?? undefined,
         isActive: isLotActive(row),
       }),
