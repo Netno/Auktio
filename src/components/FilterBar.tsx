@@ -7,7 +7,7 @@ import { CATEGORY_ORDER } from "@/config/sources";
 import type { SortOption, FacetCount, SearchStatus } from "@/lib/types";
 import { formatSEK } from "@/lib/utils";
 
-interface HouseFacet extends FacetCount {
+export interface HouseFacet extends FacetCount {
   label?: string;
 }
 

@@ -139,6 +139,7 @@ export interface SearchResponse {
 export interface FacetCount {
   value: string;
   count: number;
+  label?: string;
 }
 
 /** Ingestion result */
