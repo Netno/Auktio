@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Heart, Gavel, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { timeLeft, formatSEK, imgSize } from "@/lib/utils";
@@ -12,11 +12,19 @@ interface LotCardProps {
   onToggleFavorite: (id: number) => void;
 }
 
+const TAP_SLOP_PX = 8;
+const SWIPE_THRESHOLD_PX = 36;
+
 export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
   const [showLocationOverlay, setShowLocationOverlay] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef(0);
+  const touchDeltaYRef = useRef(0);
+  const suppressClickRef = useRef(false);
   const tl = lot.endTime ? timeLeft(lot.endTime) : null;
 
   const images = lot.images?.length
@@ -66,11 +74,65 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
     [images.length],
   );
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+    touchDeltaXRef.current = 0;
+    touchDeltaYRef.current = 0;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartXRef.current == null || touchStartYRef.current == null) {
+      return;
+    }
+
+    const touch = e.touches[0];
+    touchDeltaXRef.current = touch.clientX - touchStartXRef.current;
+    touchDeltaYRef.current = touch.clientY - touchStartYRef.current;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const deltaX = touchDeltaXRef.current;
+    const deltaY = touchDeltaYRef.current;
+    const isHorizontalGesture =
+      Math.abs(deltaX) > TAP_SLOP_PX && Math.abs(deltaX) > Math.abs(deltaY);
+
+    if (isHorizontalGesture) {
+      suppressClickRef.current = true;
+
+      if (images.length > 1 && Math.abs(deltaX) >= SWIPE_THRESHOLD_PX) {
+        setImgIndex((currentIndex) => {
+          if (deltaX < 0) {
+            return currentIndex < images.length - 1 ? currentIndex + 1 : 0;
+          }
+
+          return currentIndex > 0 ? currentIndex - 1 : images.length - 1;
+        });
+      }
+
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 0);
+    }
+
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    touchDeltaXRef.current = 0;
+    touchDeltaYRef.current = 0;
+  }, [images.length]);
+
   return (
     <a
       href={lot.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClickCapture={(e) => {
+        if (!suppressClickRef.current) return;
+        e.preventDefault();
+        e.stopPropagation();
+        suppressClickRef.current = false;
+      }}
       className={`group relative flex h-full flex-col overflow-visible rounded-xl border border-brand-200/60 bg-white shadow-card animate-slide-up cursor-pointer isolate
         transition-all duration-300 hover:-translate-y-[3px] hover:border-brand-300/60 hover:shadow-elevated ${
           showLocationOverlay ? "z-40" : "z-0 hover:z-10"
@@ -84,6 +146,11 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
           setHovering(false);
           setImgIndex(0);
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        style={{ touchAction: "pan-y" }}
       >
         {/* Placeholder */}
         <div
