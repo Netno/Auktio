@@ -44,6 +44,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv" className={`${dmSans.variable} ${playfair.variable}`}>
+      <head>
+        <link
+          rel="preconnect"
+          href="https://media.skeleton.bbys.io"
+          crossOrigin=""
+        />
+        <link rel="dns-prefetch" href="https://media.skeleton.bbys.io" />
+      </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

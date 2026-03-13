@@ -61,12 +61,13 @@ export function LotGrid({
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-      {lots.map((lot) => (
+      {lots.map((lot, index) => (
         <LotCard
           key={lot.id}
           lot={lot}
           isFavorite={isFavorite(lot.id)}
           onToggleFavorite={onToggleFavorite}
+          imagePriority={index < 4}
         />
       ))}
     </div>

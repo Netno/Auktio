@@ -10,12 +10,18 @@ interface LotCardProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  imagePriority?: boolean;
 }
 
 const TAP_SLOP_PX = 8;
 const SWIPE_THRESHOLD_PX = 36;
 
-export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
+export function LotCard({
+  lot,
+  isFavorite,
+  onToggleFavorite,
+  imagePriority = false,
+}: LotCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
@@ -166,7 +172,10 @@ export function LotCard({ lot, isFavorite, onToggleFavorite }: LotCardProps) {
             src={currentImage}
             alt={lot.title}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 1.5rem), (max-width: 1279px) calc(33vw - 1.5rem), 280px"
+            priority={imagePriority}
+            loading={imagePriority ? "eager" : "lazy"}
+            fetchPriority={imagePriority ? "high" : "auto"}
             className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
             style={{ opacity: imgLoaded ? 1 : 0 }}
             onLoad={() => setImgLoaded(true)}

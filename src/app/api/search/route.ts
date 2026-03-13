@@ -20,9 +20,21 @@ const PAGE_SIZE_DEFAULT = 40;
 const PAGE_SIZE_MAX = 100;
 const FACET_BATCH_SIZE = 1000;
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
+const FACET_CACHE_TTL_MS = 5 * 60 * 1000;
 
 /** 60 requests per minute per IP */
 const RATE_LIMIT_CONFIG = { maxRequests: 60, windowMs: 60_000 };
+
+type FacetBundle = {
+  categories: Array<{ value: string; count: number }>;
+  cities: Array<{ value: string; count: number }>;
+  houses: Array<{ value: string; label: string; count: number }>;
+};
+
+const facetCache = new Map<
+  SearchStatus,
+  { expiresAt: number; value: FacetBundle }
+>();
 
 type SearchRow = {
   id: number;
@@ -372,6 +384,78 @@ async function fetchAllRows<T>(
   return rows;
 }
 
+async function getWindowCount(
+  supabase: any,
+  params: SearchParams,
+  vectorLotIds: number[] | null,
+  nowIso: string,
+) {
+  const nowDate = new Date(nowIso);
+  const windowStartIso = new Date(nowDate.getTime() - 86_400_000).toISOString();
+  const windowEndIso = new Date(nowDate.getTime() + 86_400_000).toISOString();
+
+  let query = supabase.from("auc_lots").select("id", {
+    count: "exact",
+    head: true,
+  });
+
+  query = applySearchCriteria(query, params, vectorLotIds, nowIso);
+
+  if (params.status === "ended") {
+    query = query.gte("end_time", windowStartIso).lte("end_time", nowIso);
+  } else {
+    query = query.lte("end_time", windowEndIso);
+  }
+
+  const { count, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  return count ?? 0;
+}
+
+async function getFacetBundle(supabase: any, status: SearchStatus) {
+  const cached = facetCache.get(status);
+  const now = Date.now();
+
+  if (cached && cached.expiresAt > now) {
+    return cached.value;
+  }
+
+  const [categories, cities, houses] = await Promise.all([
+    getCategoryFacets(supabase, status),
+    getCityFacets(supabase, status),
+    getHouseFacets(supabase, status),
+  ]);
+
+  const value = { categories, cities, houses };
+  facetCache.set(status, {
+    expiresAt: now + FACET_CACHE_TTL_MS,
+    value,
+  });
+
+  return value;
+}
+
+function isDefaultLandingSearch(params: SearchParams) {
+  return (
+    !params.query &&
+    !params.lotIds?.length &&
+    !params.categories?.length &&
+    !params.city &&
+    !params.houseId &&
+    !params.hasBids &&
+    params.minPrice == null &&
+    params.maxPrice == null &&
+    (params.status ?? "active") === "active" &&
+    (params.page ?? 1) === 1 &&
+    (params.pageSize ?? PAGE_SIZE_DEFAULT) === PAGE_SIZE_DEFAULT &&
+    (params.sortBy ?? "ending-soon") === "ending-soon"
+  );
+}
+
 /**
  * GET /api/search?q=...&categories=...&city=...&sort=...&page=...
  *
@@ -489,14 +573,6 @@ export async function GET(request: NextRequest) {
     );
     query = applySearchCriteria(query, effectiveParams, vectorLotIds, nowIso);
 
-    let statsQuery = supabase.from("auc_lots").select("end_time, availability");
-    statsQuery = applySearchCriteria(
-      statsQuery,
-      effectiveParams,
-      vectorLotIds,
-      nowIso,
-    );
-
     // For vector/semantic mode: sort by relevance (client-side) — fetch all matches
     const useRelevanceSort = needsVector && vectorLotIds?.length;
 
@@ -537,24 +613,17 @@ export async function GET(request: NextRequest) {
       query = query.range(offset, offset + effectiveParams.pageSize! - 1);
     }
 
-    const [{ data, count, error }, { data: statsRows, error: statsError }] =
-      await Promise.all([query, statsQuery]);
+    const [{ data, count, error }, windowCount, facetBundle] =
+      await Promise.all([
+        query,
+        getWindowCount(supabase, effectiveParams, vectorLotIds, nowIso),
+        getFacetBundle(supabase, params.status ?? "active"),
+      ]);
 
     if (error) {
       console.error("[api/search] Query error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    if (statsError) {
-      console.error("[api/search] Stats query error:", statsError);
-    }
-
-    // Fetch facets (category, city & house counts) in parallel
-    const [categoryFacets, cityFacets, houseFacets] = await Promise.all([
-      getCategoryFacets(supabase, params.status ?? "active"),
-      getCityFacets(supabase, params.status ?? "active"),
-      getHouseFacets(supabase, params.status ?? "active"),
-    ]);
 
     // Normalize response
     const allRows: NormalizedLot[] = ((data ?? []) as SearchRow[]).map(
@@ -628,25 +697,29 @@ export async function GET(request: NextRequest) {
       resultTotal = count ?? 0;
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       lots,
       total: resultTotal,
       page: effectiveParams.page,
       pageSize: effectiveParams.pageSize,
       stats: {
-        windowCount: getStatusWindowCountFromRows(
-          (statsRows ?? []) as Array<
-            Pick<SearchRow, "end_time" | "availability">
-          >,
-          effectiveParams.status ?? "active",
-        ),
+        windowCount,
       },
       facets: {
-        categories: categoryFacets,
-        cities: cityFacets,
-        houses: houseFacets,
+        categories: facetBundle.categories,
+        cities: facetBundle.cities,
+        houses: facetBundle.houses,
       },
     });
+
+    if (isDefaultLandingSearch(effectiveParams)) {
+      response.headers.set(
+        "Cache-Control",
+        "public, s-maxage=60, stale-while-revalidate=300",
+      );
+    }
+
+    return response;
   } catch (error) {
     console.error("[api/search] Error:", error);
     return NextResponse.json(
