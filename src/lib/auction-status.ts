@@ -188,7 +188,7 @@ function deriveAuctionStatus(
     auction.start_time,
     lotStats.minLotStartTime,
   );
-  const closingStartTime = minIsoDate(lotStats.minLotEndTime, auction.end_time);
+  const closingStartTime = lotStats.minLotEndTime ?? auction.end_time;
   const effectiveEndTime = maxIsoDate(auction.end_time, lotStats.maxLotEndTime);
 
   let status: AuctionStatus = "uncertain";
