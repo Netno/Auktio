@@ -15,6 +15,12 @@ import { createServerClient } from "./supabase";
 import { generateQueryEmbedding } from "./embeddings";
 import { formatDate, formatSEK } from "./utils";
 import { FEED_SOURCES } from "@/config/sources";
+import {
+  buildSwedishWordRoots as buildWordRoots,
+  extractSwedishQueryTerms as extractQueryTerms,
+  normalizeSearchText as normalizeText,
+  normalizeSwedishSearchQuery as normalizeSearchQuery,
+} from "@/lib/search-language";
 
 const GEMINI_GENERATE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -25,53 +31,6 @@ const TOP_K_FULLTEXT = 10;
 
 /** Maximum lots to include in the final LLM context (after dedup + re-rank) */
 const MAX_CONTEXT_LOTS = 12;
-
-const QUERY_STOP_WORDS = new Set([
-  "och",
-  "att",
-  "det",
-  "den",
-  "detta",
-  "dessa",
-  "som",
-  "med",
-  "utan",
-  "för",
-  "från",
-  "hos",
-  "på",
-  "av",
-  "i",
-  "om",
-  "är",
-  "var",
-  "kan",
-  "finns",
-  "finnes",
-  "någon",
-  "några",
-  "just",
-  "nu",
-  "snart",
-  "slutar",
-  "billig",
-  "billiga",
-  "bra",
-  "bästa",
-  "fynd",
-  "visa",
-  "letar",
-  "efter",
-  "har",
-  "jag",
-  "ni",
-  "ute",
-  "under",
-  "över",
-  "eller",
-  "till",
-  "ca",
-]);
 
 export interface RAGRequest {
   query: string;
@@ -117,14 +76,6 @@ interface DetectedAuctionHouse {
   aliases: string[];
 }
 
-function normalizeText(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/["'.,!?():;/\\-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   const aliases = new Set<string>();
   const normalizedName = normalizeText(source.name);
@@ -168,50 +119,38 @@ function normalizeAnswerBullets(answer: string): string {
   return answer.replace(/^\s*-\s+/gm, "• ");
 }
 
-function buildWordRoots(word: string): string[] {
-  const roots = new Set<string>([word]);
-  const suffixes = [
-    "orna",
-    "arna",
-    "erna",
-    "ande",
-    "heten",
-    "elser",
-    "or",
-    "ar",
-    "er",
-    "na",
-    "en",
-    "et",
-    "an",
-    "n",
-    "a",
-    "e",
-    "r",
-    "t",
-  ];
-
-  for (const suffix of suffixes) {
-    if (word.endsWith(suffix) && word.length - suffix.length >= 3) {
-      roots.add(word.slice(0, -suffix.length));
-    }
-  }
-
-  return Array.from(roots).filter((root) => root.length >= 3);
+function extractSignificantWords(query: string): string[] {
+  return normalizeSearchQuery(query)
+    .split(" ")
+    .filter((word) => word.length >= 3);
 }
 
-function extractQueryTerms(query: string): string[] {
+function buildExpandedSemanticQuery(query: string) {
+  const normalizedQuery = normalizeSearchQuery(query);
+  const expandedTerms = extractQueryTerms(query);
+
   return Array.from(
     new Set(
-      extractSignificantWords(query).flatMap((word) => buildWordRoots(word)),
+      [normalizedQuery, ...expandedTerms]
+        .flatMap((value) => value.split(" "))
+        .map((value) => value.trim())
+        .filter(Boolean),
     ),
-  );
+  ).join(" ");
 }
 
-function extractSignificantWords(query: string): string[] {
-  return normalizeText(query)
-    .split(" ")
-    .filter((word) => word.length >= 3 && !QUERY_STOP_WORDS.has(word));
+function getSemanticMatchThreshold(query: string) {
+  const termCount = extractQueryTerms(query).length;
+
+  if (termCount <= 2) return 0.72;
+  if (termCount === 3) return 0.66;
+  return 0.58;
+}
+
+function isConcreteObjectQuery(query: string) {
+  const normalized = normalizeSearchQuery(query);
+  const words = normalized.split(" ").filter(Boolean);
+  return words.length > 0 && words.length <= 3;
 }
 
 function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
@@ -263,9 +202,12 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   const startTime = Date.now();
   const supabase = createServerClient();
   const detectedAuctionHouse = detectAuctionHouse(request.query);
+  const expandedSemanticQuery = buildExpandedSemanticQuery(request.query);
 
   // ─── Step 1: Generate query embedding ───
-  const queryEmbedding = await generateQueryEmbedding(request.query);
+  const queryEmbedding = await generateQueryEmbedding(
+    expandedSemanticQuery || request.query,
+  );
 
   // ─── Step 2: Hybrid retrieval (vector + fulltext in parallel) ───
   const [vectorResults, fulltextResults] = await Promise.all([
@@ -309,7 +251,7 @@ async function retrieveByVector(
     // Use the semantic_search_lots function from our schema
     const { data, error } = await supabase.rpc("auc_semantic_search_lots", {
       query_embedding: JSON.stringify(queryEmbedding),
-      match_threshold: 0.35,
+      match_threshold: getSemanticMatchThreshold(request.query),
       match_count: TOP_K_VECTOR,
     });
 
@@ -338,6 +280,22 @@ async function retrieveByVector(
 
     if (detectedAuctionHouse) {
       lotQuery = lotQuery.eq("house_id", detectedAuctionHouse.id);
+    }
+
+    if (request.categories?.length) {
+      lotQuery = lotQuery.overlaps("categories", request.categories);
+    }
+
+    if (request.city) {
+      lotQuery = lotQuery.eq("city", request.city);
+    }
+
+    if (request.minPrice != null) {
+      lotQuery = lotQuery.gte("current_bid", request.minPrice);
+    }
+
+    if (request.maxPrice != null) {
+      lotQuery = lotQuery.lte("current_bid", request.maxPrice);
     }
 
     if (!request.includeEnded) {
@@ -408,6 +366,12 @@ async function retrieveByFulltext(
     if (request.city) {
       query = query.eq("city", request.city);
     }
+    if (request.minPrice != null) {
+      query = query.gte("current_bid", request.minPrice);
+    }
+    if (request.maxPrice != null) {
+      query = query.lte("current_bid", request.maxPrice);
+    }
     if (detectedAuctionHouse) {
       query = query.eq("house_id", detectedAuctionHouse.id);
     }
@@ -449,23 +413,33 @@ function mergeAndRank(
   userQuery: string,
 ): RAGSourceLot[] {
   const queryTerms = extractQueryTerms(userQuery);
+  const normalizedQuery = normalizeSearchQuery(userQuery);
+  const concreteQuery = isConcreteObjectQuery(userQuery);
   const lotMap = new Map<
     number,
     RAGSourceLot & {
       score: number;
       lexicalScore: number;
       strongLexical: boolean;
+      exactPhrase: boolean;
     }
   >();
 
   // Vector results (primary, scored by similarity)
   for (const lot of vectorLots) {
     const lexical = getLexicalMatch(lot, queryTerms);
+    const exactPhrase =
+      normalizedQuery.length >= 3 &&
+      normalizeText(lot.title ?? "").includes(normalizedQuery);
     lotMap.set(lot.id, {
       ...lot,
-      score: (lot.similarity ?? 0.5) * 1.0 + lexical.score * 0.12,
+      score:
+        (lot.similarity ?? 0.5) * 2.4 +
+        lexical.score * (concreteQuery ? 0.9 : 0.35) +
+        (exactPhrase ? (concreteQuery ? 10 : 5) : 0),
       lexicalScore: lexical.score,
       strongLexical: lexical.strong,
+      exactPhrase,
     });
   }
 
@@ -474,34 +448,57 @@ function mergeAndRank(
     const lot = fulltextLots[i];
     const existing = lotMap.get(lot.id);
     const lexical = getLexicalMatch(lot, queryTerms);
+    const exactPhrase =
+      normalizedQuery.length >= 3 &&
+      normalizeText(lot.title ?? "").includes(normalizedQuery);
 
     if (existing) {
       // Found in both — boost score
       existing.score +=
-        0.45 + (TOP_K_FULLTEXT - i) * 0.03 + lexical.score * 0.08;
+        0.75 +
+        (TOP_K_FULLTEXT - i) * 0.04 +
+        lexical.score * (concreteQuery ? 0.8 : 0.3) +
+        (exactPhrase ? (concreteQuery ? 8 : 4) : 0);
       existing.lexicalScore = Math.max(existing.lexicalScore, lexical.score);
       existing.strongLexical = existing.strongLexical || lexical.strong;
+      existing.exactPhrase = existing.exactPhrase || exactPhrase;
     } else {
       lotMap.set(lot.id, {
         ...lot,
-        score: 0.45 + (TOP_K_FULLTEXT - i) * 0.03 + lexical.score * 0.12,
+        score:
+          0.75 +
+          (TOP_K_FULLTEXT - i) * 0.04 +
+          lexical.score * (concreteQuery ? 0.95 : 0.4) +
+          (exactPhrase ? (concreteQuery ? 10 : 5) : 0),
         lexicalScore: lexical.score,
         strongLexical: lexical.strong,
+        exactPhrase,
       });
     }
   }
 
   let rankedLots = Array.from(lotMap.values())
+    .filter(
+      (lot) =>
+        !concreteQuery ||
+        lot.lexicalScore > 0 ||
+        lot.exactPhrase ||
+        lot.strongLexical,
+    )
     .sort((a, b) => b.score - a.score)
-    .map(({ score, lexicalScore, strongLexical, ...lot }) => ({
+    .map(({ score, lexicalScore, strongLexical, exactPhrase, ...lot }) => ({
       ...lot,
       _lexicalScore: lexicalScore,
       _strongLexical: strongLexical,
+      _exactPhrase: exactPhrase,
     }));
 
+  const exactPhraseLots = rankedLots.filter((lot) => lot._exactPhrase);
   const strongLexicalLots = rankedLots.filter((lot) => lot._strongLexical);
 
-  if (strongLexicalLots.length > 0) {
+  if (concreteQuery && exactPhraseLots.length > 0) {
+    rankedLots = exactPhraseLots;
+  } else if (concreteQuery && strongLexicalLots.length > 0) {
     rankedLots = strongLexicalLots;
   } else {
     const weakLexicalLots = rankedLots.filter((lot) => lot._lexicalScore > 0);
@@ -510,7 +507,9 @@ function mergeAndRank(
     }
   }
 
-  return rankedLots.map(({ _lexicalScore, _strongLexical, ...lot }) => lot);
+  return rankedLots.map(
+    ({ _lexicalScore, _strongLexical, _exactPhrase, ...lot }) => lot,
+  );
 }
 
 /**

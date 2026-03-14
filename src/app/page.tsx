@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { SearchHero } from "@/components/SearchHero";
 import { StatsBar } from "@/components/StatsBar";
@@ -137,6 +137,8 @@ function buildAiSuggestedQueries(params: {
 
 function HomePage() {
   const [showFavsOnly, setShowFavsOnly] = useState(false);
+  const [pendingMobileResultsJump, setPendingMobileResultsJump] =
+    useState(false);
   const {
     favorites,
     toggleFavorite,
@@ -205,6 +207,39 @@ function HomePage() {
     visibleLots: displayLots,
   });
 
+  const scrollToResults = useCallback(() => {
+    const resultsTop = document.getElementById("search-results-top");
+    resultsTop?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const handlePageChange = useCallback(
+    (nextPage: number) => {
+      setPage(nextPage);
+      requestAnimationFrame(() => {
+        scrollToResults();
+      });
+    },
+    [scrollToResults, setPage],
+  );
+
+  const submitSearchFromHero = useCallback(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      setPendingMobileResultsJump(true);
+      return;
+    }
+
+    scrollToResults();
+  }, [scrollToResults]);
+
+  useEffect(() => {
+    if (!pendingMobileResultsJump || loading) {
+      return;
+    }
+
+    scrollToResults();
+    setPendingMobileResultsJump(false);
+  }, [loading, pendingMobileResultsJump, scrollToResults]);
+
   return (
     <div className="min-h-screen bg-brand-50">
       <Header
@@ -218,9 +253,40 @@ function HomePage() {
         onQueryChange={setQuery}
         searchMode={searchMode}
         onSearchModeChange={setSearchMode}
+        total={total}
+        loading={loading}
+        onViewResults={scrollToResults}
+        onSubmitSearch={submitSearchFromHero}
       />
 
-      <main className="mx-auto max-w-[1360px] px-4 pb-20 sm:px-6">
+      <main
+        id="search-results-top"
+        className="mx-auto max-w-[1360px] px-4 pb-20 sm:px-6"
+      >
+        {query.trim() && (
+          <div className="sticky top-12 z-30 -mx-4 mb-3 border-b border-brand-200/70 bg-brand-50/95 px-4 py-2 backdrop-blur sm:static sm:mx-0 sm:mb-0 sm:hidden sm:border-b-0 sm:bg-transparent sm:px-0 sm:py-0">
+            <div className="flex items-center justify-between gap-3 rounded-full border border-brand-200 bg-white px-3 py-2 shadow-card">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-400">
+                  Resultat
+                </p>
+                <p className="truncate text-xs text-brand-800">
+                  {loading
+                    ? "Söker..."
+                    : `${total.toLocaleString("sv-SE")} träffar för \"${query.trim()}\"`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={scrollToResults}
+                className="shrink-0 rounded-full bg-brand-900 px-3 py-1.5 text-[11px] font-semibold text-white"
+              >
+                Visa
+              </button>
+            </div>
+          </div>
+        )}
+
         <StatsBar
           lots={displayLots}
           total={total}
@@ -267,7 +333,7 @@ function HomePage() {
               page={page}
               pageSize={pageSize}
               total={total}
-              onPageChange={setPage}
+              onPageChange={handlePageChange}
               className="!mt-0"
             />
           }
@@ -285,7 +351,7 @@ function HomePage() {
           page={page}
           pageSize={pageSize}
           total={total}
-          onPageChange={setPage}
+          onPageChange={handlePageChange}
         />
       </main>
 

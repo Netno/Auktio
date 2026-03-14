@@ -104,11 +104,20 @@ function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
     return 0;
   }
 
+  const normalizedTitle = normalizeText(lot.title ?? "");
   const titleTokens = normalizeText(lot.title ?? "")
     .split(" ")
     .filter(Boolean)
     .flatMap((token) => buildWordRoots(token));
   const categoryTokens = normalizeText((lot.categories ?? []).join(" "))
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
+  const aiCategoryTokens = normalizeText((lot.aiCategories ?? []).join(" "))
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
+  const artistTokens = normalizeText((lot.artists ?? []).join(" "))
     .split(" ")
     .filter(Boolean)
     .flatMap((token) => buildWordRoots(token));
@@ -123,8 +132,15 @@ function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
   let score = 0;
   for (const term of queryTerms) {
     if (matchesTerm(titleTokens, term)) {
+      score += 6;
+      if (normalizedTitle.includes(term)) {
+        score += 2;
+      }
+    } else if (matchesTerm(artistTokens, term)) {
       score += 4;
     } else if (matchesTerm(categoryTokens, term)) {
+      score += 3;
+    } else if (matchesTerm(aiCategoryTokens, term)) {
       score += 2;
     } else if (matchesTerm(descriptionTokens, term)) {
       score += 1;
@@ -132,6 +148,43 @@ function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
   }
 
   return score;
+}
+
+function isConcreteObjectQuery(query: string) {
+  const normalized = normalizeSearchQuery(query);
+  const words = normalized.split(" ").filter(Boolean);
+  return words.length > 0 && words.length <= 3;
+}
+
+function getVectorRankScore(vectorOrder: Map<number, number>, lotId: number) {
+  const position = vectorOrder.get(lotId);
+  if (position == null) return 0;
+  return 1 / (position + 1);
+}
+
+function getBlendedSearchScore(
+  lot: NormalizedLot,
+  queryTerms: string[],
+  normalizedQuery: string,
+  vectorOrder: Map<number, number>,
+  concreteQuery: boolean,
+) {
+  const lexicalScore = getLexicalScore(lot, queryTerms);
+  const vectorScore = getVectorRankScore(vectorOrder, lot.id);
+  const normalizedTitle = normalizeText(lot.title ?? "");
+  const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
+  const hasExactPhrase =
+    normalizedQuery.length >= 3 &&
+    (normalizedTitle.includes(normalizedQuery) ||
+      normalizedCategories.includes(normalizedQuery));
+
+  let score = lexicalScore * (concreteQuery ? 1.8 : 1.2) + vectorScore * 3;
+
+  if (hasExactPhrase) {
+    score += concreteQuery ? 14 : 8;
+  }
+
+  return { score, lexicalScore, hasExactPhrase };
 }
 
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
@@ -266,6 +319,44 @@ function getDefaultSort(status: SearchStatus, query?: string): SortOption {
   return status === "ended" ? "recently-ended" : "ending-soon";
 }
 
+function buildExpandedSemanticQuery(query: string) {
+  const normalizedQuery = normalizeSearchQuery(query);
+  const expandedTerms = extractQueryTerms(query);
+
+  return Array.from(
+    new Set(
+      [normalizedQuery, ...expandedTerms]
+        .flatMap((value) => value.split(" "))
+        .map((value) => value.trim())
+        .filter(Boolean),
+    ),
+  ).join(" ");
+}
+
+function getSemanticMatchThreshold(query: string) {
+  const termCount = extractQueryTerms(query).length;
+
+  if (termCount <= 2) return 0.72;
+  if (termCount === 3) return 0.66;
+  return 0.58;
+}
+
+function mergeUniqueIds(...groups: number[][]) {
+  const merged: number[] = [];
+  const seen = new Set<number>();
+
+  for (const group of groups) {
+    for (const id of group) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        merged.push(id);
+      }
+    }
+  }
+
+  return merged;
+}
+
 function getStatusWindowCountFromRows(
   rows: Array<Pick<SearchRow, "end_time" | "availability">>,
   status: SearchStatus,
@@ -291,7 +382,7 @@ function applySearchCriteria(
   vectorLotIds: number[] | null,
   nowIso: string,
 ) {
-  query = applyStatusFilter(query, params.status ?? "active", nowIso);
+  query = applyNonQueryCriteria(query, params, nowIso);
 
   if (params.query?.trim()) {
     if (params.searchMode === "vector" || params.searchMode === "semantic") {
@@ -318,6 +409,16 @@ function applySearchCriteria(
       });
     }
   }
+
+  return query;
+}
+
+function applyNonQueryCriteria(
+  query: any,
+  params: SearchParams,
+  nowIso: string,
+) {
+  query = applyStatusFilter(query, params.status ?? "active", nowIso);
 
   if (params.lotIds) {
     if (params.lotIds.length > 0) {
@@ -352,6 +453,40 @@ function applySearchCriteria(
   }
 
   return query;
+}
+
+async function getLexicalCandidateIds(
+  supabase: any,
+  params: SearchParams,
+  nowIso: string,
+) {
+  if (!params.query?.trim()) {
+    return [];
+  }
+
+  const expandedQuery = buildExpandedSemanticQuery(params.query);
+  if (!expandedQuery) {
+    return [];
+  }
+
+  let query = supabase.from("auc_lots").select("id");
+  query = applyNonQueryCriteria(query, params, nowIso);
+  query = query.textSearch("search_text", expandedQuery, {
+    type: "websearch",
+    config: "swedish",
+  });
+  query = query.limit(120);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.warn("[api/search] Lexical candidate lookup failed:", error);
+    return [];
+  }
+
+  return (data ?? [])
+    .map((row: { id: number | null }) => row.id)
+    .filter((id: number | null): id is number => Number.isFinite(id));
 }
 
 async function fetchAllRows<T>(
@@ -491,6 +626,7 @@ export async function GET(request: NextRequest) {
     lotIds: searchParams
       .get("ids")
       ?.split(",")
+      .filter((value) => value.trim().length > 0)
       .map((value) => Number(value))
       .filter((value) => Number.isFinite(value)),
     categories: searchParams.get("categories")?.split(",").filter(Boolean),
@@ -545,19 +681,30 @@ export async function GET(request: NextRequest) {
     let vectorLotIds: number[] | null = null;
 
     if (needsVector) {
-      const queryEmbedding = await generateQueryEmbedding(
+      const expandedSemanticQuery = buildExpandedSemanticQuery(
         effectiveParams.query!,
       );
+      const [queryEmbedding, lexicalCandidateIds] = await Promise.all([
+        generateQueryEmbedding(expandedSemanticQuery || effectiveParams.query!),
+        effectiveParams.searchMode === "vector" ||
+        effectiveParams.searchMode === "semantic"
+          ? getLexicalCandidateIds(supabase, effectiveParams, nowIso)
+          : Promise.resolve([]),
+      ]);
+
       const { data: vectorData } = await supabase.rpc(
         "auc_semantic_search_lots",
         {
           query_embedding: JSON.stringify(queryEmbedding),
-          match_threshold: 0.5,
+          match_threshold: getSemanticMatchThreshold(effectiveParams.query!),
           match_count: 200,
         },
       );
-      // Already ordered by similarity (best first)
-      vectorLotIds = (vectorData ?? []).map((d: any) => d.lot_id as number);
+
+      const semanticIds = (vectorData ?? []).map(
+        (d: any) => d.lot_id as number,
+      );
+      vectorLotIds = mergeUniqueIds(lexicalCandidateIds, semanticIds);
     }
 
     // ── Build main query ──
@@ -661,30 +808,34 @@ export async function GET(request: NextRequest) {
     if (useRelevanceSort) {
       const queryTerms = extractQueryTerms(effectiveParams.query ?? "");
       const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
-      let rankedRows = allRows;
+      const normalizedQuery = normalizeSearchQuery(effectiveParams.query ?? "");
+      const concreteQuery = isConcreteObjectQuery(effectiveParams.query ?? "");
 
-      if (queryTerms.length > 0) {
-        const lexicalMatches = allRows
-          .map((lot) => ({
+      const rankedRows = allRows
+        .map((lot) => {
+          const blended = getBlendedSearchScore(
             lot,
-            lexicalScore: getLexicalScore(lot, queryTerms),
-          }))
-          .filter((entry) => entry.lexicalScore > 0)
-          .sort((a, b) => {
-            if (b.lexicalScore !== a.lexicalScore) {
-              return b.lexicalScore - a.lexicalScore;
-            }
-            return (
-              (vectorOrder.get(a.lot.id) ?? Number.MAX_SAFE_INTEGER) -
-              (vectorOrder.get(b.lot.id) ?? Number.MAX_SAFE_INTEGER)
-            );
-          })
-          .map((entry) => entry.lot);
-
-        if (lexicalMatches.length > 0) {
-          rankedRows = lexicalMatches;
-        }
-      }
+            queryTerms,
+            normalizedQuery,
+            vectorOrder,
+            concreteQuery,
+          );
+          return { lot, ...blended };
+        })
+        .filter(
+          (entry) =>
+            !concreteQuery || entry.lexicalScore > 0 || entry.hasExactPhrase,
+        )
+        .sort((a, b) => {
+          if (b.score !== a.score) {
+            return b.score - a.score;
+          }
+          return (
+            (vectorOrder.get(a.lot.id) ?? Number.MAX_SAFE_INTEGER) -
+            (vectorOrder.get(b.lot.id) ?? Number.MAX_SAFE_INTEGER)
+          );
+        })
+        .map((entry) => entry.lot);
 
       const relevanceOrder = new Map(
         rankedRows.map((lot, idx) => [lot.id, idx]),

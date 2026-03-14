@@ -74,6 +74,8 @@ function getDefaultSort(status: SearchStatus, query: string): SortOption {
 export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const lotIdsKey =
+    options?.lotIds == null ? "__all__" : options.lotIds.join(",");
 
   // Read initial state from URL
   const [query, setQueryState] = useState(searchParams.get("q") ?? "");
@@ -274,7 +276,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     sortBy,
     page,
     fetchResults,
-    options?.lotIds,
+    lotIdsKey,
   ]);
 
   useEffect(() => {

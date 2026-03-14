@@ -16,11 +16,11 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-brand-900 border-b border-white/5">
-      <div className="mx-auto flex h-14 max-w-[1360px] items-center justify-between px-4 sm:h-16 sm:px-6">
+      <div className="mx-auto flex h-12 max-w-[1360px] items-center justify-between px-4 sm:h-14 sm:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <span className="w-2 h-2 rounded-full bg-accent-500 group-hover:scale-125 transition-transform" />
-          <span className="font-serif text-[20px] font-semibold tracking-tight text-white/95 sm:text-[22px]">
+          <span className="font-serif text-[18px] font-semibold tracking-tight text-white/95 sm:text-[20px]">
             Auktio
           </span>
         </Link>
@@ -29,7 +29,7 @@ export function Header({
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleFavs}
-            className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-medium transition-all sm:px-4 sm:text-[13px]
+            className={`inline-flex min-h-8 items-center gap-2 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all sm:min-h-9 sm:px-4 sm:text-[13px]
               ${
                 showFavsOnly
                   ? "bg-accent-500 text-white"

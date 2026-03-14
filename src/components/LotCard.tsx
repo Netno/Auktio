@@ -51,6 +51,9 @@ export function LotCard({
   const googleMapsEmbedUrl = mapQuery
     ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=11&output=embed`
     : undefined;
+  const googleMapsExternalUrl = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : undefined;
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
     : lot.currentBid != null
@@ -127,6 +130,29 @@ export function LotCard({
     touchDeltaXRef.current = 0;
     touchDeltaYRef.current = 0;
   }, [images.length]);
+
+  const handleMapButtonClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!locationLabel) {
+        return;
+      }
+
+      const prefersTouch =
+        typeof window !== "undefined" &&
+        window.matchMedia("(pointer: coarse)").matches;
+
+      if (prefersTouch && googleMapsExternalUrl) {
+        window.open(googleMapsExternalUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      setShowLocationOverlay((current) => !current);
+    },
+    [googleMapsExternalUrl, locationLabel],
+  );
 
   return (
     <a
@@ -283,14 +309,19 @@ export function LotCard({
                 onMouseLeave={() => setShowLocationOverlay(false)}
               >
                 <span>·</span>
-                <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold normal-case tracking-normal text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-900">
+                <button
+                  type="button"
+                  onClick={handleMapButtonClick}
+                  className="ml-1 inline-flex min-h-8 items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold normal-case tracking-normal text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-900 sm:min-h-0 sm:px-2 sm:py-0.5"
+                  aria-label={`Visa karta för ${locationLabel}`}
+                >
                   <MapPin size={10} className="shrink-0" />
                   <span>{locationLabel}</span>
-                </span>
+                </button>
 
                 {showLocationOverlay && googleMapsEmbedUrl && (
                   <div
-                    className="absolute left-0 top-[calc(100%-2px)] z-30 w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur"
+                    className="absolute left-0 top-[calc(100%-2px)] z-30 hidden w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur sm:block"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -301,7 +332,7 @@ export function LotCard({
                         Finns i {locationLabel}
                       </div>
                       <div className="text-sky-800/80">
-                        Snabbkarta for platsen.
+                        Snabbkarta för platsen.
                       </div>
                     </div>
                     <iframe
