@@ -54,7 +54,7 @@ export function AuctionListRow({
     : "xl:grid-cols-[190px_minmax(0,2.7fr)_88px_88px_100px_auto]";
 
   return (
-    <article className="rounded-lg border border-brand-200/80 bg-white px-3 py-2.5 shadow-card transition-colors hover:border-brand-300 sm:px-3.5">
+    <article className="rounded-lg border border-brand-200/80 bg-white px-3 py-2.5 shadow-card transition-colors hover:border-brand-300 sm:px-3.5 xl:px-3">
       <div className={`flex flex-col gap-2.5 xl:grid ${desktopGridClass} xl:items-start xl:gap-2.5`}>
         <div className="min-w-0 grid grid-cols-2 gap-1.5 text-sm xl:block xl:self-start">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400 xl:hidden">
