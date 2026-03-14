@@ -225,6 +225,13 @@ function HomePage() {
     [scrollToResults, setPage],
   );
 
+  const handleTopPageChange = useCallback(
+    (nextPage: number) => {
+      setPage(nextPage);
+    },
+    [setPage],
+  );
+
   const submitSearchFromHero = useCallback(() => {
     if (typeof window !== "undefined" && window.innerWidth < 640) {
       setPendingMobileResultsJump(true);
@@ -366,7 +373,7 @@ function HomePage() {
               page={page}
               pageSize={pageSize}
               total={total}
-              onPageChange={handlePageChange}
+              onPageChange={handleTopPageChange}
               className="!mt-0"
             />
           }
