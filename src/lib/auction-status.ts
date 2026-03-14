@@ -1,4 +1,5 @@
 import { createServerClient } from "./supabase";
+import { normalizeAuctionTitle } from "./utils";
 import type {
   AuctionStatus,
   AuctionStatusSource,
@@ -74,7 +75,9 @@ function maxIsoDate(...values: Array<string | null | undefined>) {
   );
 }
 
-function getLotDisplayEndTime(lot: Pick<LotRow, "local_end_time" | "end_time">) {
+function getLotDisplayEndTime(
+  lot: Pick<LotRow, "local_end_time" | "end_time">,
+) {
   return lot.local_end_time ?? lot.end_time;
 }
 
@@ -260,7 +263,11 @@ async function getLotStatsByAuctions(auctions: AuctionRow[]) {
     new Set(auctions.map((auction) => auction.house_id).filter(Boolean)),
   );
 
-  for (let index = 0; index < auctionIds.length; index += LOT_STATS_BATCH_SIZE) {
+  for (
+    let index = 0;
+    index < auctionIds.length;
+    index += LOT_STATS_BATCH_SIZE
+  ) {
     const chunk = auctionIds.slice(index, index + LOT_STATS_BATCH_SIZE);
 
     for (let page = 0; ; page += 1) {
@@ -415,7 +422,7 @@ export async function listAuctionSummaries(
       houseId: auction.house_id,
       houseName: auction.auc_auction_houses?.name ?? auction.house_id,
       houseLogoUrl: auction.auc_auction_houses?.logo_url ?? undefined,
-      title: auction.title,
+      title: normalizeAuctionTitle(auction.title),
       description: auction.description ?? undefined,
       url: auction.url ?? "#",
       imageUrl: auction.image_url ?? undefined,
@@ -463,7 +470,10 @@ export async function listAuctionSummaries(
         left.closingStartTime ?? left.effectiveEndTime ?? left.startTime ?? 0,
       ).getTime() -
       new Date(
-        right.closingStartTime ?? right.effectiveEndTime ?? right.startTime ?? 0,
+        right.closingStartTime ??
+          right.effectiveEndTime ??
+          right.startTime ??
+          0,
       ).getTime()
     );
   });

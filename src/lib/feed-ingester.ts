@@ -1,12 +1,14 @@
 import { createServerClient } from "./supabase";
 import { FEED_SOURCES } from "../config/sources";
 import type { FeedResponse, FeedLot, IngestResult } from "./types";
+import { normalizeAuctionTitle } from "./utils";
 
 const supabase = createServerClient();
 
 /** Retry config */
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY_MS = 2000; // exponential: 2s, 4s, 8s
+const PRICE_BANK_LOOKBACK_DAYS = 30;
 
 /**
  * Ingest all configured feed sources.
@@ -20,7 +22,7 @@ export async function ingestAllFeeds(): Promise<IngestResult[]> {
     const result = await ingestFeed(source.id, source.feedUrl);
     results.push(result);
     console.log(
-      `[ingest] ${source.name}: +${result.lotsAdded} added, ~${result.lotsUpdated} updated, =${result.lotsSkipped ?? 0} skipped (${result.durationMs}ms)`,
+      `[ingest] ${source.name}: +${result.lotsAdded} added, ~${result.lotsUpdated} updated, =${result.lotsSkipped ?? 0} skipped, ${result.soldPricesUpdated ?? 0} sold prices refreshed (${result.durationMs}ms)`,
     );
   }
 
@@ -128,6 +130,7 @@ async function ingestFeed(
     let lotsAdded = 0;
     let lotsUpdated = 0;
     let lotsSkipped = 0;
+    let soldPricesUpdated = 0;
 
     // 3. Collect all lot IDs from this feed to check existing hashes
     const allFeedLotIds = feed.auctions.flatMap((a) => a.lots.map((l) => l.id));
@@ -140,7 +143,7 @@ async function ingestFeed(
         {
           id: auction.id,
           house_id: houseId,
-          title: auction.title,
+          title: normalizeAuctionTitle(auction.title),
           description: auction.description,
           url: auction.url,
           is_live: auction.isLiveAuction,
@@ -202,6 +205,8 @@ async function ingestFeed(
       }
     }
 
+    soldPricesUpdated = await ingestPriceBankFeed(houseId, feedUrl);
+
     const result: IngestResult = {
       houseId,
       status: "success",
@@ -209,6 +214,7 @@ async function ingestFeed(
       lotsUpdated,
       lotsSkipped,
       lotsRemoved: 0,
+      soldPricesUpdated,
       durationMs: Date.now() - startTime,
     };
 
@@ -232,6 +238,7 @@ async function ingestFeed(
       lotsUpdated: 0,
       lotsSkipped: 0,
       lotsRemoved: 0,
+      soldPricesUpdated: 0,
       durationMs: Date.now() - startTime,
       error: error instanceof Error ? error.message : String(error),
     };
@@ -268,6 +275,139 @@ async function getExistingLotHashes(
     }
   }
   return map;
+}
+
+async function getExistingLotsForPriceBank(
+  houseId: string,
+  lotIds: number[],
+): Promise<
+  Map<
+    number,
+    {
+      auction_id: number;
+      content_hash: string | null;
+      sold_price: number | null;
+    }
+  >
+> {
+  const map = new Map<
+    number,
+    {
+      auction_id: number;
+      content_hash: string | null;
+      sold_price: number | null;
+    }
+  >();
+
+  if (lotIds.length === 0) return map;
+
+  const chunks = chunkArray(lotIds, 500);
+  for (const chunk of chunks) {
+    const { data } = await supabase
+      .from("auc_lots")
+      .select("id, auction_id, content_hash, sold_price")
+      .eq("house_id", houseId)
+      .in("id", chunk);
+
+    for (const row of data ?? []) {
+      map.set(row.id, {
+        auction_id: row.auction_id,
+        content_hash: row.content_hash,
+        sold_price: row.sold_price,
+      });
+    }
+  }
+
+  return map;
+}
+
+async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
+  const priceBankUrl = buildPriceBankFeedUrl(feedUrl);
+
+  try {
+    const response = await fetchWithRetry(priceBankUrl, {
+      headers: { Accept: "application/json" },
+      next: { revalidate: 0 },
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `[ingest] PriceBankFeed ${houseId} returned ${response.status}: ${response.statusText}`,
+      );
+      return 0;
+    }
+
+    const soldLots = (await response.json()) as FeedLot[];
+    if (!Array.isArray(soldLots) || soldLots.length === 0) {
+      return 0;
+    }
+
+    const existingLots = await getExistingLotsForPriceBank(
+      houseId,
+      soldLots.map((lot) => lot.id),
+    );
+
+    const changedRows = soldLots
+      .map((lot) => {
+        const existing = existingLots.get(lot.id);
+        if (!existing) return null;
+
+        const contentHash = computeLotHash(lot);
+        const soldPrice = lot.price.amount ?? null;
+
+        if (
+          existing.content_hash === contentHash &&
+          existing.sold_price === soldPrice
+        ) {
+          return null;
+        }
+
+        return {
+          ...normalizeLot(lot, existing.auction_id, houseId),
+          content_hash: contentHash,
+        };
+      })
+      .filter((row): row is NonNullable<typeof row> => row != null);
+
+    if (changedRows.length === 0) {
+      return 0;
+    }
+
+    for (const batch of chunkArray(changedRows, 50)) {
+      const { error } = await supabase
+        .from("auc_lots")
+        .upsert(batch, { onConflict: "id" });
+
+      if (error) {
+        console.error(
+          `[ingest] PriceBankFeed batch error for ${houseId}:`,
+          error.message,
+        );
+      }
+    }
+
+    return changedRows.length;
+  } catch (error) {
+    console.warn(
+      `[ingest] PriceBankFeed failed for ${houseId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return 0;
+  }
+}
+
+function buildPriceBankFeedUrl(feedUrl: string) {
+  const url = new URL(feedUrl);
+  url.pathname = url.pathname.replace(/\/feed$/, "/feed/PriceBankFeed");
+
+  const fromDate = new Date();
+  fromDate.setUTCDate(fromDate.getUTCDate() - PRICE_BANK_LOOKBACK_DAYS);
+
+  url.search = new URLSearchParams({
+    fromdate: fromDate.toISOString(),
+    apiVersion: "2.0",
+  }).toString();
+
+  return url.toString();
 }
 
 /**

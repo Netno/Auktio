@@ -192,6 +192,7 @@ export interface IngestResult {
   lotsUpdated: number;
   lotsSkipped: number;
   lotsRemoved: number;
+  soldPricesUpdated?: number;
   durationMs: number;
   error?: string;
 }

@@ -48,6 +48,21 @@ export function formatDate(dateStr: string): string {
 }
 
 /**
+ * Normalize auction titles to sentence case for cleaner UI.
+ */
+export function normalizeAuctionTitle(
+  title: string | null | undefined,
+): string {
+  const trimmed = title?.trim();
+  if (!trimmed) return "";
+
+  const lowerCased = trimmed.toLocaleLowerCase("sv-SE");
+  const [firstCharacter, ...rest] = Array.from(lowerCased);
+
+  return `${firstCharacter.toLocaleUpperCase("sv-SE")}${rest.join("")}`;
+}
+
+/**
  * Swap Skeleton image size suffix: _sm, _med, _lg.
  * Falls back to the original URL if no known suffix is found.
  */
