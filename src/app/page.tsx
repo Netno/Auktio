@@ -305,6 +305,9 @@ function HomePage() {
                   <span key={title} className="font-semibold text-sky-950">
                     {index > 0 ? ", " : ""}
                     {title}
+                    {selectedAuctionIds.length === 1 && selectedHouseLabel
+                      ? ` · ${selectedHouseLabel}`
+                      : ""}
                   </span>
                 ))
               : `${selectedAuctionIds.length} vald${selectedAuctionIds.length === 1 ? " auktion" : "a auktioner"}`}

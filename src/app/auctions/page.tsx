@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Layers3 } from "lucide-react";
+import { ChevronDown, Layers3, SlidersHorizontal } from "lucide-react";
 import { Header } from "@/components/Header";
 import {
   AuctionListRow,
@@ -93,11 +93,17 @@ function getRelativeDayDifference(value?: string) {
   return Math.round((compare - today) / 86_400_000);
 }
 
+function getRemainingDaysInCurrentWeek() {
+  const today = new Date().getDay();
+  return (7 - today) % 7;
+}
+
 function groupAuctionsForDisplay(
   auctions: AuctionSummary[],
   status: AuctionStatus,
 ) {
   const groups = new Map<string, AuctionSummary[]>();
+  const remainingDaysInCurrentWeek = getRemainingDaysInCurrentWeek();
 
   for (const auction of auctions) {
     const anchor =
@@ -115,10 +121,15 @@ function groupAuctionsForDisplay(
 
     let label = "Övrigt";
     if (status === "ongoing") {
-      if (relativeDay === 0) label = "Slutar idag";
-      else if (relativeDay != null && relativeDay > 0 && relativeDay <= 7)
-        label = "Slutar den här veckan";
-      else label = "Fortsätter längre fram";
+      if (relativeDay != null && relativeDay < 0) label = "Har börjat avslutas";
+      else if (relativeDay === 0) label = "Slutar idag";
+      else if (
+        relativeDay != null &&
+        relativeDay > 0 &&
+        relativeDay <= remainingDaysInCurrentWeek
+      )
+        label = "Avslutas denna veckan";
+      else label = "Nästa vecka och framåt";
     } else if (status === "upcoming") {
       if (relativeDay === 0) label = "Startar idag";
       else if (relativeDay != null && relativeDay > 0 && relativeDay <= 7)
@@ -136,9 +147,54 @@ function groupAuctionsForDisplay(
     groups.set(label, [...(groups.get(label) ?? []), auction]);
   }
 
-  return Array.from(groups.entries()).map(([label, items]) => ({
+  const orderedEntries = Array.from(groups.entries());
+
+  if (status === "ongoing") {
+    const rank: Record<string, number> = {
+      "Har börjat avslutas": 0,
+      "Slutar idag": 1,
+      "Avslutas denna veckan": 2,
+      "Nästa vecka och framåt": 3,
+      Övrigt: 4,
+    };
+    orderedEntries.sort(
+      ([leftLabel], [rightLabel]) =>
+        (rank[leftLabel] ?? Number.MAX_SAFE_INTEGER) -
+        (rank[rightLabel] ?? Number.MAX_SAFE_INTEGER),
+    );
+  }
+
+  return orderedEntries.map(([label, items]) => ({
     label,
-    items,
+    items: [...items].sort((left, right) => {
+      const leftAnchor =
+        status === "ended"
+          ? (left.effectiveEndTime ?? left.endTime)
+          : status === "upcoming"
+            ? (left.closingStartTime ??
+              left.effectiveStartTime ??
+              left.startTime)
+            : (left.closingStartTime ??
+              left.effectiveEndTime ??
+              left.endTime ??
+              left.startTime);
+      const rightAnchor =
+        status === "ended"
+          ? (right.effectiveEndTime ?? right.endTime)
+          : status === "upcoming"
+            ? (right.closingStartTime ??
+              right.effectiveStartTime ??
+              right.startTime)
+            : (right.closingStartTime ??
+              right.effectiveEndTime ??
+              right.endTime ??
+              right.startTime);
+
+      return (
+        new Date(leftAnchor ?? 0).getTime() -
+        new Date(rightAnchor ?? 0).getTime()
+      );
+    }),
   }));
 }
 
@@ -178,10 +234,10 @@ function Section({
         {groupedAuctions.map((group) => (
           <div key={group.label} className="space-y-2">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-brand-500">
+              <h3 className="rounded-full bg-brand-100 px-3 py-1 text-[13px] font-bold uppercase tracking-[0.14em] text-brand-700">
                 {group.label}
               </h3>
-              <span className="text-[11px] text-brand-400">
+              <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-brand-500 ring-1 ring-brand-200">
                 {group.items.length} auktioner
               </span>
             </div>
@@ -237,6 +293,7 @@ export default function AuctionsPage() {
   const [houseId, setHouseId] = useState("");
   const [daysBack, setDaysBack] = useState(DEFAULT_DAYS);
   const [daysForward, setDaysForward] = useState(DEFAULT_DAYS);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [selectedAuctions, setSelectedAuctions] = useState<AuctionSummary[]>(
     [],
   );
@@ -342,7 +399,9 @@ export default function AuctionsPage() {
           return {
             ...current,
             auctions: current.auctions.map((auction) => {
-              const update = result.updates.find((item) => item.id === auction.id);
+              const update = result.updates.find(
+                (item) => item.id === auction.id,
+              );
               return update ? { ...auction, ...update } : auction;
             }),
           };
@@ -404,7 +463,9 @@ export default function AuctionsPage() {
 
   const toggleAuctionSelection = (auction: AuctionSummary) => {
     setSelectedAuctions((current) => {
-      if (current.some((item) => getAuctionKey(item) === getAuctionKey(auction))) {
+      if (
+        current.some((item) => getAuctionKey(item) === getAuctionKey(auction))
+      ) {
         return current.filter(
           (item) => getAuctionKey(item) !== getAuctionKey(auction),
         );
@@ -469,8 +530,36 @@ export default function AuctionsPage() {
         )}
 
         <div className="-mt-1 rounded-xl border border-brand-200 bg-white p-3 shadow-card sm:p-4">
+          <div className="mb-3 flex items-center justify-between gap-3 lg:hidden">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-400">
+                Filter och sortering
+              </p>
+              <p className="mt-1 text-[13px] text-brand-500">
+                Status, auktionshus och tidsfönster
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen((current) => !current)}
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-brand-200 bg-white px-3 py-2 text-[13px] font-semibold text-brand-800 transition-colors hover:bg-brand-50"
+              aria-expanded={mobileFiltersOpen}
+              aria-controls="mobile-auction-filters"
+            >
+              <SlidersHorizontal size={15} />
+              {mobileFiltersOpen ? "Dolj" : "Visa"}
+              <ChevronDown
+                size={15}
+                className={`transition-transform ${mobileFiltersOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+          </div>
+
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div className="grid flex-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div
+              id="mobile-auction-filters"
+              className={`${mobileFiltersOpen ? "grid" : "hidden"} flex-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 lg:grid`}
+            >
               <label className="grid gap-1 text-[13px] text-brand-600">
                 Status
                 <select
