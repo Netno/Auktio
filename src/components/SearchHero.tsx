@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Sparkles, Layers, Brain } from "lucide-react";
+import { Search, Sparkles, Layers, Brain, X } from "lucide-react";
 import { useRef, useEffect } from "react";
 import type { SearchMode } from "@/lib/types";
 
@@ -33,6 +33,11 @@ export function SearchHero({
 }: SearchHeroProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasQuery = query.trim().length > 0;
+
+  const clearQuery = () => {
+    onQueryChange("");
+    inputRef.current?.focus();
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && hasQuery) {
@@ -100,8 +105,18 @@ export function SearchHero({
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyDown={handleKeyDown}
         />
+        {hasQuery && (
+          <button
+            type="button"
+            onClick={clearQuery}
+            aria-label="Rensa sökning"
+            className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-700 sm:right-[52px]"
+          >
+            <X size={16} />
+          </button>
+        )}
         {searchMode !== "keyword" && (
-          <span className="absolute right-3.5 top-1/2 hidden -translate-y-1/2 bg-gold-50 text-gold-500 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide sm:flex sm:items-center sm:gap-1">
+          <span className="absolute right-3.5 top-1/2 hidden -translate-y-1/2 bg-gold-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-gold-500 sm:flex sm:items-center sm:gap-1">
             <Sparkles size={12} />
             AI-sök
           </span>
