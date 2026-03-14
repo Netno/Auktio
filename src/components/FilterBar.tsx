@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Filter, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { CATEGORY_ORDER } from "@/config/sources";
 import type { SortOption, FacetCount, SearchStatus } from "@/lib/types";
@@ -66,6 +66,7 @@ export function FilterBar({
   activeFilterCount,
   topPagination,
 }: FilterBarProps) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [expandedFilters, setExpandedFilters] = useState(false);
 
   // Local slider state for responsive dragging (debounced to parent)
@@ -139,8 +140,83 @@ export function FilterBar({
 
   return (
     <div className="space-y-3 mb-4">
+      <div className="md:hidden space-y-3">
+        <button
+          type="button"
+          onClick={() => setMobileFiltersOpen((open) => !open)}
+          className="flex w-full items-center justify-between rounded-2xl border border-brand-200 bg-white px-4 py-3 text-left shadow-card"
+        >
+          <span className="flex items-center gap-2 text-sm font-medium text-brand-700">
+            <Filter size={16} />
+            Filter och sortering
+            {activeFilterCount > 0 && (
+              <span className="rounded-full bg-accent-500 px-2 py-px text-[11px] font-semibold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </span>
+          {mobileFiltersOpen ? (
+            <ChevronUp size={18} className="text-brand-500" />
+          ) : (
+            <ChevronDown size={18} className="text-brand-500" />
+          )}
+        </button>
+
+        {topPagination && (
+          <div className="flex justify-center">{topPagination}</div>
+        )}
+
+        {mobileFiltersOpen && (
+          <div className="space-y-3 rounded-2xl border border-brand-200/70 bg-white p-4 shadow-card animate-fade-in">
+            <div className="grid grid-cols-3 items-center rounded-2xl border border-brand-200 bg-brand-50 p-1">
+              {(
+                [
+                  { value: "active", label: "Aktiva" },
+                  { value: "ended", label: "Avslutade" },
+                  { value: "all", label: "Alla" },
+                ] as const
+              ).map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => onSetStatus(option.value)}
+                  className={`rounded-xl px-2.5 py-2 text-[12px] font-medium transition-colors ${
+                    status === option.value
+                      ? "bg-brand-900 text-white"
+                      : "text-brand-500 hover:text-brand-900"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <select
+                value={sortBy}
+                onChange={(e) => onSetSort(e.target.value as SortOption)}
+                className="min-w-0 rounded-xl border border-brand-200 bg-white px-3 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={onClearFilters}
+                disabled={!hasClearableFilters}
+                className="rounded-xl border border-brand-200 px-3 py-2 text-xs text-brand-500 transition-colors hover:border-brand-300 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Rensa
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Status + controls */}
-      <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
+      <div className="hidden gap-3 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
         <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:justify-self-start">
           <div className="grid grid-cols-3 items-center rounded-2xl border border-brand-200 bg-white p-1 md:mr-1.5 md:flex md:rounded-full md:p-0.5">
             {(
@@ -210,14 +286,10 @@ export function FilterBar({
             Rensa alla
           </button>
         </div>
-
-        {topPagination && (
-          <div className="flex justify-center md:hidden">{topPagination}</div>
-        )}
       </div>
 
       {/* Expanded filter panel */}
-      {expandedFilters && (
+      {(expandedFilters || mobileFiltersOpen) && (
         <div className="grid grid-cols-1 gap-4 rounded-xl border border-brand-200/60 bg-white p-4 shadow-card animate-fade-in md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.9fr)_auto]">
           {/* Categories */}
           <div className="md:col-span-3">
