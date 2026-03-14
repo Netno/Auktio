@@ -95,7 +95,7 @@ export function SearchHero({
         <input
           ref={inputRef}
           type="text"
-          className="w-full rounded-2xl bg-white py-2.5 pl-11 pr-4 text-sm text-brand-900 placeholder:text-brand-400 shadow-elevated-lg border-2 border-transparent focus:border-accent-500 focus:shadow-[0_12px_40px_rgba(26,26,24,0.1),0_0_0_4px_theme(colors.accent.100)] outline-none transition-all sm:py-3 sm:pl-[52px] sm:pr-[100px] sm:text-base"
+          className="w-full rounded-2xl border-2 border-transparent bg-white py-2.5 pl-11 pr-12 text-sm text-brand-900 placeholder:text-brand-400 shadow-elevated-lg outline-none transition-all focus:border-accent-500 focus:shadow-[0_12px_40px_rgba(26,26,24,0.1),0_0_0_4px_theme(colors.accent.100)] sm:py-3 sm:pl-[52px] sm:pr-[152px] sm:text-base"
           placeholder={
             searchMode === "keyword"
               ? "Sök föremål, kategori, konstnär..."
@@ -105,22 +105,24 @@ export function SearchHero({
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        {hasQuery && (
-          <button
-            type="button"
-            onClick={clearQuery}
-            aria-label="Rensa sökning"
-            className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-700 sm:right-[52px]"
-          >
-            <X size={16} />
-          </button>
-        )}
-        {searchMode !== "keyword" && (
-          <span className="absolute right-3.5 top-1/2 hidden -translate-y-1/2 bg-gold-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-gold-500 sm:flex sm:items-center sm:gap-1">
-            <Sparkles size={12} />
-            AI-sök
-          </span>
-        )}
+        <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
+          {searchMode !== "keyword" && (
+            <span className="hidden bg-gold-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-gold-500 sm:flex sm:items-center sm:gap-1">
+              <Sparkles size={12} />
+              AI-sök
+            </span>
+          )}
+          {hasQuery && (
+            <button
+              type="button"
+              onClick={clearQuery}
+              aria-label="Rensa sökning"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-700"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {hasQuery && (
