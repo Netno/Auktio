@@ -33,6 +33,8 @@ interface UseSearchReturn {
   // Params
   query: string;
   selectedCategories: string[];
+  selectedAuctionIds: number[];
+  selectedAuctionTitles: string[];
   selectedCity: string;
   selectedHouseId: string;
   hasBids: boolean;
@@ -84,6 +86,19 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   );
   const [selectedCategories, setCategories] = useState<string[]>(
     searchParams.get("categories")?.split(",").filter(Boolean) ?? [],
+  );
+  const [selectedAuctionIds, setSelectedAuctionIds] = useState<number[]>(
+    searchParams
+      .get("auctionId")
+      ?.split(",")
+      .filter((value) => value.trim().length > 0)
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value)) ?? [],
+  );
+  const [selectedAuctionTitles, setSelectedAuctionTitles] = useState<string[]>(
+    searchParams
+      .getAll("auctionTitle")
+      .filter((value) => value.trim().length > 0),
   );
   const [selectedCity, setCityState] = useState(searchParams.get("city") ?? "");
   const [selectedHouseId, setHouseIdState] = useState(
@@ -168,6 +183,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       status: SearchStatus;
       lotIds?: number[];
       categories: string[];
+      auctionIds: number[];
+      auctionTitles: string[];
       city: string;
       houseId: string;
       hasBids: boolean;
@@ -198,6 +215,13 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         urlParams.set("categories", params.categories.join(","));
       if (params.categories.length)
         requestParams.set("categories", params.categories.join(","));
+      if (params.auctionIds.length)
+        urlParams.set("auctionId", params.auctionIds.join(","));
+      if (params.auctionIds.length)
+        requestParams.set("auctionId", params.auctionIds.join(","));
+      for (const title of params.auctionTitles) {
+        urlParams.append("auctionTitle", title);
+      }
       if (params.city) urlParams.set("city", params.city);
       if (params.city) requestParams.set("city", params.city);
       if (params.houseId) urlParams.set("houseId", params.houseId);
@@ -255,6 +279,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       status,
       lotIds: options?.lotIds,
       categories: selectedCategories,
+      auctionIds: selectedAuctionIds,
+      auctionTitles: selectedAuctionTitles,
       city: selectedCity,
       houseId: selectedHouseId,
       hasBids,
@@ -268,6 +294,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     searchMode,
     status,
     selectedCategories,
+    selectedAuctionIds,
+    selectedAuctionTitles,
     selectedCity,
     selectedHouseId,
     hasBids,
@@ -357,6 +385,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   const clearFilters = () => {
     setQueryState("");
     setCategories([]);
+    setSelectedAuctionIds([]);
+    setSelectedAuctionTitles([]);
     setCityState("");
     setHouseIdState("");
     setHasBidsState(false);
@@ -379,6 +409,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     searchMode,
     status,
     selectedCategories,
+    selectedAuctionIds,
+    selectedAuctionTitles,
     selectedCity,
     selectedHouseId,
     hasBids,

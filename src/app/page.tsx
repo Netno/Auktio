@@ -153,6 +153,8 @@ function HomePage() {
     stats,
     query,
     selectedCategories,
+    selectedAuctionIds,
+    selectedAuctionTitles,
     selectedCity,
     selectedHouseId,
     hasBids,
@@ -181,6 +183,7 @@ function HomePage() {
 
   const activeFilterCount =
     selectedCategories.length +
+    (selectedAuctionIds.length > 0 ? 1 : 0) +
     (selectedCity ? 1 : 0) +
     (selectedHouseId ? 1 : 0) +
     (hasBids ? 1 : 0) +
@@ -293,6 +296,33 @@ function HomePage() {
           status={status}
           windowCount={stats.windowCount}
         />
+
+        {selectedAuctionIds.length > 0 && (
+          <div className="mb-4 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800 shadow-card sm:px-5">
+            Visar föremål från{" "}
+            {selectedAuctionTitles.length > 0
+              ? selectedAuctionTitles.slice(0, 2).map((title, index) => (
+                  <span key={title} className="font-semibold text-sky-950">
+                    {index > 0 ? ", " : ""}
+                    {title}
+                  </span>
+                ))
+              : `${selectedAuctionIds.length} vald${selectedAuctionIds.length === 1 ? " auktion" : "a auktioner"}`}
+            {selectedAuctionTitles.length > 2 && (
+              <span className="font-semibold text-sky-950">
+                {` och ${selectedAuctionTitles.length - 2} till`}
+              </span>
+            )}
+            .
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="ml-2 font-semibold text-sky-900 underline underline-offset-2"
+            >
+              Rensa filtret
+            </button>
+          </div>
+        )}
 
         {!loading &&
           status === "ended" &&

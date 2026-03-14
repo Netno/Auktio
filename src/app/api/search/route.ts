@@ -38,6 +38,7 @@ const facetCache = new Map<
 
 type SearchRow = {
   id: number;
+  auction_id: number;
   title: string;
   description: string | null;
   categories: string[] | null;
@@ -67,6 +68,7 @@ type SearchRow = {
 
 type NormalizedLot = {
   id: number;
+  auctionId: number;
   title: string;
   description: string | null;
   categories: string[] | null;
@@ -428,6 +430,14 @@ function applyNonQueryCriteria(
     }
   }
 
+  if (params.auctionIds) {
+    if (params.auctionIds.length > 0) {
+      query = query.in("auction_id", params.auctionIds);
+    } else {
+      query = query.eq("auction_id", -1);
+    }
+  }
+
   if (params.categories?.length) {
     query = query.overlaps("categories", params.categories);
   }
@@ -577,6 +587,7 @@ async function getFacetBundle(supabase: any, status: SearchStatus) {
 function isDefaultLandingSearch(params: SearchParams) {
   return (
     !params.query &&
+    !params.auctionIds?.length &&
     !params.lotIds?.length &&
     !params.categories?.length &&
     !params.city &&
@@ -623,6 +634,12 @@ export async function GET(request: NextRequest) {
     query: searchParams.get("q") ?? undefined,
     searchMode: (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
     status,
+    auctionIds: searchParams
+      .get("auctionId")
+      ?.split(",")
+      .filter((value) => value.trim().length > 0)
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value)),
     lotIds: searchParams
       .get("ids")
       ?.split(",")
@@ -711,6 +728,7 @@ export async function GET(request: NextRequest) {
     let query = supabase.from("auc_lots").select(
       `
         id, title, description, categories, ai_categories, artists,
+        auction_id,
         images, thumbnail_url, currency, estimate, current_bid,
         min_bid, sold_price, start_time, end_time, local_end_time,
         created_at, city, country, availability, url, house_id,
@@ -776,6 +794,7 @@ export async function GET(request: NextRequest) {
     const allRows: NormalizedLot[] = ((data ?? []) as SearchRow[]).map(
       (row) => ({
         id: row.id,
+        auctionId: row.auction_id,
         title: row.title,
         description: row.description,
         categories: row.categories,

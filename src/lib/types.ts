@@ -59,6 +59,45 @@ export interface AuctionHouse {
   lastSynced?: string;
 }
 
+export type AuctionStatus = "upcoming" | "ongoing" | "ended" | "uncertain";
+
+export type AuctionStatusSource =
+  | "database"
+  | "derived-from-lots"
+  | "site-verified"
+  | "uncertain";
+
+export interface AuctionSummary {
+  id: number;
+  houseId: string;
+  houseName: string;
+  houseLogoUrl?: string;
+  title: string;
+  description?: string;
+  url: string;
+  imageUrl?: string;
+  isLive: boolean;
+  startTime?: string;
+  endTime?: string;
+  closingStartTime?: string;
+  effectiveStartTime?: string;
+  effectiveEndTime?: string;
+  lotCount: number;
+  activeLotCount: number;
+  endedLotCount: number;
+  lotDataIncomplete: boolean;
+  status: AuctionStatus;
+  statusSource: AuctionStatusSource;
+  verificationPending?: boolean;
+}
+
+export interface AuctionsResponse {
+  auctions: AuctionSummary[];
+  stats: Record<AuctionStatus, number>;
+  daysBack: number;
+  daysForward: number;
+}
+
 export interface Lot {
   id: number;
   auctionId: number;
@@ -93,6 +132,7 @@ export interface SearchParams {
   query?: string;
   searchMode?: SearchMode;
   status?: SearchStatus;
+  auctionIds?: number[];
   lotIds?: number[];
   categories?: string[];
   city?: string;
