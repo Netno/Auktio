@@ -20,9 +20,7 @@ function formatAuctionEndDate(value?: string) {
     return "–";
   }
 
-  const match = value.match(
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/,
-  );
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
 
   if (!match) {
     return "–";
@@ -32,12 +30,16 @@ function formatAuctionEndDate(value?: string) {
   const weekday = new Intl.DateTimeFormat("sv-SE", {
     weekday: "short",
     timeZone: "UTC",
-  }).format(new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0)));
+  }).format(
+    new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0)),
+  );
 
   const monthLabel = new Intl.DateTimeFormat("sv-SE", {
     month: "short",
     timeZone: "UTC",
-  }).format(new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0)));
+  }).format(
+    new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0)),
+  );
 
   return `${weekday} ${Number(day)} ${monthLabel} ${hour}:${minute}`;
 }
@@ -55,7 +57,9 @@ export function AuctionListRow({
 
   return (
     <article className="rounded-lg border border-brand-200/80 bg-white px-3 py-2.5 shadow-card transition-colors hover:border-brand-300 sm:px-3.5 xl:px-3">
-      <div className={`flex flex-col gap-2.5 xl:grid ${desktopGridClass} xl:items-start xl:gap-2.5`}>
+      <div
+        className={`flex flex-col gap-2.5 xl:grid ${desktopGridClass} xl:items-start xl:gap-2.5`}
+      >
         <div className="min-w-0 grid grid-cols-2 gap-1.5 text-sm xl:block xl:self-start">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400 xl:hidden">
             Första avslut
@@ -108,7 +112,9 @@ export function AuctionListRow({
             </p>
             <p className="mt-0.5 inline-flex max-w-full items-center gap-1 whitespace-nowrap text-[12px] text-brand-600 xl:text-[13px]">
               <Clock3 size={13} className="text-brand-400" />
-              {formatAuctionDate(auction.effectiveStartTime ?? auction.startTime)}
+              {formatAuctionDate(
+                auction.effectiveStartTime ?? auction.startTime,
+              )}
             </p>
           </div>
         )}

@@ -46,10 +46,63 @@ export function Pagination({
 
   const btn =
     "flex items-center justify-center rounded-lg border text-sm font-medium transition-colors";
+  const mobileBtn =
+    "flex h-10 min-w-10 items-center justify-center rounded-lg border px-2 text-sm font-medium transition-colors";
 
   return (
     <div className={`${className ?? "mt-10"}`}>
-      <div className="flex items-center justify-center gap-1.5">
+      <div className="flex items-center justify-center gap-1.5 sm:hidden">
+        <button
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+          className={`${mobileBtn} border-brand-200 bg-white text-brand-600
+          disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
+        >
+          <ChevronLeft size={16} />
+        </button>
+
+        <div className="max-w-[calc(100vw-7.5rem)] overflow-x-auto px-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-max items-center gap-1.5">
+            {pages.map((p, idx) =>
+              p === "…" ? (
+                <span
+                  key={`mobile-ellipsis-${idx}`}
+                  className="flex h-10 min-w-8 items-center justify-center text-brand-400 text-sm select-none"
+                >
+                  …
+                </span>
+              ) : (
+                <button
+                  key={`mobile-${p}`}
+                  onClick={() => onPageChange(p)}
+                  className={`${mobileBtn} ${
+                    p === page
+                      ? "bg-brand-900 border-brand-900 text-white"
+                      : "border-brand-200 bg-white text-brand-600 hover:bg-brand-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+
+        <button
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages}
+          className={`${mobileBtn} border-brand-200 bg-white text-brand-600
+          disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+
+      <div className="mt-2 text-center text-xs text-brand-400 sm:hidden">
+        Sida {page} av {totalPages}
+      </div>
+
+      <div className="hidden items-center justify-center gap-1.5 sm:flex">
         {/* Prev */}
         <button
           onClick={() => onPageChange(page - 1)}
@@ -86,10 +139,6 @@ export function Pagination({
           )}
         </div>
 
-        <span className="flex h-10 min-w-[4.25rem] items-center justify-center rounded-lg border border-brand-200 bg-white px-3 text-sm font-medium text-brand-700 sm:hidden">
-          {page} / {totalPages}
-        </span>
-
         {/* Next */}
         <button
           onClick={() => onPageChange(page + 1)}
@@ -103,10 +152,6 @@ export function Pagination({
         <span className="ml-2 hidden text-xs text-brand-400 sm:inline">
           Sida {page} av {totalPages}
         </span>
-      </div>
-
-      <div className="mt-2 text-center text-xs text-brand-400 sm:hidden">
-        Sida {page} av {totalPages}
       </div>
     </div>
   );
