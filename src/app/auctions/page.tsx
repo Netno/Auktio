@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Layers3 } from "lucide-react";
 import { Header } from "@/components/Header";
-import { AuctionListRow } from "@/components/AuctionListRow";
+import {
+  AuctionListRow,
+  getAuctionDesktopGridClass,
+} from "@/components/AuctionListRow";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
   AuctionsResponse,
@@ -38,7 +41,7 @@ function LoadingRows() {
           key={index}
           className="rounded-lg border border-brand-200 bg-white px-3 py-2.5 shadow-card animate-pulse sm:px-3.5"
         >
-          <div className="flex flex-col gap-2.5 xl:grid xl:grid-cols-[190px_minmax(0,2.7fr)_150px_64px_72px_100px_auto] xl:items-start xl:gap-2.5">
+          <div className="flex flex-col gap-2.5 xl:grid xl:grid-cols-[190px_minmax(0,2.7fr)_150px_64px_72px_100px_232px] xl:items-start xl:gap-2.5">
             <div className="space-y-1.5">
               <div className="flex gap-2">
                 <div className="h-5 w-16 rounded-full bg-brand-100" />
@@ -158,9 +161,7 @@ function Section({
 
   const groupedAuctions = groupAuctionsForDisplay(auctions, status);
   const showStartTime = status === "upcoming";
-  const headerGridClass = showStartTime
-    ? "xl:grid-cols-[190px_minmax(0,2.7fr)_150px_88px_88px_100px_auto]"
-    : "xl:grid-cols-[190px_minmax(0,2.7fr)_88px_88px_100px_auto]";
+  const headerGridClass = getAuctionDesktopGridClass(showStartTime);
 
   return (
     <section className="space-y-3">
@@ -208,7 +209,7 @@ function Section({
               <span className="pt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-400">
                 Status
               </span>
-              <span className="pt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-400 text-right">
+              <span className="pt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-400">
                 Åtgärder
               </span>
             </div>

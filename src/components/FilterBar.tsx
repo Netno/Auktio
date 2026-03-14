@@ -141,8 +141,8 @@ export function FilterBar({
     <div className="space-y-3 mb-4">
       {/* Status + controls */}
       <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
-        <div className="flex gap-1.5 flex-wrap md:justify-self-start">
-          <div className="mr-1.5 flex items-center rounded-full border border-brand-200 bg-white p-0.5">
+        <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:justify-self-start">
+          <div className="grid grid-cols-3 items-center rounded-2xl border border-brand-200 bg-white p-1 md:mr-1.5 md:flex md:rounded-full md:p-0.5">
             {(
               [
                 { value: "active", label: "Aktiva" },
@@ -153,7 +153,7 @@ export function FilterBar({
               <button
                 key={option.value}
                 onClick={() => onSetStatus(option.value)}
-                className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
+                className={`rounded-xl px-2.5 py-2 text-[12px] font-medium transition-colors md:rounded-full md:py-1 ${
                   status === option.value
                     ? "bg-brand-900 text-white"
                     : "text-brand-500 hover:text-brand-900"
@@ -173,19 +173,11 @@ export function FilterBar({
           <div className="hidden md:block" />
         )}
 
-        <div className="flex flex-wrap items-center gap-2 md:justify-self-end md:justify-end">
-          <button
-            onClick={onClearFilters}
-            disabled={!hasClearableFilters}
-            className="px-2 py-1 text-xs text-brand-400 transition-colors hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Rensa alla
-          </button>
-
+        <div className="grid grid-cols-[1fr_auto] gap-2 md:flex md:flex-wrap md:items-center md:justify-self-end md:justify-end">
           <button
             onClick={() => setExpandedFilters(!expandedFilters)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full
-              text-[12px] font-medium border border-brand-200 bg-white text-brand-600
+            className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-brand-200 bg-white px-3 py-2
+              text-[12px] font-medium text-brand-600
               hover:border-brand-400 transition-all"
           >
             <Filter size={14} />
@@ -200,8 +192,8 @@ export function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => onSetSort(e.target.value as SortOption)}
-            className="min-w-[9rem] max-w-full px-3 py-1.5 rounded-lg border border-brand-200 bg-white
-              text-[12px] text-brand-600 outline-none cursor-pointer"
+            className="min-w-0 max-w-full rounded-xl border border-brand-200 bg-white px-3 py-2
+              text-[12px] text-brand-600 outline-none cursor-pointer md:min-w-[9rem] md:rounded-lg md:py-1.5"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -209,6 +201,14 @@ export function FilterBar({
               </option>
             ))}
           </select>
+
+          <button
+            onClick={onClearFilters}
+            disabled={!hasClearableFilters}
+            className="col-span-2 px-2 py-1 text-center text-xs text-brand-400 transition-colors hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-40 md:col-auto"
+          >
+            Rensa alla
+          </button>
         </div>
 
         {topPagination && (
