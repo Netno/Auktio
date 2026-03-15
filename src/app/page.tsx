@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useState } from "react";
+import { ArrowUp } from "lucide-react";
 import { Header } from "@/components/Header";
 import { SearchHero } from "@/components/SearchHero";
 import { StatsBar } from "@/components/StatsBar";
@@ -139,6 +140,7 @@ function HomePage() {
   const [showFavsOnly, setShowFavsOnly] = useState(false);
   const [pendingMobileResultsJump, setPendingMobileResultsJump] =
     useState(false);
+  const [showMobileTopShortcut, setShowMobileTopShortcut] = useState(false);
   const {
     favorites,
     toggleFavorite,
@@ -252,6 +254,40 @@ function HomePage() {
     scrollToResults();
     setPendingMobileResultsJump(false);
   }, [loading, pendingMobileResultsJump, scrollToResults]);
+
+  useEffect(() => {
+    const updateMobileTopShortcut = () => {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      if (window.innerWidth >= 640) {
+        setShowMobileTopShortcut(false);
+        return;
+      }
+
+      setShowMobileTopShortcut(window.scrollY > 900);
+    };
+
+    updateMobileTopShortcut();
+    window.addEventListener("scroll", updateMobileTopShortcut, {
+      passive: true,
+    });
+    window.addEventListener("resize", updateMobileTopShortcut);
+
+    return () => {
+      window.removeEventListener("scroll", updateMobileTopShortcut);
+      window.removeEventListener("resize", updateMobileTopShortcut);
+    };
+  }, []);
+
+  const scrollToSearchTop = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-50">
@@ -401,6 +437,24 @@ function HomePage() {
       </main>
 
       {/* Floating AI Search */}
+      <div
+        className={`pointer-events-none fixed bottom-[5.25rem] right-4 z-40 transition-all duration-300 sm:hidden ${
+          showMobileTopShortcut
+            ? "translate-y-0 opacity-100"
+            : "translate-y-3 opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={scrollToSearchTop}
+          className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-200/80 bg-white/95 px-4 py-2.5 text-[12px] font-semibold text-brand-900 shadow-[0_10px_28px_rgba(93,69,40,0.14)] backdrop-blur-md transition-colors hover:bg-white"
+          aria-label="Till sök och filter högst upp"
+        >
+          <ArrowUp size={15} />
+          <span>Sök & filter</span>
+        </button>
+      </div>
+
       <AISearch suggestedQueries={aiSuggestedQueries} />
     </div>
   );
