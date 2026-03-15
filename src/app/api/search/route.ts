@@ -168,11 +168,13 @@ function getVectorRankScore(vectorOrder: Map<number, number>, lotId: number) {
 function getBlendedSearchScore(
   lot: NormalizedLot,
   queryTerms: string[],
+  expandedQueryTerms: string[],
   normalizedQuery: string,
   vectorOrder: Map<number, number>,
   concreteQuery: boolean,
 ) {
   const lexicalScore = getLexicalScore(lot, queryTerms);
+  const expandedLexicalScore = getLexicalScore(lot, expandedQueryTerms);
   const vectorScore = getVectorRankScore(vectorOrder, lot.id);
   const normalizedTitle = normalizeText(lot.title ?? "");
   const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
@@ -181,13 +183,16 @@ function getBlendedSearchScore(
     (normalizedTitle.includes(normalizedQuery) ||
       normalizedCategories.includes(normalizedQuery));
 
-  let score = lexicalScore * (concreteQuery ? 1.8 : 1.2) + vectorScore * 3;
+  let score =
+    lexicalScore * (concreteQuery ? 1.8 : 1.2) +
+    expandedLexicalScore * (concreteQuery ? 1.15 : 0.75) +
+    vectorScore * 3;
 
   if (hasExactPhrase) {
     score += concreteQuery ? 14 : 8;
   }
 
-  return { score, lexicalScore, hasExactPhrase };
+  return { score, lexicalScore, expandedLexicalScore, hasExactPhrase };
 }
 
 function buildExpandedTextMatchClauses(query: string) {
@@ -903,15 +908,19 @@ export async function GET(request: NextRequest) {
     let lots, resultTotal;
     if (useRelevanceSort) {
       const queryTerms = extractQueryTerms(effectiveParams.query ?? "");
+      const expandedQueryTerms = expandSemanticTerms(
+        effectiveParams.query ?? "",
+      ).filter((term) => !queryTerms.includes(term));
       const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
       const normalizedQuery = normalizeSearchQuery(effectiveParams.query ?? "");
       const concreteQuery = isConcreteObjectQuery(effectiveParams.query ?? "");
 
-      const rankedRows = allRows
+      const rankedEntries = allRows
         .map((lot) => {
           const blended = getBlendedSearchScore(
             lot,
             queryTerms,
+            expandedQueryTerms,
             normalizedQuery,
             vectorOrder,
             concreteQuery,
@@ -920,7 +929,10 @@ export async function GET(request: NextRequest) {
         })
         .filter(
           (entry) =>
-            !concreteQuery || entry.lexicalScore > 0 || entry.hasExactPhrase,
+            !concreteQuery ||
+            entry.lexicalScore > 0 ||
+            entry.expandedLexicalScore > 0 ||
+            entry.hasExactPhrase,
         )
         .sort((a, b) => {
           if (b.score !== a.score) {
@@ -930,27 +942,21 @@ export async function GET(request: NextRequest) {
             (vectorOrder.get(a.lot.id) ?? Number.MAX_SAFE_INTEGER) -
             (vectorOrder.get(b.lot.id) ?? Number.MAX_SAFE_INTEGER)
           );
-        })
-        .map((entry) => entry.lot);
+        });
 
-      const lexicalQualifiedRows = rankedRows.filter((lot) => {
-        const blended = getBlendedSearchScore(
-          lot,
-          queryTerms,
-          normalizedQuery,
-          vectorOrder,
-          concreteQuery,
-        );
-
-        return blended.lexicalScore > 0 || blended.hasExactPhrase;
-      });
+      const lexicalQualifiedRows = rankedEntries.filter(
+        (entry) =>
+          entry.lexicalScore > 0 ||
+          entry.expandedLexicalScore > 0 ||
+          entry.hasExactPhrase,
+      );
 
       const finalRankedRows = shouldRequireStrictLexicalMatch(
         effectiveParams.query ?? "",
         lexicalQualifiedRows.length,
       )
-        ? lexicalQualifiedRows
-        : rankedRows;
+        ? lexicalQualifiedRows.map((entry) => entry.lot)
+        : rankedEntries.map((entry) => entry.lot);
 
       const relevanceOrder = new Map(
         finalRankedRows.map((lot, idx) => [lot.id, idx]),
