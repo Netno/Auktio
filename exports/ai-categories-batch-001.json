@@ -1,0 +1,563 @@
+{
+  "exportedAt": "2026-03-15T01:27:02.361Z",
+  "batchSize": 50,
+  "activeLotsScanned": 2800,
+  "totalActiveLots": 4682,
+  "exportedLots": 50,
+  "rows": [
+    {
+      "id": 51666,
+      "title": "Diverse.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "DIVERSE"
+      ],
+      "houseId": "laholms-auktioner",
+      "endTime": "2026-03-22T19:32:23+00:00"
+    },
+    {
+      "id": 69923,
+      "title": "SPEGEL, bronserad, 1900-talets andra hälft",
+      "description": "Fasettslipat glas, dekor av bladverk, ca 99,5 x 49,5 cm",
+      "categories": [
+        "Speglar"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T19:10:26.267+00:00"
+    },
+    {
+      "id": 69924,
+      "title": "SPEGEL, förgylld och bronserad, 1900-tal",
+      "description": "Oval form, krönt av rosett, 76 x 63 cm",
+      "categories": [
+        "Speglar"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T18:30:26.267+00:00"
+    },
+    {
+      "id": 69925,
+      "title": "BENGT TORNBERG, såsslev, silver, Linköping 1823",
+      "description": "Delvis förgylld, inskription J.N., längd ca 18 cm, vikt ca 45 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-25T18:02:26.267+00:00"
+    },
+    {
+      "id": 69926,
+      "title": "FICKUR, Zenith, 18k guld, 1900-talets första hälft",
+      "description": "Savonett, manuellt urverk, vitemaljerad urtavla, plexiglas, boettnr 180877, verknr 2005843, innerboett i metall, diameter 50 mm, tot vikt ca 98,5 gExtern förvaring. Vänligen kontakta oss för tidbokning av visning en dag i förväg",
+      "categories": [
+        "Klockor",
+        "Guld"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-17T19:10:11.253+00:00"
+    },
+    {
+      "id": 69928,
+      "title": "ARNE JACOBSEN, 4 st stolar, \"Sjuan\", Fritz Hansen, år 2007",
+      "description": "Stomme i förkromat stålrör, formpressad sits och rygg, svartlackerade, etikettmärkta, sitthöjd ca 46, rygghöjd 78 cm",
+      "categories": [
+        "Design",
+        "Möbler"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-17T18:48:11.253+00:00"
+    },
+    {
+      "id": 69931,
+      "title": "BORDSLAMPOR, 4 st, Vittsjö, 1900-talets andra hälft",
+      "description": "Modell 212/213, fot i glas, kupa i plast, en ljuspunkt, höjd inkl skärm ca 45-53 cm",
+      "categories": [
+        "Belysning"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-19T18:06:11.253+00:00"
+    },
+    {
+      "id": 69935,
+      "title": "JEAN-LOUIS DOMECQ, bordslampa, Jielde, Frankrike, 1900-talets mitt ",
+      "description": "Metall, höj- och sänkbar, märkt med plakett, modellen formgiven år 1950, total höjd ca 125 cm",
+      "categories": [
+        "Belysning",
+        "Design",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T19:26:26.267+00:00"
+    },
+    {
+      "id": 69936,
+      "title": "VITRINSKÅP, 1900-talets första hälft ",
+      "description": "Rikligt skuren dekor, välvda glas i sidodörrar, kolonner nedtill, bakstycke med grön textil, höjd ca 163, 130 x 40 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-25T19:02:26.267+00:00"
+    },
+    {
+      "id": 69937,
+      "title": "SOFFBORD, ek och metall, 2000-tal",
+      "description": "Underrede av ek, skiva av orangelackerad metall med uppsvängd kant, höjd 53, 100 x 70 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:56:26.267+00:00"
+    },
+    {
+      "id": 69943,
+      "title": "TAKLAMPA, \"Fog Pendel\", Zero, nutida",
+      "description": "Stomme av vitlackerad metall,  glaskupa lackerad med täckande vit nertill och gradvis transparent upptill, diameter ca 27, höjd 40 cm",
+      "categories": [
+        "Belysning",
+        "Design"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-26T19:40:26.267+00:00"
+    },
+    {
+      "id": 69952,
+      "title": "LJUSKRONA, mässing, barockstil, 1900-talets andra hälft",
+      "description": "Stomme av mässing, behängd med olikslipade prismor, fem ljusarmar, fem ljuspunkter, höjd exkl kedja ca 48, diameter 41 cm",
+      "categories": [
+        "Belysning"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T19:34:26.267+00:00"
+    },
+    {
+      "id": 69956,
+      "title": "KARMSTOLAR, 1 par, rokokostil, 1900-talets andra hälft",
+      "description": "Beige målning, lös stoppad sits, klädsel av rutmönstrad textil, sitthöjd 48 cm, tot höjd 102 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T19:12:11.253+00:00"
+    },
+    {
+      "id": 69986,
+      "title": "PUNCHMUGGAR, 12 st, silver, Fritz Olsson, 1950-tal",
+      "description": "Hamrad dekor, uppsvängd hänkel, fotring med inskription, höjd ca 3,5 cm, tot vikt ca 367 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-26T19:20:26.267+00:00"
+    },
+    {
+      "id": 69988,
+      "title": "COLLIER, 2 st, bärnsten, 1900-tal",
+      "description": "Collier med olikformad bärnsten (längd ca 80 cm), doserad collier (längd ca 60 cm)",
+      "categories": [
+        "Smycken",
+        "Vintage & Fashion"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T19:26:11.253+00:00"
+    },
+    {
+      "id": 69989,
+      "title": "PRYDNADSDOCKOR, 4 st, Franklin Heirloom Dolls, Franklin Mint Company, USA",
+      "description": "Tre med ställning samt en på divan, höjd inkl. ställning ca 49-60 cm, docka på divan längd ca 54 cm.",
+      "categories": [
+        "Diverse",
+        "Leksaker"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-18T19:38:11.253+00:00"
+    },
+    {
+      "id": 69992,
+      "title": "NILS TORNBERG, 2 st, skedar, silver, Linköping 1794",
+      "description": "Med inskription M Ms, längd ca 21 cm, vikt ca 107 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T18:42:11.253+00:00"
+    },
+    {
+      "id": 69993,
+      "title": "NILS TORNBERG, sked, silver, Linköping 1791",
+      "description": "Med inskription M Ms, längd ca 21 cm, vikt ca 68 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-15T19:00:11.253+00:00"
+    },
+    {
+      "id": 69994,
+      "title": "SKEDAR, 2 st, silver, Anders Rahm, Norrköping 1825 och Lorenz Georg Weis, Norrköping 1806",
+      "description": "Med inskription, längd ca 22,5-23 cm, tot. vikt ca 115 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-15T19:12:11.253+00:00"
+    },
+    {
+      "id": 69995,
+      "title": "SKEDAR, 2 st, silver, bla Johannes Lagerdahl, Eksjö, omkring år 1800",
+      "description": "Med inskription, längd ca 21,5-22 cml, vikt ca 83 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-18T19:42:11.253+00:00"
+    },
+    {
+      "id": 69996,
+      "title": "SKEDAR, 3 st, silver, Bernhard Wilhelm Ivarsson, Nyköping, Peter Pihl, Västervik samt en med otydliga stämplar, 1800-talets första hälft",
+      "description": "Med inskription, längd ca 20,5-22 cm, vikt ca 127 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T19:56:11.253+00:00"
+    },
+    {
+      "id": 69997,
+      "title": "SKEDAR, 2 st, silver, CG Hallberg, Stockholm 1956 och Nils Tornberg, Norrköping 1805",
+      "description": "Med inskription, längd ca 19-21 cm, vikt ca 103 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-18T18:00:11.253+00:00"
+    },
+    {
+      "id": 69998,
+      "title": "MEDALJ, silver, Statsteatern Weisbaden, 1979",
+      "description": "Framtagen för återöppningen av Statsteatern i Weisbanden 1978, i originaletui, diameter 45 mm, vikt ca 47 g",
+      "categories": [
+        "Diverse",
+        "Silver"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T18:44:26.267+00:00"
+    },
+    {
+      "id": 69999,
+      "title": "LARS NORRMAN, färglitografi, signerad och numrerad 150/360",
+      "description": "\"Ska vi ta en tequila, Mexico\", bildstorlek 26 x 70 cm, inkl ram 41 x 83 cm",
+      "categories": [
+        "Grafik",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-17T19:18:11.253+00:00"
+    },
+    {
+      "id": 70000,
+      "title": "SVÄRDSORDEN, medalj och kraschan, metall, bla Sporrong",
+      "description": "Längd ca 7 cm, medalj med band",
+      "categories": [
+        "Diverse",
+        "Mynt & Medaljer"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-26T18:08:26.267+00:00"
+    },
+    {
+      "id": 70001,
+      "title": "JACOB ÄNGMAN, 4 st kaffeskedar, silver, \"Rosenholm\", GAB, Stockholm, 1960-tal",
+      "description": "Längd ca 12 cm, tot. vikt ca 61 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-21T18:04:26.267+00:00"
+    },
+    {
+      "id": 70002,
+      "title": "BROSCHER, 3 st, metall och silver, 1900-tal ",
+      "description": "Brosch av metall i form av blad, längd ca 6 cm, brosch av silver i form av blad med genombruten dekor med markasiter, längd ca 5 cm, brosch av silver med genombruten dekor av blommor och blad, längd ca 4 cm, silverbroschernas tot. vikt ca 19 g",
+      "categories": [
+        "Silver",
+        "Smycken"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T18:08:26.267+00:00"
+    },
+    {
+      "id": 70003,
+      "title": "SAMLING SMYCKEN, mestadels silver, 1900-tal",
+      "description": "Bla örhängen, armband, ring samt halskedja, halskedjans längd ca 80 cm, tot. vikt ca 58 g",
+      "categories": [
+        "Diverse",
+        "Smycken"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:08:26.267+00:00"
+    },
+    {
+      "id": 70004,
+      "title": "ÖRHÄNGEN, 1 par SAMT ARMBAND, 3 st, olika metaller, 1900-tal",
+      "description": "Bla örhängen av Börje Tennung, höjd ca 4 cm",
+      "categories": [
+        "Smycken"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T19:36:26.267+00:00"
+    },
+    {
+      "id": 70005,
+      "title": "HÄNGE, 18k guld, i form av katt",
+      "description": "Längd ca 2 cm, vikt ca 1,2 g",
+      "categories": [
+        "Smycken",
+        "Guld"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T19:02:26.267+00:00"
+    },
+    {
+      "id": 70006,
+      "title": "ÖRHÄNGEN, 1 par, 18k guld, med mindre vita stenar",
+      "description": "Stiftsystem, diameter 6 mm, tot vikt ca 0,6 g",
+      "categories": [
+        "Smycken",
+        "Guld"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T18:58:26.267+00:00"
+    },
+    {
+      "id": 70007,
+      "title": "RINGAR, 2 st, 14k och 18k guld, varav en med mindre diamanter",
+      "description": "Ringstorlek ca 15,75/50, tot. vikt ca 2,8 g",
+      "categories": [
+        "Smycken",
+        "Guld"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:22:26.267+00:00"
+    },
+    {
+      "id": 70008,
+      "title": "DOCKOR, 4 st, samt kläder, bla \"Midge\", Barbie, Mattel inc., 1958 och Evergreen, Hongkong, 1950-/60-tal",
+      "description": "Barbie \"Midge\" klädd i \"Red Flare\", kläder tex \"The Yachtsman\", \"Career girl\", dockornas längd ca 23-31 cm, två stativ medföljer",
+      "categories": [
+        "Diverse",
+        "Leksaker",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T19:38:26.267+00:00"
+    },
+    {
+      "id": 70009,
+      "title": "DAMARMBANDSUR, Certina, gulddoublé, 1900-talets andra hälft",
+      "description": "Manuellt urverk, diameter ca 18 mm",
+      "categories": [
+        "Klockor"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T19:30:11.253+00:00"
+    },
+    {
+      "id": 70010,
+      "title": "HERRARMBANDSUR, Eterna, stål, 1900-talets mitt",
+      "description": "Manuellt urverk, svart urtavla, pelxiglas, diameter ca 32 mm",
+      "categories": [
+        "Klockor"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-16T19:14:11.253+00:00"
+    },
+    {
+      "id": 70011,
+      "title": "SKOR, 3 par, till kimono, Japan, 1900-talets andra hälft ",
+      "description": "Längd ca 23 cm",
+      "categories": [
+        "Asiatiskt Konsthantverk",
+        "Diverse",
+        "Vintage & Fashion"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-26T19:10:26.267+00:00"
+    },
+    {
+      "id": 70012,
+      "title": "VINGLAS, 4 st, glas, 1900-/2000-tal, otydligt signerade",
+      "description": "Fot av klarglas, blått skaft och röd dekor, otydligt signerade, höjd ca 24 cm",
+      "categories": [
+        "Glas",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:34:26.267+00:00"
+    },
+    {
+      "id": 70013,
+      "title": "ERIK HÖGLUND, vas, glas, Boda, 1960-/70-tal",
+      "description": "Orangerött glas, höjd ca 17 cm",
+      "categories": [
+        "Design",
+        "Glas",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T19:06:26.267+00:00"
+    },
+    {
+      "id": 70014,
+      "title": "SKOR SAMT VÄSKA, Japan, 1900-talets andra hälft",
+      "description": "Gul lack, med originalförpackning, skornas längd ca 23 cm, väskans längd ca 22 cm",
+      "categories": [
+        "Asiatiskt Konsthantverk",
+        "Diverse",
+        "Vintage & Fashion"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-26T18:54:26.267+00:00"
+    },
+    {
+      "id": 70015,
+      "title": "ASSIETTER, 3 + 6 st, flintgods, Rörstrand",
+      "description": "Vit glasyr, reliefdekor, diameter ca 15,5 - 19 cm",
+      "categories": [
+        "Design",
+        "Keramik",
+        "Det dukade bordet",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:36:26.267+00:00"
+    },
+    {
+      "id": 70016,
+      "title": "SKÅL PÅ FOT, glas och vitmetall, tidigt 1900-tal",
+      "description": "Fot av vitmetall, skål med slipad dekor, höjd 18,5, diameter 23 cm",
+      "categories": [
+        "Diverse",
+        "Glas",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T19:00:26.267+00:00"
+    },
+    {
+      "id": 70017,
+      "title": "VAS OCH SKÅL, stengods, bla Søholm, Bornholm, Danmark",
+      "description": "Blå glasyr, vasens höjd ca 13 cm",
+      "categories": [
+        "Keramik",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-23T18:58:26.267+00:00"
+    },
+    {
+      "id": 70018,
+      "title": "KERAMIKFÖREMÅL, 5 st, stengods, 1900-/2000-tal, signerade",
+      "description": "Beige glasyr, omfattande 2 ägg, 2 vaser samt skål, olika signaturer, äggens höjd ca 7 - 10 cm",
+      "categories": [
+        "Diverse",
+        "Keramik",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T18:26:26.267+00:00"
+    },
+    {
+      "id": 70019,
+      "title": "KIMONO, siden, Japan, 1900-talets andra hälft",
+      "description": "Cremevit med olikfärgad dekor, längd från axel ca 155 cm",
+      "categories": [
+        "Asiatiskt Konsthantverk",
+        "Diverse",
+        "Textil",
+        "Vintage & Fashion"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T18:06:26.267+00:00"
+    },
+    {
+      "id": 70020,
+      "title": "MOCKASKEDAR, 12 st, silver, 1900-tal",
+      "description": "Skaft med genombruten dekor, längd ca 10,5 cm, vikt ca 118 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-24T18:18:26.267+00:00"
+    },
+    {
+      "id": 70021,
+      "title": "INGRID ATTERBERG, golvvas, lergods, \"Pepita\", Upsala Ekeby, 1900-talets mitt",
+      "description": "Reliefdekor i rutmönster med vit glasyr, bottenstämpel, insats av plåt, höjd ca 48,5 cm",
+      "categories": [
+        "Design",
+        "Diverse",
+        "Keramik",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:48:26.267+00:00"
+    },
+    {
+      "id": 70024,
+      "title": "BORDSLAMPOR, 1 par snarlika, keramik, Bitossi, Miranda, 1960-/70-tal",
+      "description": "Brun keramik, delvis kopparfärgad glasyr, en ljuspunkt vardera, etikettmärkta, skärmar med kopparfärgad dekor, tot höjd inkl skärm ca 49 cm",
+      "categories": [
+        "Belysning",
+        "Keramik",
+        "Retro"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-20T19:32:26.267+00:00"
+    },
+    {
+      "id": 70025,
+      "title": "MUGGAR, 2 st samt BÄGARE, 2 st, silver, bla GAB, Stockholm, 1900-talets andra hälft",
+      "description": "Med inskriptioner bla \"Per\" och \"SVF\", höjd ca 4-7,5 cm, tot. vikt ca 258 g",
+      "categories": [
+        "Silver",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-21T18:50:26.267+00:00"
+    },
+    {
+      "id": 70026,
+      "title": "GRUVLYKTA, mässing, British Coal Mining Company Wales UK, 1900-tal",
+      "description": "Höjd ink. krok ca 30 cm",
+      "categories": [
+        "Belysning",
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:12:26.267+00:00"
+    },
+    {
+      "id": 70028,
+      "title": "STEKHUV, pläter, England, omkring år 1900",
+      "description": "Hänkel med riklig dekor av bladverk, längd ca 50, bredd 39, höjd 28 cm",
+      "categories": [
+        "Diverse",
+        "Det dukade bordet"
+      ],
+      "houseId": "olsens-auktioner",
+      "endTime": "2026-03-22T18:20:26.267+00:00"
+    }
+  ]
+}

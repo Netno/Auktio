@@ -300,6 +300,7 @@ export default function AuctionsPage() {
   const [data, setData] = useState<AuctionsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasLoadedOnce = data != null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -307,7 +308,6 @@ export default function AuctionsPage() {
     async function loadAuctions() {
       setLoading(true);
       setError(null);
-      setData(null);
 
       const params = new URLSearchParams({
         status,
@@ -319,12 +319,9 @@ export default function AuctionsPage() {
         params.set("houseId", houseId);
       }
 
-      params.set("_ts", String(Date.now()));
-
       try {
         const response = await fetch(`/api/auctions?${params.toString()}`, {
           signal: controller.signal,
-          cache: "no-store",
         });
 
         if (!response.ok) {
@@ -664,7 +661,7 @@ export default function AuctionsPage() {
         </div>
 
         <div className="mt-4 space-y-6">
-          {loading && (
+          {loading && !hasLoadedOnce && (
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-brand-200 pb-2">
                 <div>
@@ -680,24 +677,33 @@ export default function AuctionsPage() {
             </div>
           )}
 
+          {loading && hasLoadedOnce && (
+            <div className="rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-[13px] text-brand-700 shadow-card">
+              Laddar auktioner...
+            </div>
+          )}
+
           {error && !loading && (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
               {error}
             </div>
           )}
 
-          {!loading && !error && (data?.auctions.length ?? 0) === 0 && (
-            <div className="rounded-xl border border-brand-200 bg-white px-5 py-10 text-center shadow-card">
-              <h2 className="font-serif text-xl text-brand-900">
-                Inga auktioner hittades
-              </h2>
-              <p className="mt-2 text-[13px] text-brand-500">
-                Prova att ändra tidsfönster eller auktionshus.
-              </p>
-            </div>
-          )}
+          {!loading &&
+            !error &&
+            hasLoadedOnce &&
+            (data?.auctions.length ?? 0) === 0 && (
+              <div className="rounded-xl border border-brand-200 bg-white px-5 py-10 text-center shadow-card">
+                <h2 className="font-serif text-xl text-brand-900">
+                  Inga auktioner hittades
+                </h2>
+                <p className="mt-2 text-[13px] text-brand-500">
+                  Prova att ändra tidsfönster eller auktionshus.
+                </p>
+              </div>
+            )}
 
-          {!loading && !error && (
+          {hasLoadedOnce && !error && (
             <>
               <Section
                 title="Pågår nu"

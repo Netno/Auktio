@@ -20,6 +20,13 @@ type ListAuctionSummariesOptions = {
   verifySites?: boolean;
 };
 
+type AuctionsSummaryResponse = {
+  auctions: AuctionSummary[];
+  stats: Record<AuctionStatus, number>;
+  daysBack: number;
+  daysForward: number;
+};
+
 type AuctionRow = {
   id: number;
   house_id: string;
@@ -58,6 +65,17 @@ const siteStatusCache = new Map<
   string,
   { expiresAt: number; status: AuctionStatus | null }
 >();
+const auctionSummaryCache = new Map<
+  string,
+  { expiresAt: number; value: AuctionsSummaryResponse }
+>();
+const AUCTION_SUMMARY_CACHE_TTL_MS = 30_000;
+
+function getAuctionSummaryCacheKey(
+  options: Required<ListAuctionSummariesOptions>,
+) {
+  return JSON.stringify(options);
+}
 
 function minIsoDate(...values: Array<string | null | undefined>) {
   return (
@@ -349,9 +367,24 @@ export async function listAuctionSummaries(
     houseId,
     verifySites = false,
   } = options;
+  const cacheOptions: Required<ListAuctionSummariesOptions> = {
+    daysBack,
+    daysForward,
+    status,
+    houseId: houseId ?? "",
+    verifySites,
+  };
+  const cacheKey = getAuctionSummaryCacheKey(cacheOptions);
+  const cached = auctionSummaryCache.get(cacheKey);
+  const now = Date.now();
+
+  if (cached && cached.expiresAt > now) {
+    return cached.value;
+  }
+
   const supabase = createServerClient();
-  const now = new Date();
-  const nowMs = now.getTime();
+  const nowDate = new Date(now);
+  const nowMs = nowDate.getTime();
   const windowStart = new Date(nowMs - daysBack * MS_PER_DAY).toISOString();
   const windowEnd = new Date(nowMs + daysForward * MS_PER_DAY).toISOString();
 
@@ -478,12 +511,19 @@ export async function listAuctionSummaries(
     );
   });
 
-  return {
+  const result: AuctionsSummaryResponse = {
     auctions: filteredAuctions,
     stats: buildStatsRecord(filteredAuctions),
     daysBack,
     daysForward,
   };
+
+  auctionSummaryCache.set(cacheKey, {
+    expiresAt: now + AUCTION_SUMMARY_CACHE_TTL_MS,
+    value: result,
+  });
+
+  return result;
 }
 
 export async function verifyAuctionStatuses(auctionIds: number[]) {
