@@ -22,6 +22,19 @@ import {
   normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
+import {
+  detectPrimaryObjectIntent,
+  detectQueryModifierTerms,
+  evaluateCollectionMatch,
+  evaluateModifierMatch,
+  evaluateObjectMatch as evaluateLotObjectMatch,
+  getBaseQueryTermWeight as getBaseTermWeight,
+  getCollectionAwareScorePenalty,
+  getModifierAwareScoreBoost,
+  getObjectAwareScoreBoost,
+  shouldRequirePrimaryObjectMatch,
+  shouldRequireModifierMatch,
+} from "@/lib/search-object-intent";
 
 const GEMINI_GENERATE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -32,6 +45,29 @@ const TOP_K_FULLTEXT = 10;
 
 /** Maximum lots to include in the final LLM context (after dedup + re-rank) */
 const MAX_CONTEXT_LOTS = 12;
+
+const RETRIEVAL_NOISE_TERMS = new Set([
+  "alla",
+  "visa",
+  "föremål",
+  "foremal",
+  "objekt",
+  "auktion",
+  "auktioner",
+  "slutar",
+  "slut",
+  "avslutas",
+  "avslutade",
+  "idag",
+  "imorgon",
+  "ikvall",
+  "ikväll",
+  "kvall",
+  "kväll",
+  "snart",
+  "denna",
+  "vecka",
+]);
 
 export interface RAGRequest {
   query: string;
@@ -78,6 +114,13 @@ interface DetectedAuctionHouse {
   aliases: string[];
 }
 
+interface DerivedRetrievalIntent {
+  includeEnded: boolean;
+  endTimeFrom?: string;
+  endTimeTo?: string;
+  prefersBrowse: boolean;
+}
+
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   const aliases = new Set<string>();
   const normalizedName = normalizeText(source.name);
@@ -105,50 +148,9 @@ const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   };
 });
 
-const BROAD_BROWSE_TERMS = [
-  "fynd",
-  "prisvard",
-  "prisvärd",
-  "billig",
-  "billigt",
-  "billiga",
-  "rekommendera",
-  "tips",
-  "intressant",
-  "intressanta",
-  "visa",
-  "bra",
-  "sammanfatta",
-  "jamfor",
-  "jämför",
-];
-
-function detectAuctionHouse(query: string): DetectedAuctionHouse | null {
-  const normalizedQuery = ` ${normalizeText(query)} `;
-
-  for (const house of HOUSE_MATCHERS) {
-    if (house.aliases.some((alias) => normalizedQuery.includes(` ${alias} `))) {
-      return house;
-    }
-  }
-
-  return null;
-}
-
-function getAuctionHouseAliasTokens(house: DetectedAuctionHouse | null) {
-  if (!house) return new Set<string>();
-
-  return new Set(
-    house.aliases
-      .flatMap((alias) => alias.split(" "))
-      .map((token) => token.trim())
-      .filter((token) => token.length >= 3),
-  );
-}
-
-function stripAuctionHouseTerms(
-  query: string,
-  house: DetectedAuctionHouse | null,
+const LOW_SIGNAL_QUERY_TERMS = new Set([
+  "antik",
+  "antika",
 ) {
   const normalizedQuery = normalizeSearchQuery(query);
   if (!house) return normalizedQuery;
@@ -166,6 +168,24 @@ function stripAuctionHouseTerms(
 function isBroadBrowseQuery(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
   return BROAD_BROWSE_TERMS.some((term) => normalizedQuery.includes(term));
+}
+
+function getTimeZoneOffsetMs(date: Date, timeZone: string) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+    intent.prefersBrowse = true;
+  }
+
+  return intent;
 }
 
 function buildNoContextAnswer(
@@ -206,6 +226,7 @@ function buildExpandedSemanticQuery(query: string) {
 function getSemanticMatchThreshold(query: string) {
   const termCount = extractQueryTerms(query).length;
 
+  if (termCount <= 1) return 0.5;
   if (termCount <= 2) return 0.72;
   if (termCount === 3) return 0.66;
   return 0.58;
@@ -246,20 +267,21 @@ function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
   let strong = false;
 
   for (const term of queryTerms) {
+    const weight = getBaseTermWeight(term);
     const inTitle = matchesTerm(titleTokens, term);
     const inCategory = matchesTerm(categoryTokens, term);
     const inDescription = matchesTerm(descriptionTokens, term);
 
     if (inTitle) {
-      score += 4;
+      score += 4 * weight;
       strong = true;
     } else if (matchesTerm(aiCategoryTokens, term)) {
-      score += 3;
+      score += 3 * weight;
       strong = true;
     } else if (inCategory) {
-      score += 2;
+      score += 2 * weight;
     } else if (inDescription) {
-      score += 1;
+      score += 1 * weight;
     }
   }
 
@@ -277,39 +299,70 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
     request.query,
     detectedAuctionHouse,
   );
-  const expandedSemanticQuery = buildExpandedSemanticQuery(
+  const rankingQuery = stripRetrievalNoiseTerms(
     retrievalQuery || request.query,
   );
-
-  // ─── Step 1: Generate query embedding ───
-  const queryEmbedding = await generateQueryEmbedding(
-    expandedSemanticQuery || request.query,
+  const semanticSeedQuery = rankingQuery || retrievalQuery || request.query;
+  const derivedIntent = deriveRetrievalIntent(
+    request.query,
+    request.includeEnded,
   );
 
-  // ─── Step 2: Hybrid retrieval (vector + fulltext in parallel) ───
-  const [vectorResults, fulltextResults] = await Promise.all([
-    retrieveByVector(
-      supabase,
-      queryEmbedding,
-      request,
-      detectedAuctionHouse,
-    ),
-    retrieveByFulltext(
-      supabase,
-      request,
-      detectedAuctionHouse,
-      retrievalQuery,
-    ),
-  ]);
+  let vectorResults: RAGSourceLot[] = [];
+  let fulltextResults: RAGSourceLot[] = [];
+  let mergedLots: RAGSourceLot[] = [];
 
-  // ─── Step 3: Merge & deduplicate results ───
-  const mergedLots = mergeAndRank(
-    vectorResults,
-    fulltextResults,
-    retrievalQuery || request.query,
-  );
+  if (!derivedIntent.prefersBrowse || rankingQuery) {
+    const expandedSemanticQuery = buildExpandedSemanticQuery(semanticSeedQuery);
+
+    // ─── Step 1: Generate query embedding ───
+    const queryEmbedding = await generateQueryEmbedding(
+      expandedSemanticQuery || semanticSeedQuery,
+    );
+
+    // ─── Step 2: Hybrid retrieval (vector + fulltext in parallel) ───
+    [vectorResults, fulltextResults] = await Promise.all([
+      retrieveByVector(
+        supabase,
+        queryEmbedding,
+        request,
+        detectedAuctionHouse,
+        derivedIntent,
+      ),
+      retrieveByFulltext(
+        supabase,
+        request,
+        detectedAuctionHouse,
+        semanticSeedQuery,
+        derivedIntent,
+      ),
+    ]);
+
+    // ─── Step 3: Merge & deduplicate results ───
+    mergedLots = mergeAndRank(
+      vectorResults,
+      fulltextResults,
+      semanticSeedQuery,
+    );
+  }
 
   let contextLots = mergedLots.slice(0, MAX_CONTEXT_LOTS);
+
+  if (contextLots.length < 6 || derivedIntent.prefersBrowse) {
+    const browseFallbackLots = await retrieveBrowseFallbackLots(
+      supabase,
+      request,
+      detectedAuctionHouse,
+      derivedIntent,
+      semanticSeedQuery,
+    );
+    const seenIds = new Set(contextLots.map((lot) => lot.id));
+
+    contextLots = [
+      ...contextLots,
+      ...browseFallbackLots.filter((lot) => !seenIds.has(lot.id)),
+    ].slice(0, MAX_CONTEXT_LOTS);
+  }
 
   if (
     detectedAuctionHouse &&
@@ -319,7 +372,8 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
       supabase,
       request,
       detectedAuctionHouse,
-      retrievalQuery || request.query,
+      derivedIntent,
+      semanticSeedQuery,
     );
     const seenIds = new Set(contextLots.map((lot) => lot.id));
 
@@ -365,6 +419,7 @@ async function retrieveByVector(
   queryEmbedding: number[],
   request: RAGRequest,
   detectedAuctionHouse: DetectedAuctionHouse | null,
+  derivedIntent: DerivedRetrievalIntent,
 ): Promise<RAGSourceLot[]> {
   try {
     // Use the semantic_search_lots function from our schema
@@ -417,10 +472,16 @@ async function retrieveByVector(
       lotQuery = lotQuery.lte("current_bid", request.maxPrice);
     }
 
-    if (!request.includeEnded) {
+    if (!derivedIntent.includeEnded) {
       lotQuery = lotQuery
         .gt("end_time", new Date().toISOString())
         .is("availability", null);
+    }
+    if (derivedIntent.endTimeFrom) {
+      lotQuery = lotQuery.gte("end_time", derivedIntent.endTimeFrom);
+    }
+    if (derivedIntent.endTimeTo) {
+      lotQuery = lotQuery.lt("end_time", derivedIntent.endTimeTo);
     }
 
     const { data: lots } = await lotQuery;
@@ -455,9 +516,12 @@ async function retrieveByFulltext(
   request: RAGRequest,
   detectedAuctionHouse: DetectedAuctionHouse | null,
   retrievalQuery: string,
+  derivedIntent: DerivedRetrievalIntent,
 ): Promise<RAGSourceLot[]> {
   try {
-    const searchWords = extractSignificantWords(retrievalQuery || request.query);
+    const searchWords = extractSignificantWords(
+      retrievalQuery || request.query,
+    );
     const searchQuery = searchWords.length
       ? searchWords.join(" ")
       : retrievalQuery || request.query;
@@ -476,10 +540,16 @@ async function retrieveByFulltext(
       })
       .limit(TOP_K_FULLTEXT);
 
-    if (!request.includeEnded) {
+    if (!derivedIntent.includeEnded) {
       query = query
         .gt("end_time", new Date().toISOString())
         .is("availability", null);
+    }
+    if (derivedIntent.endTimeFrom) {
+      query = query.gte("end_time", derivedIntent.endTimeFrom);
+    }
+    if (derivedIntent.endTimeTo) {
+      query = query.lt("end_time", derivedIntent.endTimeTo);
     }
     if (request.categories?.length) {
       query = query.overlaps("categories", request.categories);
@@ -529,6 +599,7 @@ async function retrieveHouseBrowseFallbackLots(
   supabase: any,
   request: RAGRequest,
   detectedAuctionHouse: DetectedAuctionHouse,
+  derivedIntent: DerivedRetrievalIntent,
   rankingQuery: string,
 ): Promise<RAGSourceLot[]> {
   try {
@@ -542,13 +613,21 @@ async function retrieveHouseBrowseFallbackLots(
       .eq("house_id", detectedAuctionHouse.id)
       .limit(36);
 
-    if (!request.includeEnded) {
+    if (!derivedIntent.includeEnded) {
       query = query
         .gt("end_time", new Date().toISOString())
         .is("availability", null)
         .order("end_time", { ascending: true });
     } else {
       query = query.order("end_time", { ascending: false });
+    }
+
+    if (derivedIntent.endTimeFrom) {
+      query = query.gte("end_time", derivedIntent.endTimeFrom);
+    }
+
+    if (derivedIntent.endTimeTo) {
+      query = query.lt("end_time", derivedIntent.endTimeTo);
     }
 
     if (request.categories?.length) {
@@ -576,74 +655,315 @@ async function retrieveHouseBrowseFallbackLots(
 
     const queryTerms = extractQueryTerms(rankingQuery);
     const normalizedQuery = normalizeSearchQuery(rankingQuery);
+    const primaryObjectIntent = detectPrimaryObjectIntent(rankingQuery);
+    const queryModifierTerms = detectQueryModifierTerms(
+      rankingQuery,
+      primaryObjectIntent,
+    );
+    const concreteQuery = isConcreteObjectQuery(rankingQuery);
 
     const rankedFallbackLots: Array<{ lot: RAGSourceLot; score: number }> = (
       data ?? []
     ).map((lot: any) => {
-        const mappedLot: RAGSourceLot = {
-          id: lot.id,
-          title: lot.title,
-          description: lot.description,
-          categories: lot.categories,
-          aiCategories: lot.ai_categories,
-          currentBid: lot.current_bid,
-          estimate: lot.estimate,
-          currency: lot.currency,
-          city: lot.city,
-          url: lot.url,
-          thumbnailUrl: lot.thumbnail_url,
-          endTime: lot.end_time,
-          houseName: lot.auc_auction_houses?.name,
-        };
+      const mappedLot: RAGSourceLot = {
+        id: lot.id,
+        title: lot.title,
+        description: lot.description,
+        categories: lot.categories,
+        aiCategories: lot.ai_categories,
+        currentBid: lot.current_bid,
+        estimate: lot.estimate,
+        currency: lot.currency,
+        city: lot.city,
+        url: lot.url,
+        thumbnailUrl: lot.thumbnail_url,
+        endTime: lot.end_time,
+        houseName: lot.auc_auction_houses?.name,
+      };
 
-        const lexical = getLexicalMatch(mappedLot, queryTerms);
-        const exactPhrase =
-          normalizedQuery.length >= 3 &&
-          normalizeText(mappedLot.title ?? "").includes(normalizedQuery);
-        const endsAt = mappedLot.endTime
-          ? new Date(mappedLot.endTime).getTime()
-          : null;
-        const msLeft = endsAt != null ? endsAt - Date.now() : Number.POSITIVE_INFINITY;
-        const urgencyBoost =
-          msLeft <= 86_400_000
-            ? 1.5
-            : msLeft <= 3 * 86_400_000
-              ? 0.9
-              : 0.35;
-        const bidAmount = mappedLot.currentBid ?? 0;
-        const estimateAmount = mappedLot.estimate ?? 0;
-        const bargainDelta =
-          estimateAmount > 0
-            ? (estimateAmount - bidAmount) / estimateAmount
+      const lexical = getLexicalMatch(mappedLot, queryTerms);
+      const objectMatch = evaluateLotObjectMatch(
+        mappedLot,
+        primaryObjectIntent,
+      );
+        const modifierMatch = evaluateModifierMatch(
+          mappedLot,
+          queryModifierTerms,
+        );
+        const collectionMatch = evaluateCollectionMatch(mappedLot);
+      const exactPhrase =
+        normalizedQuery.length >= 3 &&
+        normalizeText(mappedLot.title ?? "").includes(normalizedQuery);
+      const endsAt = mappedLot.endTime
+        ? new Date(mappedLot.endTime).getTime()
+        : null;
+      const msLeft =
+        endsAt != null ? endsAt - Date.now() : Number.POSITIVE_INFINITY;
+      const urgencyBoost =
+        msLeft <= 86_400_000 ? 1.5 : msLeft <= 3 * 86_400_000 ? 0.9 : 0.35;
+      const bidAmount = mappedLot.currentBid ?? 0;
+      const estimateAmount = mappedLot.estimate ?? 0;
+      const bargainDelta =
+        estimateAmount > 0 ? (estimateAmount - bidAmount) / estimateAmount : 0;
+      const bargainBoost =
+        estimateAmount > 0
+          ? bargainDelta > 0
+            ? bargainDelta * 4
+            : bargainDelta * 1.5
+          : bidAmount === 0
+            ? 0.6
             : 0;
-        const bargainBoost =
-          estimateAmount > 0
-            ? bargainDelta > 0
-              ? bargainDelta * 4
-              : bargainDelta * 1.5
-            : bidAmount === 0
-              ? 0.6
-              : 0;
 
-        return {
-          lot: mappedLot,
-          score:
-            lexical.score * 1.15 +
-            (exactPhrase ? 4 : 0) +
-            urgencyBoost +
-            bargainBoost,
-        };
-      });
+      return {
+        lot: mappedLot,
+        score:
+          lexical.score * 1.15 +
+          (exactPhrase ? 4 : 0) +
+          urgencyBoost +
+          bargainBoost +
+          getObjectAwareScoreBoost(
+            objectMatch,
+              concreteQuery,
+            ) +
+            getModifierAwareScoreBoost(
+              modifierMatch,
+              queryModifierTerms,
+              concreteQuery,
+            ) +
+            getCollectionAwareScorePenalty(
+              collectionMatch,
+              concreteQuery,
+              Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+            ),
+      };
+    });
+
+    const modifierQualifiedCount = rankedFallbackLots.filter((entry) =>
+      evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+    ).length;
 
     return rankedFallbackLots
+      .filter(
+        (entry) =>
+          !shouldRequirePrimaryObjectMatch(
+            rankingQuery,
+            primaryObjectIntent,
+            rankedFallbackLots.filter(
+              (candidate) =>
+                evaluateLotObjectMatch(candidate.lot, primaryObjectIntent)
+                  .hasMatch,
+            ).length,
+          ) || evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
+      )
+      .filter(
+        (entry) =>
+          !shouldRequireModifierMatch(
+            rankingQuery,
+            queryModifierTerms,
+            modifierQualifiedCount,
+          ) || evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+      )
+      .filter(
+        (entry, _index, entries) =>
+          !(
+            concreteQuery &&
+            (primaryObjectIntent || queryModifierTerms.length > 0) &&
+            entries.filter((candidate) => !evaluateCollectionMatch(candidate.lot).hasMatch)
+              .length >= 4 &&
+            evaluateCollectionMatch(entry.lot).hasMatch
+          ),
+      )
       .sort(
-        (left: { lot: RAGSourceLot; score: number }, right: { lot: RAGSourceLot; score: number }) =>
-          right.score - left.score,
+        (
+          left: { lot: RAGSourceLot; score: number },
+          right: { lot: RAGSourceLot; score: number },
+        ) => right.score - left.score,
       )
       .map((entry: { lot: RAGSourceLot; score: number }) => entry.lot)
       .slice(0, MAX_CONTEXT_LOTS);
   } catch (err) {
     console.error("[RAG] House browse fallback failed:", err);
+    return [];
+  }
+}
+
+async function retrieveBrowseFallbackLots(
+  supabase: any,
+  request: RAGRequest,
+  detectedAuctionHouse: DetectedAuctionHouse | null,
+  derivedIntent: DerivedRetrievalIntent,
+  rankingQuery: string,
+): Promise<RAGSourceLot[]> {
+  try {
+    let query = supabase
+      .from("auc_lots")
+      .select(
+        `id, title, description, categories, ai_categories, current_bid, estimate,
+         house_id,
+         currency, city, url, thumbnail_url, end_time,
+         auc_auction_houses!inner(name)`,
+      )
+      .limit(36);
+
+    if (detectedAuctionHouse) {
+      query = query.eq("house_id", detectedAuctionHouse.id);
+    }
+
+    if (!derivedIntent.includeEnded) {
+      query = query
+        .gt("end_time", new Date().toISOString())
+        .is("availability", null)
+        .order("end_time", { ascending: true });
+    } else {
+      query = query.order("end_time", { ascending: false });
+    }
+
+    if (derivedIntent.endTimeFrom) {
+      query = query.gte("end_time", derivedIntent.endTimeFrom);
+    }
+
+    if (derivedIntent.endTimeTo) {
+      query = query.lt("end_time", derivedIntent.endTimeTo);
+    }
+
+    if (request.categories?.length) {
+      query = query.overlaps("categories", request.categories);
+    }
+
+    if (request.city) {
+      query = query.eq("city", request.city);
+    }
+
+    if (request.minPrice != null) {
+      query = query.gte("current_bid", request.minPrice);
+    }
+
+    if (request.maxPrice != null) {
+      query = query.lte("current_bid", request.maxPrice);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("[RAG] Browse fallback error:", error.message);
+      return [];
+    }
+
+    const queryTerms = extractQueryTerms(rankingQuery);
+    const normalizedQuery = normalizeSearchQuery(rankingQuery);
+    const primaryObjectIntent = detectPrimaryObjectIntent(rankingQuery);
+    const queryModifierTerms = detectQueryModifierTerms(
+      rankingQuery,
+      primaryObjectIntent,
+    );
+    const concreteQuery = isConcreteObjectQuery(rankingQuery);
+
+    const rankedLots = (data ?? []).map((lot: any) => {
+      const mappedLot: RAGSourceLot = {
+        id: lot.id,
+        title: lot.title,
+        description: lot.description,
+        categories: lot.categories,
+        aiCategories: lot.ai_categories,
+        currentBid: lot.current_bid,
+        estimate: lot.estimate,
+        currency: lot.currency,
+        city: lot.city,
+        url: lot.url,
+        thumbnailUrl: lot.thumbnail_url,
+        endTime: lot.end_time,
+        houseName: lot.auc_auction_houses?.name,
+      };
+
+      const lexical = getLexicalMatch(mappedLot, queryTerms);
+      const objectMatch = evaluateLotObjectMatch(
+        mappedLot,
+        primaryObjectIntent,
+      );
+      const modifierMatch = evaluateModifierMatch(
+        mappedLot,
+        queryModifierTerms,
+      );
+      const collectionMatch = evaluateCollectionMatch(mappedLot);
+      const exactPhrase =
+        normalizedQuery.length >= 3 &&
+        normalizeText(mappedLot.title ?? "").includes(normalizedQuery);
+      const endsAt = mappedLot.endTime
+        ? new Date(mappedLot.endTime).getTime()
+        : Number.POSITIVE_INFINITY;
+      const msLeft = endsAt - Date.now();
+      const urgencyBoost =
+        msLeft <= 12 * 60 * 60 * 1000
+          ? 4
+          : msLeft <= 24 * 60 * 60 * 1000
+            ? 2.5
+            : msLeft <= 3 * 24 * 60 * 60 * 1000
+              ? 1.2
+              : 0.4;
+
+      return {
+        lot: mappedLot,
+        score:
+          urgencyBoost +
+          lexical.score * 1.2 +
+          (exactPhrase ? 5 : 0) +
+          getObjectAwareScoreBoost(objectMatch, concreteQuery) +
+          getModifierAwareScoreBoost(
+            modifierMatch,
+            queryModifierTerms,
+            concreteQuery,
+          ) +
+          getCollectionAwareScorePenalty(
+            collectionMatch,
+            concreteQuery,
+            Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+          ),
+      };
+    });
+
+    const objectQualifiedCount = rankedLots.filter(
+      (entry) =>
+        evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
+    ).length;
+    const modifierQualifiedCount = rankedLots.filter((entry) =>
+      evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+    ).length;
+
+    return rankedLots
+      .filter(
+        (entry) =>
+          !shouldRequirePrimaryObjectMatch(
+            rankingQuery,
+            primaryObjectIntent,
+            objectQualifiedCount,
+          ) || evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
+      )
+      .filter(
+        (entry) =>
+          !shouldRequireModifierMatch(
+            rankingQuery,
+            queryModifierTerms,
+            modifierQualifiedCount,
+          ) || evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+      )
+      .filter(
+        (entry, _index, entries) =>
+          !(
+            concreteQuery &&
+            (primaryObjectIntent || queryModifierTerms.length > 0) &&
+            entries.filter((candidate) => !evaluateCollectionMatch(candidate.lot).hasMatch)
+              .length >= 4 &&
+            evaluateCollectionMatch(entry.lot).hasMatch
+          ),
+      )
+      .sort(
+        (left: { score: number }, right: { score: number }) =>
+          right.score - left.score,
+      )
+      .map((entry: { lot: RAGSourceLot }) => entry.lot)
+      .slice(0, MAX_CONTEXT_LOTS);
+  } catch (err) {
+    console.error("[RAG] Browse fallback failed:", err);
     return [];
   }
 }
@@ -660,6 +980,11 @@ function mergeAndRank(
   const queryTerms = extractQueryTerms(userQuery);
   const normalizedQuery = normalizeSearchQuery(userQuery);
   const concreteQuery = isConcreteObjectQuery(userQuery);
+  const primaryObjectIntent = detectPrimaryObjectIntent(userQuery);
+  const queryModifierTerms = detectQueryModifierTerms(
+    userQuery,
+    primaryObjectIntent,
+  );
   const paintingTerms = new Set([
     "målning",
     "måleri",
@@ -682,7 +1007,9 @@ function mergeAndRank(
     "urna",
     "servis",
   ]);
-  const queryHasPaintingIntent = queryTerms.some((term) => paintingTerms.has(term));
+  const queryHasPaintingIntent = queryTerms.some((term) =>
+    paintingTerms.has(term),
+  );
   const lotMap = new Map<
     number,
     RAGSourceLot & {
@@ -690,15 +1017,24 @@ function mergeAndRank(
       lexicalScore: number;
       strongLexical: boolean;
       exactPhrase: boolean;
+      objectMatch: boolean;
+      strongObjectMatch: boolean;
     }
   >();
 
   // Vector results (primary, scored by similarity)
   for (const lot of vectorLots) {
     const lexical = getLexicalMatch(lot, queryTerms);
-    const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
+    const normalizedAiCategories = normalizeText(
+      (lot.aiCategories ?? []).join(" "),
+    );
     const combinedText = normalizeText(
-      [lot.title ?? "", lot.description ?? "", (lot.categories ?? []).join(" "), (lot.aiCategories ?? []).join(" ")].join(" "),
+      [
+        lot.title ?? "",
+        lot.description ?? "",
+        (lot.categories ?? []).join(" "),
+        (lot.aiCategories ?? []).join(" "),
+      ].join(" "),
     );
     const exactPhrase =
       normalizedQuery.length >= 3 &&
@@ -710,7 +1046,12 @@ function mergeAndRank(
     const lotLooksDecorative = Array.from(decorativeTerms).some((term) =>
       combinedText.includes(term),
     );
-    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv") ? 2.5 : 0;
+    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv")
+      ? 2.5
+      : 0;
+    const objectMatch = evaluateLotObjectMatch(lot, primaryObjectIntent);
+    const modifierMatch = evaluateModifierMatch(lot, queryModifierTerms);
+    const collectionMatch = evaluateCollectionMatch(lot);
     lotMap.set(lot.id, {
       ...lot,
       score:
@@ -718,6 +1059,17 @@ function mergeAndRank(
         lexical.score * (concreteQuery ? 0.9 : 0.35) +
         (exactPhrase ? (concreteQuery ? 10 : 5) : 0) +
         aiCategoryBoost +
+        getObjectAwareScoreBoost(objectMatch, concreteQuery) +
+        getModifierAwareScoreBoost(
+          modifierMatch,
+          queryModifierTerms,
+          concreteQuery,
+        ) +
+        getCollectionAwareScorePenalty(
+          collectionMatch,
+          concreteQuery,
+          Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+        ) +
         (queryHasPaintingIntent
           ? lotHasPaintingSignal
             ? 2.5
@@ -728,6 +1080,8 @@ function mergeAndRank(
       lexicalScore: lexical.score,
       strongLexical: lexical.strong,
       exactPhrase,
+      objectMatch: objectMatch.hasMatch,
+      strongObjectMatch: objectMatch.hasStrongMatch,
     });
   }
 
@@ -736,9 +1090,16 @@ function mergeAndRank(
     const lot = fulltextLots[i];
     const existing = lotMap.get(lot.id);
     const lexical = getLexicalMatch(lot, queryTerms);
-    const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
+    const normalizedAiCategories = normalizeText(
+      (lot.aiCategories ?? []).join(" "),
+    );
     const combinedText = normalizeText(
-      [lot.title ?? "", lot.description ?? "", (lot.categories ?? []).join(" "), (lot.aiCategories ?? []).join(" ")].join(" "),
+      [
+        lot.title ?? "",
+        lot.description ?? "",
+        (lot.categories ?? []).join(" "),
+        (lot.aiCategories ?? []).join(" "),
+      ].join(" "),
     );
     const exactPhrase =
       normalizedQuery.length >= 3 &&
@@ -750,7 +1111,12 @@ function mergeAndRank(
     const lotLooksDecorative = Array.from(decorativeTerms).some((term) =>
       combinedText.includes(term),
     );
-    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv") ? 2.5 : 0;
+    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv")
+      ? 2.5
+      : 0;
+    const objectMatch = evaluateLotObjectMatch(lot, primaryObjectIntent);
+    const modifierMatch = evaluateModifierMatch(lot, queryModifierTerms);
+    const collectionMatch = evaluateCollectionMatch(lot);
 
     if (existing) {
       // Found in both — boost score
@@ -760,6 +1126,17 @@ function mergeAndRank(
         lexical.score * (concreteQuery ? 0.8 : 0.3) +
         (exactPhrase ? (concreteQuery ? 8 : 4) : 0) +
         aiCategoryBoost +
+        getObjectAwareScoreBoost(objectMatch, concreteQuery) +
+        getModifierAwareScoreBoost(
+          modifierMatch,
+          queryModifierTerms,
+          concreteQuery,
+        ) +
+        getCollectionAwareScorePenalty(
+          collectionMatch,
+          concreteQuery,
+          Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+        ) +
         (queryHasPaintingIntent
           ? lotHasPaintingSignal
             ? 2
@@ -770,6 +1147,9 @@ function mergeAndRank(
       existing.lexicalScore = Math.max(existing.lexicalScore, lexical.score);
       existing.strongLexical = existing.strongLexical || lexical.strong;
       existing.exactPhrase = existing.exactPhrase || exactPhrase;
+      existing.objectMatch = existing.objectMatch || objectMatch.hasMatch;
+      existing.strongObjectMatch =
+        existing.strongObjectMatch || objectMatch.hasStrongMatch;
     } else {
       lotMap.set(lot.id, {
         ...lot,
@@ -779,6 +1159,17 @@ function mergeAndRank(
           lexical.score * (concreteQuery ? 0.95 : 0.4) +
           (exactPhrase ? (concreteQuery ? 10 : 5) : 0) +
           aiCategoryBoost +
+          getObjectAwareScoreBoost(objectMatch, concreteQuery) +
+          getModifierAwareScoreBoost(
+            modifierMatch,
+            queryModifierTerms,
+            concreteQuery,
+          ) +
+          getCollectionAwareScorePenalty(
+            collectionMatch,
+            concreteQuery,
+            Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+          ) +
           (queryHasPaintingIntent
             ? lotHasPaintingSignal
               ? 2
@@ -789,9 +1180,18 @@ function mergeAndRank(
         lexicalScore: lexical.score,
         strongLexical: lexical.strong,
         exactPhrase,
+        objectMatch: objectMatch.hasMatch,
+        strongObjectMatch: objectMatch.hasStrongMatch,
       });
     }
   }
+
+  const objectQualifiedCount = Array.from(lotMap.values()).filter(
+    (lot) => lot.objectMatch,
+  ).length;
+  const modifierQualifiedCount = Array.from(lotMap.values()).filter((lot) =>
+    evaluateModifierMatch(lot, queryModifierTerms).hasMatch,
+  ).length;
 
   let rankedLots = Array.from(lotMap.values())
     .filter(
@@ -799,20 +1199,67 @@ function mergeAndRank(
         !concreteQuery ||
         lot.lexicalScore > 0 ||
         lot.exactPhrase ||
-        lot.strongLexical,
+        lot.strongLexical ||
+        lot.objectMatch,
+    )
+    .filter(
+      (lot) =>
+        !shouldRequirePrimaryObjectMatch(
+          userQuery,
+          primaryObjectIntent,
+          objectQualifiedCount,
+        ) || lot.objectMatch,
+    )
+    .filter(
+      (lot) =>
+        !shouldRequireModifierMatch(
+          userQuery,
+          queryModifierTerms,
+          modifierQualifiedCount,
+        ) || evaluateModifierMatch(lot, queryModifierTerms).hasMatch,
+    )
+    .filter(
+      (lot, _index, lots) =>
+        !(
+          concreteQuery &&
+          (primaryObjectIntent || queryModifierTerms.length > 0) &&
+          lots.filter((candidate) => !evaluateCollectionMatch(candidate).hasMatch)
+            .length >= 4 &&
+          evaluateCollectionMatch(lot).hasMatch
+        ),
     )
     .sort((a, b) => b.score - a.score)
-    .map(({ score, lexicalScore, strongLexical, exactPhrase, ...lot }) => ({
-      ...lot,
-      _lexicalScore: lexicalScore,
-      _strongLexical: strongLexical,
-      _exactPhrase: exactPhrase,
-    }));
+    .map(
+      ({
+        score,
+        lexicalScore,
+        strongLexical,
+        exactPhrase,
+        objectMatch,
+        strongObjectMatch,
+        ...lot
+      }) => ({
+        ...lot,
+        _lexicalScore: lexicalScore,
+        _strongLexical: strongLexical,
+        _exactPhrase: exactPhrase,
+        _objectMatch: objectMatch,
+        _strongObjectMatch: strongObjectMatch,
+      }),
+    );
 
+  const objectMatchedLots = rankedLots.filter((lot) => lot._objectMatch);
+  const strongObjectMatchedLots = rankedLots.filter(
+    (lot) => lot._strongObjectMatch,
+  );
   const exactPhraseLots = rankedLots.filter((lot) => lot._exactPhrase);
   const strongLexicalLots = rankedLots.filter((lot) => lot._strongLexical);
 
-  if (concreteQuery && exactPhraseLots.length > 0) {
+  if (concreteQuery && strongObjectMatchedLots.length > 0) {
+    rankedLots = strongObjectMatchedLots;
+  } else if (concreteQuery && objectMatchedLots.length > 0) {
+    rankedLots = objectMatchedLots;
+  } else if (concreteQuery && exactPhraseLots.length > 0) {
     rankedLots = exactPhraseLots;
   } else if (concreteQuery && strongLexicalLots.length > 0) {
     rankedLots = strongLexicalLots;
@@ -824,7 +1271,14 @@ function mergeAndRank(
   }
 
   return rankedLots.map(
-    ({ _lexicalScore, _strongLexical, _exactPhrase, ...lot }) => lot,
+    ({
+      _lexicalScore,
+      _strongLexical,
+      _exactPhrase,
+      _objectMatch,
+      _strongObjectMatch,
+      ...lot
+    }) => lot,
   );
 }
 

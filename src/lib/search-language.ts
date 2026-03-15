@@ -1,4 +1,6 @@
 const SWEDISH_QUERY_STOP_WORDS = new Set([
+  "en",
+  "ett",
   "och",
   "att",
   "det",

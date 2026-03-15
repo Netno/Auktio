@@ -9,6 +9,19 @@ import {
   normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
+import {
+  detectPrimaryObjectIntent,
+  detectQueryModifierTerms,
+  evaluateCollectionMatch,
+  evaluateModifierMatch,
+  evaluateObjectMatch as evaluateLotObjectMatch,
+  getBaseQueryTermWeight as getBaseTermWeight,
+  getCollectionAwareScorePenalty,
+  getModifierAwareScoreBoost,
+  shouldRequirePrimaryObjectMatch,
+  shouldRequireModifierMatch,
+  type DetectedObjectIntent,
+} from "@/lib/search-object-intent";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
   SearchParams,
@@ -250,8 +263,10 @@ function getBlendedSearchScore(
   normalizedQuery: string,
   vectorOrder: Map<number, number>,
   concreteQuery: boolean,
+  primaryObjectIntent: DetectedObjectIntent | null,
+  queryModifierTerms: string[],
 ) {
-  const lexicalScore = getLexicalScore(lot, queryTerms);
+  const lexicalScore = getLexicalScore(lot, queryTerms, getBaseTermWeight);
   const expandedLexicalScore = getLexicalScore(
     lot,
     expandedQueryTerms,
@@ -296,11 +311,35 @@ function getBlendedSearchScore(
     combinedSearchText,
     PAINTING_RESULT_TERMS,
   );
+  const objectMatch = evaluateLotObjectMatch(lot, primaryObjectIntent);
+  const modifierMatch = evaluateModifierMatch(lot, queryModifierTerms);
+  const collectionMatch = evaluateCollectionMatch(lot);
 
   let score =
     lexicalScore * (concreteQuery ? 1.8 : 1.2) +
     expandedLexicalScore * (concreteQuery ? 1.15 : 0.75) +
     vectorScore * 3;
+
+  if (primaryObjectIntent) {
+    if (objectMatch.hasStrongMatch) {
+      score += 18 + objectMatch.score * 0.5;
+    } else if (objectMatch.hasMatch) {
+      score += 9 + objectMatch.score * 0.35;
+    } else {
+      score -= concreteQuery ? 24 : 10;
+    }
+  }
+
+  score += getModifierAwareScoreBoost(
+    modifierMatch,
+    queryModifierTerms,
+    concreteQuery,
+  );
+  score += getCollectionAwareScorePenalty(
+    collectionMatch,
+    concreteQuery,
+    Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+  );
 
   if (lexicalScore === 0 && expandedLexicalScore > 0) {
     if (strongAnimalMatch) {
@@ -333,7 +372,16 @@ function getBlendedSearchScore(
     score += 6;
   }
 
-  return { score, lexicalScore, expandedLexicalScore, hasExactPhrase };
+  return {
+    score,
+    lexicalScore,
+    expandedLexicalScore,
+    hasExactPhrase,
+    hasObjectMatch: objectMatch.hasMatch,
+    hasStrongObjectMatch: objectMatch.hasStrongMatch,
+    hasModifierMatch: modifierMatch.hasMatch,
+    hasCollectionMatch: collectionMatch.hasMatch,
+  };
 }
 
 function buildExpandedTextMatchClauses(query: string) {
@@ -970,8 +1018,6 @@ export async function GET(request: NextRequest) {
       );
       const [queryEmbedding, lexicalCandidateIds] = await Promise.all([
         generateQueryEmbedding(expandedSemanticQuery || effectiveParams.query!),
-        effectiveParams.searchMode === "vector" ||
-        effectiveParams.searchMode === "semantic" ||
         effectiveParams.searchMode === "hybrid"
           ? getLexicalCandidateIds(supabase, effectiveParams, nowIso)
           : Promise.resolve([]),
@@ -989,7 +1035,10 @@ export async function GET(request: NextRequest) {
       const semanticIds = (vectorData ?? []).map(
         (d: any) => d.lot_id as number,
       );
-      vectorLotIds = mergeUniqueIds(lexicalCandidateIds, semanticIds);
+      vectorLotIds =
+        effectiveParams.searchMode === "hybrid"
+          ? mergeUniqueIds(semanticIds, lexicalCandidateIds)
+          : semanticIds;
     }
 
     // ── Build main query ──
@@ -1106,6 +1155,13 @@ export async function GET(request: NextRequest) {
       const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
       const normalizedQuery = normalizeSearchQuery(effectiveParams.query ?? "");
       const concreteQuery = isConcreteObjectQuery(effectiveParams.query ?? "");
+      const primaryObjectIntent = detectPrimaryObjectIntent(
+        effectiveParams.query ?? "",
+      );
+      const queryModifierTerms = detectQueryModifierTerms(
+        effectiveParams.query ?? "",
+        primaryObjectIntent,
+      );
 
       const rankedEntries = allRows
         .map((lot) => {
@@ -1116,6 +1172,8 @@ export async function GET(request: NextRequest) {
             normalizedQuery,
             vectorOrder,
             concreteQuery,
+            primaryObjectIntent,
+            queryModifierTerms,
           );
           return { lot, ...blended };
         })
@@ -1124,7 +1182,8 @@ export async function GET(request: NextRequest) {
             !concreteQuery ||
             entry.lexicalScore > 0 ||
             entry.expandedLexicalScore > 0 ||
-            entry.hasExactPhrase,
+            entry.hasExactPhrase ||
+            entry.hasObjectMatch,
         )
         .sort((a, b) => {
           if (b.score !== a.score) {
@@ -1136,19 +1195,54 @@ export async function GET(request: NextRequest) {
           );
         });
 
-      const lexicalQualifiedRows = rankedEntries.filter(
+      const objectQualifiedRows = primaryObjectIntent
+        ? rankedEntries.filter((entry) => entry.hasObjectMatch)
+        : rankedEntries;
+
+      const rowsAfterObjectFilter = shouldRequirePrimaryObjectMatch(
+        effectiveParams.query ?? "",
+        primaryObjectIntent,
+        objectQualifiedRows.length,
+      )
+        ? objectQualifiedRows
+        : rankedEntries;
+
+      const lexicalQualifiedRows = rowsAfterObjectFilter.filter(
         (entry) =>
           entry.lexicalScore > 0 ||
           entry.expandedLexicalScore > 0 ||
-          entry.hasExactPhrase,
+          entry.hasExactPhrase ||
+          entry.hasObjectMatch,
       );
+
+      const modifierQualifiedRows = queryModifierTerms.length
+        ? lexicalQualifiedRows.filter((entry) => entry.hasModifierMatch)
+        : lexicalQualifiedRows;
+
+      const rowsAfterModifierFilter = shouldRequireModifierMatch(
+        effectiveParams.query ?? "",
+        queryModifierTerms,
+        modifierQualifiedRows.length,
+      )
+        ? modifierQualifiedRows
+        : lexicalQualifiedRows;
+
+      const nonCollectionRows = rowsAfterModifierFilter.filter(
+        (entry) => !entry.hasCollectionMatch,
+      );
+      const rowsAfterCollectionFilter =
+        concreteQuery &&
+        (primaryObjectIntent || queryModifierTerms.length > 0) &&
+        nonCollectionRows.length >= 4
+          ? nonCollectionRows
+          : rowsAfterModifierFilter;
 
       const finalRankedRows = shouldRequireStrictLexicalMatch(
         effectiveParams.query ?? "",
-        lexicalQualifiedRows.length,
+        rowsAfterCollectionFilter.length,
       )
-        ? lexicalQualifiedRows.map((entry) => entry.lot)
-        : rankedEntries.map((entry) => entry.lot);
+        ? rowsAfterCollectionFilter.map((entry) => entry.lot)
+        : rowsAfterCollectionFilter.map((entry) => entry.lot);
 
       const relevanceOrder = new Map(
         finalRankedRows.map((lot, idx) => [lot.id, idx]),
