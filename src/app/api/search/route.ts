@@ -114,6 +114,8 @@ const STRONG_ANIMAL_EXPANSION_TERMS = new Set([
 const WEAK_ANIMAL_EXPANSION_TERMS = new Set([
   "animal",
   "fauna",
+  "djur",
+  "djurmotiv",
   "hund",
   "katt",
   "häst",
@@ -132,6 +134,31 @@ const DECORATIVE_OBJECT_TERMS = new Set([
   "vas",
   "urna",
   "servis",
+]);
+
+const PAINTING_QUERY_TERMS = new Set([
+  "målning",
+  "måleri",
+  "olja",
+  "oljemålning",
+  "akvarell",
+  "gouache",
+  "pastell",
+  "tempera",
+  "tavla",
+]);
+
+const PAINTING_RESULT_TERMS = new Set([
+  "målning",
+  "måleri",
+  "olja",
+  "oljemålning",
+  "akvarell",
+  "gouache",
+  "pastell",
+  "tempera",
+  "tavla",
+  "konst",
 ]);
 
 function getLexicalScore(
@@ -182,7 +209,7 @@ function getLexicalScore(
     } else if (matchesTerm(categoryTokens, term)) {
       score += 3 * weight;
     } else if (matchesTerm(aiCategoryTokens, term)) {
-      score += 2 * weight;
+      score += 4 * weight;
     } else if (matchesTerm(descriptionTokens, term)) {
       score += 1 * weight;
     }
@@ -233,22 +260,39 @@ function getBlendedSearchScore(
   const vectorScore = getVectorRankScore(vectorOrder, lot.id);
   const normalizedTitle = normalizeText(lot.title ?? "");
   const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
+  const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
   const normalizedDescription = normalizeText(lot.description ?? "");
+  const combinedSearchText = [
+    normalizedTitle,
+    normalizedCategories,
+    normalizedAiCategories,
+    normalizedDescription,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const hasExactPhrase =
     normalizedQuery.length >= 3 &&
     (normalizedTitle.includes(normalizedQuery) ||
-      normalizedCategories.includes(normalizedQuery));
+      normalizedCategories.includes(normalizedQuery) ||
+      normalizedAiCategories.includes(normalizedQuery));
   const strongAnimalMatch = hasAnyNormalizedTerm(
-    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    combinedSearchText,
     STRONG_ANIMAL_EXPANSION_TERMS,
   );
   const weakAnimalMatch = hasAnyNormalizedTerm(
-    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    combinedSearchText,
     WEAK_ANIMAL_EXPANSION_TERMS,
   );
   const decorativeObjectMatch = hasAnyNormalizedTerm(
-    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    combinedSearchText,
     DECORATIVE_OBJECT_TERMS,
+  );
+  const queryHasPaintingIntent = queryTerms.some((term) =>
+    PAINTING_QUERY_TERMS.has(term),
+  );
+  const lotHasPaintingSignal = hasAnyNormalizedTerm(
+    combinedSearchText,
+    PAINTING_RESULT_TERMS,
   );
 
   let score =
@@ -270,6 +314,18 @@ function getBlendedSearchScore(
 
   if (hasExactPhrase) {
     score += concreteQuery ? 14 : 8;
+  }
+
+  if (queryHasPaintingIntent) {
+    if (lotHasPaintingSignal) {
+      score += 4;
+    } else if (decorativeObjectMatch) {
+      score -= 3.5;
+    }
+  }
+
+  if (queryTerms.includes("djurmotiv") && normalizedAiCategories.includes("djurmotiv")) {
+    score += 6;
   }
 
   return { score, lexicalScore, expandedLexicalScore, hasExactPhrase };
@@ -657,7 +713,41 @@ async function getLexicalCandidateIds(
     .map((row: { id: number | null }) => row.id)
     .filter((id: number | null): id is number => Number.isFinite(id));
 
-  return mergeUniqueIds(lexicalIds, fallbackIds);
+  const aiCategoryTerms = Array.from(
+    new Set(
+      [normalizeSearchQuery(params.query), ...expandSemanticTerms(params.query)]
+        .flatMap((value) => value.split(" "))
+        .map((value) => value.trim())
+        .filter((value) => value.length >= 3),
+    ),
+  );
+
+  if (!aiCategoryTerms.length) {
+    return mergeUniqueIds(lexicalIds, fallbackIds);
+  }
+
+  let aiCategoryQuery = supabase.from("auc_lots").select("id");
+  aiCategoryQuery = applyNonQueryCriteria(aiCategoryQuery, params, nowIso);
+  aiCategoryQuery = aiCategoryQuery
+    .overlaps("ai_categories", aiCategoryTerms)
+    .limit(120);
+
+  const { data: aiCategoryData, error: aiCategoryError } =
+    await aiCategoryQuery;
+
+  if (aiCategoryError) {
+    console.warn(
+      "[api/search] AI-category candidate lookup failed:",
+      aiCategoryError,
+    );
+    return mergeUniqueIds(lexicalIds, fallbackIds);
+  }
+
+  const aiCategoryIds = (aiCategoryData ?? [])
+    .map((row: { id: number | null }) => row.id)
+    .filter((id: number | null): id is number => Number.isFinite(id));
+
+  return mergeUniqueIds(lexicalIds, fallbackIds, aiCategoryIds);
 }
 
 async function fetchAllRows<T>(

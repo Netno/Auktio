@@ -60,6 +60,7 @@ export interface RAGSourceLot {
   title: string;
   description?: string;
   categories: string[];
+  aiCategories?: string[];
   currentBid?: number;
   estimate?: number;
   currency: string;
@@ -229,6 +230,10 @@ function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
     .split(" ")
     .filter(Boolean)
     .flatMap((token) => buildWordRoots(token));
+  const aiCategoryTokens = normalizeText((lot.aiCategories ?? []).join(" "))
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => buildWordRoots(token));
   const descriptionTokens = normalizeText(lot.description ?? "")
     .split(" ")
     .filter(Boolean)
@@ -247,6 +252,9 @@ function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
 
     if (inTitle) {
       score += 4;
+      strong = true;
+    } else if (matchesTerm(aiCategoryTokens, term)) {
+      score += 3;
       strong = true;
     } else if (inCategory) {
       score += 2;
@@ -382,7 +390,7 @@ async function retrieveByVector(
     let lotQuery = supabase
       .from("auc_lots")
       .select(
-        `id, title, description, categories, current_bid, estimate,
+        `id, title, description, categories, ai_categories, current_bid, estimate,
          house_id,
          currency, city, url, thumbnail_url, end_time,
          auc_auction_houses!inner(name)`,
@@ -422,6 +430,7 @@ async function retrieveByVector(
       title: lot.title,
       description: lot.description,
       categories: lot.categories,
+      aiCategories: lot.ai_categories,
       currentBid: lot.current_bid,
       estimate: lot.estimate,
       currency: lot.currency,
@@ -456,7 +465,7 @@ async function retrieveByFulltext(
     let query = supabase
       .from("auc_lots")
       .select(
-        `id, title, description, categories, current_bid, estimate,
+        `id, title, description, categories, ai_categories, current_bid, estimate,
          house_id,
          currency, city, url, thumbnail_url, end_time,
          auc_auction_houses!inner(name)`,
@@ -500,6 +509,7 @@ async function retrieveByFulltext(
       title: lot.title,
       description: lot.description,
       categories: lot.categories,
+      aiCategories: lot.ai_categories,
       currentBid: lot.current_bid,
       estimate: lot.estimate,
       currency: lot.currency,
@@ -525,7 +535,7 @@ async function retrieveHouseBrowseFallbackLots(
     let query = supabase
       .from("auc_lots")
       .select(
-        `id, title, description, categories, current_bid, estimate,
+        `id, title, description, categories, ai_categories, current_bid, estimate,
          currency, city, url, thumbnail_url, end_time,
          auc_auction_houses!inner(name)`,
       )
@@ -575,6 +585,7 @@ async function retrieveHouseBrowseFallbackLots(
           title: lot.title,
           description: lot.description,
           categories: lot.categories,
+          aiCategories: lot.ai_categories,
           currentBid: lot.current_bid,
           estimate: lot.estimate,
           currency: lot.currency,
@@ -649,6 +660,29 @@ function mergeAndRank(
   const queryTerms = extractQueryTerms(userQuery);
   const normalizedQuery = normalizeSearchQuery(userQuery);
   const concreteQuery = isConcreteObjectQuery(userQuery);
+  const paintingTerms = new Set([
+    "målning",
+    "måleri",
+    "olja",
+    "oljemålning",
+    "akvarell",
+    "gouache",
+    "pastell",
+    "tempera",
+    "tavla",
+  ]);
+  const decorativeTerms = new Set([
+    "porslin",
+    "keramik",
+    "fat",
+    "fiskfat",
+    "tallrik",
+    "skål",
+    "vas",
+    "urna",
+    "servis",
+  ]);
+  const queryHasPaintingIntent = queryTerms.some((term) => paintingTerms.has(term));
   const lotMap = new Map<
     number,
     RAGSourceLot & {
@@ -662,15 +696,35 @@ function mergeAndRank(
   // Vector results (primary, scored by similarity)
   for (const lot of vectorLots) {
     const lexical = getLexicalMatch(lot, queryTerms);
+    const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
+    const combinedText = normalizeText(
+      [lot.title ?? "", lot.description ?? "", (lot.categories ?? []).join(" "), (lot.aiCategories ?? []).join(" ")].join(" "),
+    );
     const exactPhrase =
       normalizedQuery.length >= 3 &&
-      normalizeText(lot.title ?? "").includes(normalizedQuery);
+      (normalizeText(lot.title ?? "").includes(normalizedQuery) ||
+        normalizedAiCategories.includes(normalizedQuery));
+    const lotHasPaintingSignal = Array.from(paintingTerms).some((term) =>
+      combinedText.includes(term),
+    );
+    const lotLooksDecorative = Array.from(decorativeTerms).some((term) =>
+      combinedText.includes(term),
+    );
+    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv") ? 2.5 : 0;
     lotMap.set(lot.id, {
       ...lot,
       score:
         (lot.similarity ?? 0.5) * 2.4 +
         lexical.score * (concreteQuery ? 0.9 : 0.35) +
-        (exactPhrase ? (concreteQuery ? 10 : 5) : 0),
+        (exactPhrase ? (concreteQuery ? 10 : 5) : 0) +
+        aiCategoryBoost +
+        (queryHasPaintingIntent
+          ? lotHasPaintingSignal
+            ? 2.5
+            : lotLooksDecorative
+              ? -2.5
+              : 0
+          : 0),
       lexicalScore: lexical.score,
       strongLexical: lexical.strong,
       exactPhrase,
@@ -682,9 +736,21 @@ function mergeAndRank(
     const lot = fulltextLots[i];
     const existing = lotMap.get(lot.id);
     const lexical = getLexicalMatch(lot, queryTerms);
+    const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
+    const combinedText = normalizeText(
+      [lot.title ?? "", lot.description ?? "", (lot.categories ?? []).join(" "), (lot.aiCategories ?? []).join(" ")].join(" "),
+    );
     const exactPhrase =
       normalizedQuery.length >= 3 &&
-      normalizeText(lot.title ?? "").includes(normalizedQuery);
+      (normalizeText(lot.title ?? "").includes(normalizedQuery) ||
+        normalizedAiCategories.includes(normalizedQuery));
+    const lotHasPaintingSignal = Array.from(paintingTerms).some((term) =>
+      combinedText.includes(term),
+    );
+    const lotLooksDecorative = Array.from(decorativeTerms).some((term) =>
+      combinedText.includes(term),
+    );
+    const aiCategoryBoost = normalizedAiCategories.includes("djurmotiv") ? 2.5 : 0;
 
     if (existing) {
       // Found in both — boost score
@@ -692,7 +758,15 @@ function mergeAndRank(
         0.75 +
         (TOP_K_FULLTEXT - i) * 0.04 +
         lexical.score * (concreteQuery ? 0.8 : 0.3) +
-        (exactPhrase ? (concreteQuery ? 8 : 4) : 0);
+        (exactPhrase ? (concreteQuery ? 8 : 4) : 0) +
+        aiCategoryBoost +
+        (queryHasPaintingIntent
+          ? lotHasPaintingSignal
+            ? 2
+            : lotLooksDecorative
+              ? -2
+              : 0
+          : 0);
       existing.lexicalScore = Math.max(existing.lexicalScore, lexical.score);
       existing.strongLexical = existing.strongLexical || lexical.strong;
       existing.exactPhrase = existing.exactPhrase || exactPhrase;
@@ -703,7 +777,15 @@ function mergeAndRank(
           0.75 +
           (TOP_K_FULLTEXT - i) * 0.04 +
           lexical.score * (concreteQuery ? 0.95 : 0.4) +
-          (exactPhrase ? (concreteQuery ? 10 : 5) : 0),
+          (exactPhrase ? (concreteQuery ? 10 : 5) : 0) +
+          aiCategoryBoost +
+          (queryHasPaintingIntent
+            ? lotHasPaintingSignal
+              ? 2
+              : lotLooksDecorative
+                ? -2
+                : 0
+            : 0),
         lexicalScore: lexical.score,
         strongLexical: lexical.strong,
         exactPhrase,
@@ -773,6 +855,9 @@ async function generateAnswer(
         lot.categories?.length
           ? `Kategori: ${lot.categories.join(", ")}`
           : null,
+        lot.aiCategories?.length
+          ? `AI-kategorier: ${lot.aiCategories.join(", ")}`
+          : null,
         lot.description ? `Beskrivning: ${lot.description}` : null,
         lot.currentBid ? `Bud: ${formatSEK(lot.currentBid)}` : null,
         lot.estimate ? `Utrop: ${formatSEK(lot.estimate)}` : null,
@@ -792,8 +877,11 @@ REGLER:
 - Idag är ${currentDateSwedish} (Stockholmstid). Om du använder ord som "idag", "imorgon", "i dag" eller nämner dagens datum måste du utgå exakt från detta datum
 - Du får ALDRIG hitta på ett annat aktuellt datum än ${currentDateSwedish}
 - Basera dina svar på de föremål som finns i kontexten
+- Kontexten är sorterad i relevansordning. [1] är mest relevant, sedan [2], [3] och så vidare
 - Referera till specifika föremål med deras titel och auktionshus
 - Om du rekommenderar föremål, förklara VARFÖR de matchar frågan
+- Om du nämner konkreta föremål ska du välja dem från början av kontexten och behålla samma ordning som i kontexten
+- Nämn inte ett föremål längre ner i kontexten före ett mer relevant föremål högre upp om båda matchar frågan
 - Om kontexten inte innehåller relevant information, säg det ärligt
 - Ge inte generella auktionsråd om de inte tydligt stöds av kontexten
 - Om sluttid finns i kontexten ska du använda den, särskilt vid frågor om "slutar snart"
@@ -806,6 +894,7 @@ REGLER:
 FORMAT:
 - Om du nämner två eller fler konkreta föremål, börja med rubriken "Föremål:" och lista dem på separata rader
 - Varje rad i listan ska ha formatet "• titel, auktionshus, bud, utrop". Använd tecknet "•" i början av varje rad. Utelämna bara den prisuppgift som saknas
+- Om du listar konkreta föremål ska listan följa samma ordning som kontexten och prioritera de 3 första relevanta objekten
 - Efter listan kan du ge en kort sammanfattning eller rekommendation i löpande text
 - Håll svaret under 300 ord
 - Avsluta gärna med ett relevant tips eller förslag`;

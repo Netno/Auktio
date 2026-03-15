@@ -48,6 +48,10 @@ const SWEDISH_QUERY_STOP_WORDS = new Set([
 ]);
 
 const SWEDISH_CANONICAL_QUERY_TERMS: Record<string, string> = {
+  målningar: "målning",
+  malningar: "målning",
+  malning: "målning",
+  tavlor: "tavla",
   silvrig: "silver",
   silvriga: "silver",
   silersked: "silver sked",
@@ -70,6 +74,17 @@ const SWEDISH_CANONICAL_QUERY_TERMS: Record<string, string> = {
 };
 
 const SWEDISH_SEMANTIC_QUERY_EXPANSIONS: Record<string, string[]> = {
+  målning: [
+    "oljemålning",
+    "olja",
+    "akvarell",
+    "gouache",
+    "pastell",
+    "tempera",
+    "måleri",
+    "tavla",
+  ],
+  tavla: ["målning", "oljemålning", "akvarell", "måleri"],
   djur: [
     "animal",
     "fauna",
@@ -84,6 +99,17 @@ const SWEDISH_SEMANTIC_QUERY_EXPANSIONS: Record<string, string[]> = {
     "häst",
     "fågel",
     "fisk",
+  ],
+  djurmotiv: [
+    "djur",
+    "animal",
+    "fauna",
+    "fågel",
+    "fisk",
+    "häst",
+    "hund",
+    "katt",
+    "kattdjur",
   ],
   kattdjur: ["leopard", "lejon", "tiger", "panter", "jaguar", "lodjur"],
   katt: ["kattdjur", "leopard", "lejon", "tiger", "panter", "lodjur"],
