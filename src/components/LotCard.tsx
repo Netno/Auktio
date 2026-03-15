@@ -202,6 +202,7 @@ export function LotCard({
             priority={imagePriority}
             loading={imagePriority ? "eager" : "lazy"}
             fetchPriority={imagePriority ? "high" : "auto"}
+            unoptimized
             className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
             style={{ opacity: imgLoaded ? 1 : 0 }}
             onLoad={() => setImgLoaded(true)}
@@ -298,6 +299,7 @@ export function LotCard({
                 alt={lot.houseName ?? ""}
                 width={16}
                 height={16}
+                unoptimized
                 className="rounded-sm object-contain shrink-0"
               />
             )}

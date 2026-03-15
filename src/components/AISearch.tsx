@@ -403,6 +403,7 @@ function SourceCard({
             alt={lot.title}
             width={compact ? 48 : 56}
             height={compact ? 48 : 56}
+            unoptimized
             className="w-full h-full object-cover"
           />
         </div>
