@@ -59,6 +59,7 @@ export function LotCard({
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showLocationOverlay, setShowLocationOverlay] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [showImagePreviewActive, setShowImagePreviewActive] = useState(false);
@@ -110,6 +111,7 @@ export function LotCard({
     scale: number;
   } | null>(null);
   const tl = lot.endTime ? timeLeft(lot.endTime) : null;
+  const shouldShowDescriptionTooltip = (lot.description?.length ?? 0) > 110;
 
   const images = lot.images?.length
     ? lot.images
@@ -280,8 +282,10 @@ export function LotCard({
         return { x: 0, y: 0 };
       }
 
-      const maxOffsetX = ((container.clientWidth * nextScale) - container.clientWidth) / 2;
-      const maxOffsetY = ((container.clientHeight * nextScale) - container.clientHeight) / 2;
+      const maxOffsetX =
+        (container.clientWidth * nextScale - container.clientWidth) / 2;
+      const maxOffsetY =
+        (container.clientHeight * nextScale - container.clientHeight) / 2;
 
       return {
         x: clampValue(offset.x, -maxOffsetX, maxOffsetX),
@@ -362,7 +366,12 @@ export function LotCard({
         offsetY: mobileZoomOffset.y,
       };
     },
-    [mobileZoomOffset.x, mobileZoomOffset.y, mobileZoomScale, updateMobileZoomScale],
+    [
+      mobileZoomOffset.x,
+      mobileZoomOffset.y,
+      mobileZoomScale,
+      updateMobileZoomScale,
+    ],
   );
 
   const handleMobileZoomTouchMove = useCallback(
@@ -376,7 +385,8 @@ export function LotCard({
           return;
         }
 
-        const nextScale = pinchStart.scale * (nextDistance / pinchStart.distance);
+        const nextScale =
+          pinchStart.scale * (nextDistance / pinchStart.distance);
         updateMobileZoomScale(nextScale);
         return;
       }
@@ -608,8 +618,8 @@ export function LotCard({
           e.stopPropagation();
           suppressClickRef.current = false;
         }}
-        className={`group relative flex h-full flex-col overflow-visible rounded-xl border border-brand-200/60 bg-white shadow-card animate-slide-up cursor-pointer isolate
-        transition-all duration-300 hover:-translate-y-[3px] hover:border-brand-300/60 hover:shadow-elevated ${
+        className={`group relative flex h-full flex-col overflow-visible rounded-xl border border-brand-200 bg-white shadow-[0_10px_28px_rgba(93,69,40,0.08),0_1px_0_rgba(255,255,255,0.85)_inset] animate-slide-up cursor-pointer isolate
+        transition-all duration-300 hover:-translate-y-[3px] hover:border-brand-300 hover:shadow-[0_18px_42px_rgba(93,69,40,0.14),0_1px_0_rgba(255,255,255,0.92)_inset] ${
           showLocationOverlay || showImageZoom ? "z-40" : "z-0 hover:z-10"
         }`}
       >
@@ -815,9 +825,37 @@ export function LotCard({
             </h3>
 
             {lot.description && (
-              <p className="text-xs text-brand-400 leading-snug line-clamp-1 mb-3.5">
-                {lot.description}
-              </p>
+              <div className="relative mb-3.5">
+                <p
+                  className={`peer text-xs text-brand-400 leading-snug ${
+                    isDescriptionExpanded ? "line-clamp-none" : "line-clamp-2"
+                  }`}
+                  tabIndex={shouldShowDescriptionTooltip ? 0 : -1}
+                >
+                  {lot.description}
+                </p>
+
+                {shouldShowDescriptionTooltip && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDescriptionExpanded((current) => !current);
+                    }}
+                    className="mt-1 inline-flex text-[11px] font-semibold text-brand-600 transition-colors hover:text-brand-900 sm:hidden"
+                    aria-expanded={isDescriptionExpanded}
+                  >
+                    {isDescriptionExpanded ? "Visa mindre" : "Visa mer"}
+                  </button>
+                )}
+
+                {shouldShowDescriptionTooltip && (
+                  <div className="pointer-events-none absolute left-0 top-full z-20 mt-2 hidden w-[280px] rounded-xl border border-brand-300 bg-[rgba(255,251,245,0.99)] px-3 py-2 text-[12px] leading-relaxed text-brand-800 shadow-[0_18px_36px_rgba(58,42,20,0.18)] ring-1 ring-white/85 opacity-0 translate-y-1 transition-all duration-150 sm:block peer-hover:translate-y-0 peer-hover:opacity-100 peer-focus:translate-y-0 peer-focus:opacity-100">
+                    {lot.description}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -909,8 +947,17 @@ export function LotCard({
                   onTouchCancel={handleMobileZoomTouchEnd}
                   style={{ touchAction: "none" }}
                 >
+                  <div className="pointer-events-none absolute inset-x-3 top-3 bottom-3 rounded-[1.75rem] border border-black/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.62),rgba(255,255,255,0.28))] shadow-[0_24px_60px_rgba(125,101,63,0.16)] md:hidden" />
+                  <div className="pointer-events-none absolute inset-y-6 left-0 w-20 bg-gradient-to-r from-[rgba(255,255,255,0.68)] via-[rgba(255,255,255,0.2)] to-transparent md:hidden" />
+                  <div className="pointer-events-none absolute inset-y-6 right-0 w-20 bg-gradient-to-l from-[rgba(255,255,255,0.68)] via-[rgba(255,255,255,0.2)] to-transparent md:hidden" />
+                  {images.length > 1 && (
+                    <div className="pointer-events-none absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full border border-white/80 bg-white/88 px-3 py-1 text-[11px] font-semibold text-brand-800 shadow-sm backdrop-blur-md md:hidden">
+                      Svep mellan bilder
+                    </div>
+                  )}
+
                   <div
-                    className="absolute inset-0"
+                    className="absolute inset-3 overflow-hidden rounded-[1.6rem] border border-black/10 bg-white/72 shadow-[0_10px_30px_rgba(92,73,42,0.14)] md:inset-0 md:rounded-none md:border-0 md:bg-transparent md:shadow-none"
                     style={{
                       transform: `translate3d(${mobileZoomOffset.x}px, ${mobileZoomOffset.y}px, 0) scale(${mobileZoomScale})`,
                       transformOrigin: "center center",
@@ -926,29 +973,29 @@ export function LotCard({
                     />
                   </div>
 
-                  <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/70 bg-white/76 px-3 py-1 text-[11px] font-medium text-brand-800 shadow-sm backdrop-blur-md md:hidden">
+                  <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/80 bg-white/88 px-3 py-1 text-[11px] font-semibold text-brand-800 shadow-sm backdrop-blur-md md:hidden">
                     Nyp för att zooma, dra för att flytta
                   </div>
                 </div>
 
-                <div className="border-t border-black/5 bg-white/78 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden">
+                <div className="border-t border-black/10 bg-white/92 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_30px_rgba(82,62,30,0.06)] backdrop-blur-xl md:hidden">
                   <div className="flex items-center justify-center gap-2 px-4 py-3">
                     <button
                       type="button"
                       onClick={handleMobileZoomOut}
-                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-white/70 bg-white/84 px-3 text-sm font-semibold text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white disabled:opacity-50"
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-brand-200 bg-white px-3 text-sm font-semibold text-brand-900 shadow-sm transition-colors hover:bg-brand-50 disabled:opacity-50"
                       aria-label="Zooma ut bild"
                       disabled={mobileZoomScale <= MOBILE_ZOOM_MIN_SCALE}
                     >
                       -
                     </button>
-                    <div className="min-w-[4.5rem] text-center text-xs font-medium text-brand-700">
+                    <div className="min-w-[4.5rem] text-center text-xs font-semibold tracking-wide text-brand-700">
                       {Math.round(mobileZoomScale * 100)}%
                     </div>
                     <button
                       type="button"
                       onClick={handleMobileZoomIn}
-                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-white/70 bg-white/84 px-3 text-sm font-semibold text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white disabled:opacity-50"
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-brand-200 bg-white px-3 text-sm font-semibold text-brand-900 shadow-sm transition-colors hover:bg-brand-50 disabled:opacity-50"
                       aria-label="Zooma in bild"
                       disabled={mobileZoomScale >= MOBILE_ZOOM_MAX_SCALE}
                     >
@@ -956,34 +1003,34 @@ export function LotCard({
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 px-4 pt-0 text-brand-800">
+                  <div className="flex items-start justify-between gap-3 border-t border-brand-100 px-4 pt-3 text-brand-800">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-brand-950">
+                      <p className="truncate text-[15px] font-semibold leading-tight text-brand-950">
                         {lot.title}
                       </p>
-                      <p className="truncate text-xs text-brand-600">
+                      <p className="mt-1 truncate text-[12px] font-medium text-brand-600">
                         {lot.houseName ?? "Auktionshus"}
                       </p>
                     </div>
                     {images.length > 1 && (
-                      <p className="shrink-0 text-xs font-medium text-brand-600">
+                      <p className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
                         Bild {imgIndex + 1} av {images.length}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="hidden items-center justify-between gap-3 border-t border-black/5 bg-white/70 px-4 py-3 text-brand-800 backdrop-blur-xl md:flex">
+                <div className="hidden items-center justify-between gap-3 border-t border-black/10 bg-white/82 px-4 py-3 text-brand-800 backdrop-blur-xl md:flex">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-brand-950">
                       {lot.title}
                     </p>
-                    <p className="truncate text-xs text-brand-600">
+                    <p className="truncate text-xs font-medium text-brand-600">
                       {lot.houseName ?? "Auktionshus"}
                     </p>
                   </div>
                   {images.length > 1 && (
-                    <p className="shrink-0 text-xs font-medium text-brand-600">
+                    <p className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
                       Bild {imgIndex + 1} av {images.length}
                     </p>
                   )}

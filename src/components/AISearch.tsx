@@ -354,7 +354,7 @@ function AssistantBubble({
 
       {/* Source cards */}
       {showSources && sources && (
-        <div className="space-y-1.5 ml-1 animate-fade-in">
+        <div className="ml-1 space-y-2 animate-fade-in">
           {sources.slice(0, 6).map((lot) => (
             <SourceCard key={lot.id} lot={lot} />
           ))}
@@ -389,14 +389,15 @@ function SourceCard({
       href={lot.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`flex gap-3 bg-white border border-brand-100 rounded-xl
-        hover:border-brand-200 hover:shadow-card transition-all group"
+      className={`group flex gap-3 rounded-2xl border border-brand-200 bg-white
+        shadow-[0_8px_24px_rgba(93,69,40,0.06)] transition-all
+        hover:border-brand-300 hover:shadow-[0_14px_32px_rgba(93,69,40,0.1)]
         ${compact ? "p-2" : "p-2.5"}`}
     >
       {/* Thumbnail */}
       {lot.thumbnailUrl && (
         <div
-          className={`${compact ? "w-12 h-12" : "w-14 h-14"} rounded-lg overflow-hidden bg-brand-100 shrink-0`}
+          className={`${compact ? "h-12 w-12" : "h-14 w-14"} shrink-0 overflow-hidden rounded-xl border border-brand-100 bg-brand-100 shadow-sm`}
         >
           <Image
             src={imgSize(lot.thumbnailUrl, "med")!}
@@ -411,29 +412,33 @@ function SourceCard({
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <div className="text-[11px] text-brand-400 truncate">
+        <div className="truncate text-[11px] font-medium text-brand-500">
           {lot.houseName} · {lot.city}
         </div>
         <div
-          className={`${compact ? "text-[12px]" : "text-xs"} font-medium text-brand-900 line-clamp-1 mb-1`}
+          className={`${compact ? "text-[12px]" : "text-[13px]"} mb-1 line-clamp-2 font-semibold leading-tight text-brand-950`}
         >
           {lot.title}
         </div>
-        <div className="flex items-center gap-3 text-[11px] flex-wrap">
+        <div className="flex flex-wrap items-center gap-2 text-[11px]">
           {displayPrice && (
-            <span className="font-semibold text-brand-800">
+            <span className="rounded-full bg-brand-50 px-2.5 py-1 font-semibold text-brand-900">
               {displayPrice.label} {formatSEK(displayPrice.value)}
             </span>
           )}
           {tl && (
             <span
-              className={`${tl.urgent ? "text-accent-500" : "text-brand-400"}`}
+              className={`rounded-full px-2.5 py-1 font-semibold ${
+                tl.urgent
+                  ? "bg-accent-50 text-accent-600"
+                  : "bg-brand-50 text-brand-600"
+              }`}
             >
               {tl.text}
             </span>
           )}
           {lot.similarity != null && (
-            <span className="text-brand-300">
+            <span className="rounded-full bg-gold-50 px-2.5 py-1 font-semibold text-gold-600">
               {Math.round(lot.similarity * 100)}% match
             </span>
           )}
@@ -441,8 +446,8 @@ function SourceCard({
       </div>
 
       <ExternalLink
-        size={12}
-        className="text-brand-300 group-hover:text-accent-500 shrink-0 mt-1 transition-colors"
+        size={14}
+        className="mt-1 shrink-0 text-brand-300 transition-colors group-hover:text-accent-500"
       />
     </a>
   );
