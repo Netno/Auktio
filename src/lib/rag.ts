@@ -148,9 +148,50 @@ const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   };
 });
 
-const LOW_SIGNAL_QUERY_TERMS = new Set([
-  "antik",
-  "antika",
+const BROAD_BROWSE_TERMS = [
+  "fynd",
+  "prisvard",
+  "prisvärd",
+  "billig",
+  "billigt",
+  "billiga",
+  "rekommendera",
+  "tips",
+  "intressant",
+  "intressanta",
+  "visa",
+  "bra",
+  "sammanfatta",
+  "jamfor",
+  "jämför",
+];
+
+function detectAuctionHouse(query: string): DetectedAuctionHouse | null {
+  const normalizedQuery = ` ${normalizeText(query)} `;
+
+  for (const house of HOUSE_MATCHERS) {
+    if (house.aliases.some((alias) => normalizedQuery.includes(` ${alias} `))) {
+      return house;
+    }
+  }
+
+  return null;
+}
+
+function getAuctionHouseAliasTokens(house: DetectedAuctionHouse | null) {
+  if (!house) return new Set<string>();
+
+  return new Set(
+    house.aliases
+      .flatMap((alias) => alias.split(" "))
+      .map((token) => token.trim())
+      .filter((token) => token.length >= 3),
+  );
+}
+
+function stripAuctionHouseTerms(
+  query: string,
+  house: DetectedAuctionHouse | null,
 ) {
   const normalizedQuery = normalizeSearchQuery(query);
   if (!house) return normalizedQuery;
@@ -182,6 +223,101 @@ function getTimeZoneOffsetMs(date: Date, timeZone: string) {
     second: "2-digit",
   });
   const parts = formatter.formatToParts(date);
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value]),
+  );
+  const asUtc = Date.UTC(
+    Number(values.year),
+    Number(values.month) - 1,
+    Number(values.day),
+    Number(values.hour),
+    Number(values.minute),
+    Number(values.second),
+  );
+
+  return asUtc - date.getTime();
+}
+
+function getStockholmDayRange(dayOffset: number) {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Stockholm",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const [year, month, day] = formatter
+    .format(now)
+    .split("-")
+    .map((value) => Number(value));
+
+  const utcGuess = Date.UTC(year, month - 1, day + dayOffset, 0, 0, 0, 0);
+  const start = new Date(
+    utcGuess - getTimeZoneOffsetMs(new Date(utcGuess), "Europe/Stockholm"),
+  );
+  const nextGuess = Date.UTC(year, month - 1, day + dayOffset + 1, 0, 0, 0, 0);
+  const end = new Date(
+    nextGuess - getTimeZoneOffsetMs(new Date(nextGuess), "Europe/Stockholm"),
+  );
+
+  return { start, end };
+}
+
+function stripRetrievalNoiseTerms(query: string) {
+  return normalizeSearchQuery(query)
+    .split(" ")
+    .filter((token) => token && !RETRIEVAL_NOISE_TERMS.has(token))
+    .join(" ")
+    .trim();
+}
+
+function deriveRetrievalIntent(
+  query: string,
+  includeEnded: boolean | undefined,
+): DerivedRetrievalIntent {
+  const normalized = normalizeSearchQuery(query);
+  const residualQuery = stripRetrievalNoiseTerms(query);
+  const intent: DerivedRetrievalIntent = {
+    includeEnded: Boolean(includeEnded),
+    prefersBrowse: false,
+  };
+
+  if (
+    /\b(slutpris|såld|sålda|avslutad|avslutade|avslutats|klubbat|klubbad)\b/u.test(
+      normalized,
+    )
+  ) {
+    intent.includeEnded = true;
+  }
+
+  if (normalized.includes("idag")) {
+    const range = getStockholmDayRange(0);
+    intent.endTimeFrom = range.start.toISOString();
+    intent.endTimeTo = range.end.toISOString();
+    intent.prefersBrowse = true;
+  } else if (normalized.includes("imorgon")) {
+    const range = getStockholmDayRange(1);
+    intent.endTimeFrom = range.start.toISOString();
+    intent.endTimeTo = range.end.toISOString();
+    intent.prefersBrowse = true;
+  } else if (normalized.includes("ikvall") || normalized.includes("ikväll")) {
+    const range = getStockholmDayRange(0);
+    intent.endTimeFrom = new Date().toISOString();
+    intent.endTimeTo = range.end.toISOString();
+    intent.prefersBrowse = true;
+  } else if (normalized.includes("snart")) {
+    intent.endTimeFrom = new Date().toISOString();
+    intent.endTimeTo = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
+    intent.prefersBrowse = true;
+  } else if (normalized.includes("vecka")) {
+    intent.endTimeFrom = new Date().toISOString();
+    intent.endTimeTo = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    intent.prefersBrowse = true;
+  }
+
+  if (!residualQuery || /\b(alla|visa)\b/u.test(normalized)) {
     intent.prefersBrowse = true;
   }
 
@@ -686,11 +822,11 @@ async function retrieveHouseBrowseFallbackLots(
         mappedLot,
         primaryObjectIntent,
       );
-        const modifierMatch = evaluateModifierMatch(
-          mappedLot,
-          queryModifierTerms,
-        );
-        const collectionMatch = evaluateCollectionMatch(mappedLot);
+      const modifierMatch = evaluateModifierMatch(
+        mappedLot,
+        queryModifierTerms,
+      );
+      const collectionMatch = evaluateCollectionMatch(mappedLot);
       const exactPhrase =
         normalizedQuery.length >= 3 &&
         normalizeText(mappedLot.title ?? "").includes(normalizedQuery);
@@ -721,42 +857,40 @@ async function retrieveHouseBrowseFallbackLots(
           (exactPhrase ? 4 : 0) +
           urgencyBoost +
           bargainBoost +
-          getObjectAwareScoreBoost(
-            objectMatch,
-              concreteQuery,
-            ) +
-            getModifierAwareScoreBoost(
-              modifierMatch,
-              queryModifierTerms,
-              concreteQuery,
-            ) +
-            getCollectionAwareScorePenalty(
-              collectionMatch,
-              concreteQuery,
-              Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
-            ),
+          getObjectAwareScoreBoost(objectMatch, concreteQuery) +
+          getModifierAwareScoreBoost(
+            modifierMatch,
+            queryModifierTerms,
+            concreteQuery,
+          ) +
+          getCollectionAwareScorePenalty(
+            collectionMatch,
+            concreteQuery,
+            Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
+          ),
       };
     });
 
-    const modifierQualifiedCount = rankedFallbackLots.filter((entry) =>
-      evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+    const modifierQualifiedCount = rankedFallbackLots.filter(
+      (entry: { lot: RAGSourceLot; score: number }) =>
+        evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
     ).length;
 
     return rankedFallbackLots
       .filter(
-        (entry) =>
+        (entry: { lot: RAGSourceLot; score: number }) =>
           !shouldRequirePrimaryObjectMatch(
             rankingQuery,
             primaryObjectIntent,
             rankedFallbackLots.filter(
-              (candidate) =>
+              (candidate: { lot: RAGSourceLot; score: number }) =>
                 evaluateLotObjectMatch(candidate.lot, primaryObjectIntent)
                   .hasMatch,
             ).length,
           ) || evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
       )
       .filter(
-        (entry) =>
+        (entry: { lot: RAGSourceLot; score: number }) =>
           !shouldRequireModifierMatch(
             rankingQuery,
             queryModifierTerms,
@@ -764,12 +898,18 @@ async function retrieveHouseBrowseFallbackLots(
           ) || evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
       )
       .filter(
-        (entry, _index, entries) =>
+        (
+          entry: { lot: RAGSourceLot; score: number },
+          _index: number,
+          entries: Array<{ lot: RAGSourceLot; score: number }>,
+        ) =>
           !(
             concreteQuery &&
             (primaryObjectIntent || queryModifierTerms.length > 0) &&
-            entries.filter((candidate) => !evaluateCollectionMatch(candidate.lot).hasMatch)
-              .length >= 4 &&
+            entries.filter(
+              (candidate: { lot: RAGSourceLot; score: number }) =>
+                !evaluateCollectionMatch(candidate.lot).hasMatch,
+            ).length >= 4 &&
             evaluateCollectionMatch(entry.lot).hasMatch
           ),
       )
@@ -922,16 +1062,17 @@ async function retrieveBrowseFallbackLots(
     });
 
     const objectQualifiedCount = rankedLots.filter(
-      (entry) =>
+      (entry: { lot: RAGSourceLot; score: number }) =>
         evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
     ).length;
-    const modifierQualifiedCount = rankedLots.filter((entry) =>
-      evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
+    const modifierQualifiedCount = rankedLots.filter(
+      (entry: { lot: RAGSourceLot; score: number }) =>
+        evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
     ).length;
 
     return rankedLots
       .filter(
-        (entry) =>
+        (entry: { lot: RAGSourceLot; score: number }) =>
           !shouldRequirePrimaryObjectMatch(
             rankingQuery,
             primaryObjectIntent,
@@ -939,7 +1080,7 @@ async function retrieveBrowseFallbackLots(
           ) || evaluateLotObjectMatch(entry.lot, primaryObjectIntent).hasMatch,
       )
       .filter(
-        (entry) =>
+        (entry: { lot: RAGSourceLot; score: number }) =>
           !shouldRequireModifierMatch(
             rankingQuery,
             queryModifierTerms,
@@ -947,12 +1088,18 @@ async function retrieveBrowseFallbackLots(
           ) || evaluateModifierMatch(entry.lot, queryModifierTerms).hasMatch,
       )
       .filter(
-        (entry, _index, entries) =>
+        (
+          entry: { lot: RAGSourceLot; score: number },
+          _index: number,
+          entries: Array<{ lot: RAGSourceLot; score: number }>,
+        ) =>
           !(
             concreteQuery &&
             (primaryObjectIntent || queryModifierTerms.length > 0) &&
-            entries.filter((candidate) => !evaluateCollectionMatch(candidate.lot).hasMatch)
-              .length >= 4 &&
+            entries.filter(
+              (candidate: { lot: RAGSourceLot; score: number }) =>
+                !evaluateCollectionMatch(candidate.lot).hasMatch,
+            ).length >= 4 &&
             evaluateCollectionMatch(entry.lot).hasMatch
           ),
       )
@@ -1189,8 +1336,8 @@ function mergeAndRank(
   const objectQualifiedCount = Array.from(lotMap.values()).filter(
     (lot) => lot.objectMatch,
   ).length;
-  const modifierQualifiedCount = Array.from(lotMap.values()).filter((lot) =>
-    evaluateModifierMatch(lot, queryModifierTerms).hasMatch,
+  const modifierQualifiedCount = Array.from(lotMap.values()).filter(
+    (lot) => evaluateModifierMatch(lot, queryModifierTerms).hasMatch,
   ).length;
 
   let rankedLots = Array.from(lotMap.values())
@@ -1223,8 +1370,9 @@ function mergeAndRank(
         !(
           concreteQuery &&
           (primaryObjectIntent || queryModifierTerms.length > 0) &&
-          lots.filter((candidate) => !evaluateCollectionMatch(candidate).hasMatch)
-            .length >= 4 &&
+          lots.filter(
+            (candidate) => !evaluateCollectionMatch(candidate).hasMatch,
+          ).length >= 4 &&
           evaluateCollectionMatch(lot).hasMatch
         ),
     )
