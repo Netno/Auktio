@@ -66,11 +66,11 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
           className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-5"
         >
           <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-1.5">
-            <span className="truncate font-semibold text-[13px] text-brand-900 sm:text-sm">
-              {stat.num}
-            </span>
-            <span className="text-[11px] leading-tight text-brand-400 sm:text-xs">
+            <span className="order-1 text-[11px] leading-tight text-brand-400 sm:order-2 sm:text-xs">
               {stat.label}
+            </span>
+            <span className="order-2 truncate font-semibold text-[13px] text-brand-900 sm:order-1 sm:text-sm">
+              {stat.num}
             </span>
           </div>
           {i < stats.length - 1 && (
