@@ -626,7 +626,7 @@ export default function AuctionsPage() {
 
             <div className="overflow-hidden rounded-xl border border-brand-200/50 bg-brand-50/70 lg:min-w-[320px]">
               <div className="grid grid-cols-4 divide-x divide-brand-200/70">
-                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                <div className="px-2 py-2 text-center sm:px-3 sm:py-2.5">
                   <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
                     Pågår
                   </div>
@@ -634,7 +634,7 @@ export default function AuctionsPage() {
                     {data?.stats.ongoing ?? 0}
                   </div>
                 </div>
-                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                <div className="px-2 py-2 text-center sm:px-3 sm:py-2.5">
                   <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
                     Kommande
                   </div>
@@ -642,7 +642,7 @@ export default function AuctionsPage() {
                     {data?.stats.upcoming ?? 0}
                   </div>
                 </div>
-                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                <div className="px-2 py-2 text-center sm:px-3 sm:py-2.5">
                   <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
                     Avslutade
                   </div>
@@ -650,7 +650,7 @@ export default function AuctionsPage() {
                     {data?.stats.ended ?? 0}
                   </div>
                 </div>
-                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                <div className="px-2 py-2 text-center sm:px-3 sm:py-2.5">
                   <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
                     Osäkra
                   </div>
