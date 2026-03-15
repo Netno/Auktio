@@ -23,6 +23,27 @@ interface LotCardProps {
 
 const TAP_SLOP_PX = 8;
 const SWIPE_THRESHOLD_PX = 36;
+const MOBILE_ZOOM_MIN_SCALE = 1;
+const MOBILE_ZOOM_MAX_SCALE = 4;
+const MOBILE_ZOOM_STEP = 0.5;
+const DOUBLE_TAP_DELAY_MS = 280;
+
+function clampValue(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getTouchDistance(touches: React.TouchList) {
+  if (touches.length < 2) {
+    return 0;
+  }
+
+  const firstTouch = touches[0];
+  const secondTouch = touches[1];
+  const deltaX = secondTouch.clientX - firstTouch.clientX;
+  const deltaY = secondTouch.clientY - firstTouch.clientY;
+
+  return Math.hypot(deltaX, deltaY);
+}
 
 export function LotCard({
   lot,
@@ -42,6 +63,8 @@ export function LotCard({
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [showImagePreviewActive, setShowImagePreviewActive] = useState(false);
   const [showImageZoom, setShowImageZoom] = useState(false);
+  const [mobileZoomScale, setMobileZoomScale] = useState(MOBILE_ZOOM_MIN_SCALE);
+  const [mobileZoomOffset, setMobileZoomOffset] = useState({ x: 0, y: 0 });
   const [imagePreviewLayout, setImagePreviewLayout] = useState<{
     top: number;
     left: number;
@@ -73,7 +96,19 @@ export function LotCard({
   > | null>(null);
   const previewFrameRef = useRef<number | null>(null);
   const previewImageAreaRef = useRef<HTMLDivElement | null>(null);
+  const mobileZoomImageAreaRef = useRef<HTMLDivElement | null>(null);
   const zoomButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobileZoomLastTapRef = useRef(0);
+  const mobileZoomPanStartRef = useRef<{
+    x: number;
+    y: number;
+    offsetX: number;
+    offsetY: number;
+  } | null>(null);
+  const mobileZoomPinchStartRef = useRef<{
+    distance: number;
+    scale: number;
+  } | null>(null);
   const tl = lot.endTime ? timeLeft(lot.endTime) : null;
 
   const images = lot.images?.length
@@ -237,6 +272,156 @@ export function LotCard({
     setShowImageZoom(false);
   }, []);
 
+  const clampMobileZoomOffset = useCallback(
+    (nextScale: number, offset: { x: number; y: number }) => {
+      const container = mobileZoomImageAreaRef.current;
+
+      if (!container || nextScale <= MOBILE_ZOOM_MIN_SCALE) {
+        return { x: 0, y: 0 };
+      }
+
+      const maxOffsetX = ((container.clientWidth * nextScale) - container.clientWidth) / 2;
+      const maxOffsetY = ((container.clientHeight * nextScale) - container.clientHeight) / 2;
+
+      return {
+        x: clampValue(offset.x, -maxOffsetX, maxOffsetX),
+        y: clampValue(offset.y, -maxOffsetY, maxOffsetY),
+      };
+    },
+    [],
+  );
+
+  const updateMobileZoomScale = useCallback(
+    (nextScale: number) => {
+      const clampedScale = clampValue(
+        nextScale,
+        MOBILE_ZOOM_MIN_SCALE,
+        MOBILE_ZOOM_MAX_SCALE,
+      );
+
+      setMobileZoomScale(clampedScale);
+      setMobileZoomOffset((currentOffset) =>
+        clampMobileZoomOffset(clampedScale, currentOffset),
+      );
+    },
+    [clampMobileZoomOffset],
+  );
+
+  const handleMobileZoomIn = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      updateMobileZoomScale(mobileZoomScale + MOBILE_ZOOM_STEP);
+    },
+    [mobileZoomScale, updateMobileZoomScale],
+  );
+
+  const handleMobileZoomOut = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      updateMobileZoomScale(mobileZoomScale - MOBILE_ZOOM_STEP);
+    },
+    [mobileZoomScale, updateMobileZoomScale],
+  );
+
+  const handleMobileZoomTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length === 2) {
+        mobileZoomPinchStartRef.current = {
+          distance: getTouchDistance(e.touches),
+          scale: mobileZoomScale,
+        };
+        mobileZoomPanStartRef.current = null;
+        return;
+      }
+
+      if (e.touches.length !== 1) {
+        return;
+      }
+
+      const touch = e.touches[0];
+      const now = Date.now();
+
+      if (now - mobileZoomLastTapRef.current <= DOUBLE_TAP_DELAY_MS) {
+        e.preventDefault();
+        const nextScale = mobileZoomScale > MOBILE_ZOOM_MIN_SCALE ? 1 : 2.5;
+        setMobileZoomOffset({ x: 0, y: 0 });
+        updateMobileZoomScale(nextScale);
+        mobileZoomLastTapRef.current = 0;
+        mobileZoomPanStartRef.current = null;
+        mobileZoomPinchStartRef.current = null;
+        return;
+      }
+
+      mobileZoomLastTapRef.current = now;
+      mobileZoomPanStartRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+        offsetX: mobileZoomOffset.x,
+        offsetY: mobileZoomOffset.y,
+      };
+    },
+    [mobileZoomOffset.x, mobileZoomOffset.y, mobileZoomScale, updateMobileZoomScale],
+  );
+
+  const handleMobileZoomTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length === 2 && mobileZoomPinchStartRef.current) {
+        e.preventDefault();
+        const nextDistance = getTouchDistance(e.touches);
+        const pinchStart = mobileZoomPinchStartRef.current;
+
+        if (!pinchStart.distance) {
+          return;
+        }
+
+        const nextScale = pinchStart.scale * (nextDistance / pinchStart.distance);
+        updateMobileZoomScale(nextScale);
+        return;
+      }
+
+      if (
+        e.touches.length === 1 &&
+        mobileZoomPanStartRef.current &&
+        mobileZoomScale > MOBILE_ZOOM_MIN_SCALE
+      ) {
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const panStart = mobileZoomPanStartRef.current;
+        const rawOffset = {
+          x: panStart.offsetX + (touch.clientX - panStart.x),
+          y: panStart.offsetY + (touch.clientY - panStart.y),
+        };
+
+        setMobileZoomOffset(clampMobileZoomOffset(mobileZoomScale, rawOffset));
+      }
+    },
+    [clampMobileZoomOffset, mobileZoomScale, updateMobileZoomScale],
+  );
+
+  const handleMobileZoomTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length === 1 && mobileZoomScale > MOBILE_ZOOM_MIN_SCALE) {
+        const touch = e.touches[0];
+        mobileZoomPanStartRef.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+          offsetX: mobileZoomOffset.x,
+          offsetY: mobileZoomOffset.y,
+        };
+      } else if (e.touches.length === 0) {
+        mobileZoomPanStartRef.current = null;
+      }
+
+      if (e.touches.length < 2) {
+        mobileZoomPinchStartRef.current = null;
+      }
+    },
+    [mobileZoomOffset.x, mobileZoomOffset.y, mobileZoomScale],
+  );
+
   const clearPreviewCloseTimeout = useCallback(() => {
     if (previewCloseTimeoutRef.current) {
       clearTimeout(previewCloseTimeoutRef.current);
@@ -355,6 +540,12 @@ export function LotCard({
     if (!showImageZoom) {
       return;
     }
+
+    setMobileZoomScale(MOBILE_ZOOM_MIN_SCALE);
+    setMobileZoomOffset({ x: 0, y: 0 });
+    mobileZoomPanStartRef.current = null;
+    mobileZoomPinchStartRef.current = null;
+    mobileZoomLastTapRef.current = 0;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -661,11 +852,17 @@ export function LotCard({
 
       {showImageZoom && zoomImage && (
         <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-brand-950/88 px-4 py-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[120] overflow-hidden bg-[linear-gradient(180deg,rgba(249,247,242,0.98)_0%,rgba(236,244,247,0.96)_52%,rgba(248,244,236,0.98)_100%)] backdrop-blur-md"
           onClick={handleCloseImageZoom}
         >
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute left-[-8%] top-[-4%] h-56 w-56 rounded-full bg-[rgba(216,178,107,0.18)] blur-3xl" />
+            <div className="absolute right-[-10%] top-[12%] h-72 w-72 rounded-full bg-[rgba(139,181,196,0.2)] blur-3xl" />
+            <div className="absolute bottom-[-10%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[rgba(185,157,117,0.14)] blur-3xl" />
+          </div>
+
           <div
-            className="relative w-full max-w-5xl"
+            className="relative flex h-full w-full items-stretch justify-center md:items-center md:px-4 md:py-6"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -674,58 +871,123 @@ export function LotCard({
             <button
               type="button"
               onClick={handleCloseImageZoom}
-              className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/92 text-brand-800 shadow-card transition-colors hover:bg-white"
+              className="absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/78 text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white"
               aria-label="Stäng bildzoom"
             >
               <X size={18} />
             </button>
 
-            {images.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={prevImage}
-                  className="absolute left-3 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-brand-800 shadow-card transition-colors hover:bg-white"
-                  aria-label="Visa föregående bild"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={nextImage}
-                  className="absolute right-3 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-brand-800 shadow-card transition-colors hover:bg-white"
-                  aria-label="Visa nästa bild"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </>
-            )}
+            <div className="flex h-full w-full flex-col md:h-auto md:w-full md:max-w-5xl">
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={prevImage}
+                    className="absolute left-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/80 text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white"
+                    aria-label="Visa föregående bild"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextImage}
+                    className="absolute right-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/80 text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white"
+                    aria-label="Visa nästa bild"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
 
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-brand-900 shadow-elevated-lg">
-              <div className="relative aspect-[4/3] w-full bg-brand-950">
-                <Image
-                  src={zoomImage}
-                  alt={lot.title}
-                  fill
-                  unoptimized
-                  sizes="100vw"
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-white/90">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">
-                    {lot.title}
-                  </p>
-                  <p className="truncate text-xs text-white/65">
-                    {lot.houseName ?? "Auktionshus"}
-                  </p>
+              <div className="flex flex-1 flex-col md:overflow-hidden md:rounded-[2rem] md:border md:border-white/60 md:bg-white/72 md:shadow-elevated-lg md:backdrop-blur-xl">
+                <div
+                  ref={mobileZoomImageAreaRef}
+                  className="relative min-h-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.98),rgba(241,236,227,0.92)_68%,rgba(228,235,238,0.92)_100%)] md:aspect-[4/3] md:h-auto md:flex-none"
+                  onTouchStart={handleMobileZoomTouchStart}
+                  onTouchMove={handleMobileZoomTouchMove}
+                  onTouchEnd={handleMobileZoomTouchEnd}
+                  onTouchCancel={handleMobileZoomTouchEnd}
+                  style={{ touchAction: "none" }}
+                >
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      transform: `translate3d(${mobileZoomOffset.x}px, ${mobileZoomOffset.y}px, 0) scale(${mobileZoomScale})`,
+                      transformOrigin: "center center",
+                    }}
+                  >
+                    <Image
+                      src={zoomImage}
+                      alt={lot.title}
+                      fill
+                      unoptimized
+                      sizes="100vw"
+                      className="object-contain"
+                    />
+                  </div>
+
+                  <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/70 bg-white/76 px-3 py-1 text-[11px] font-medium text-brand-800 shadow-sm backdrop-blur-md md:hidden">
+                    Nyp för att zooma, dra för att flytta
+                  </div>
                 </div>
-                {images.length > 1 && (
-                  <p className="shrink-0 text-xs font-medium text-white/65">
-                    Bild {imgIndex + 1} av {images.length}
-                  </p>
-                )}
+
+                <div className="border-t border-black/5 bg-white/78 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={handleMobileZoomOut}
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-white/70 bg-white/84 px-3 text-sm font-semibold text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white disabled:opacity-50"
+                      aria-label="Zooma ut bild"
+                      disabled={mobileZoomScale <= MOBILE_ZOOM_MIN_SCALE}
+                    >
+                      -
+                    </button>
+                    <div className="min-w-[4.5rem] text-center text-xs font-medium text-brand-700">
+                      {Math.round(mobileZoomScale * 100)}%
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleMobileZoomIn}
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-white/70 bg-white/84 px-3 text-sm font-semibold text-brand-900 shadow-card backdrop-blur-md transition-colors hover:bg-white disabled:opacity-50"
+                      aria-label="Zooma in bild"
+                      disabled={mobileZoomScale >= MOBILE_ZOOM_MAX_SCALE}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 px-4 pt-0 text-brand-800">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-brand-950">
+                        {lot.title}
+                      </p>
+                      <p className="truncate text-xs text-brand-600">
+                        {lot.houseName ?? "Auktionshus"}
+                      </p>
+                    </div>
+                    {images.length > 1 && (
+                      <p className="shrink-0 text-xs font-medium text-brand-600">
+                        Bild {imgIndex + 1} av {images.length}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="hidden items-center justify-between gap-3 border-t border-black/5 bg-white/70 px-4 py-3 text-brand-800 backdrop-blur-xl md:flex">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-brand-950">
+                      {lot.title}
+                    </p>
+                    <p className="truncate text-xs text-brand-600">
+                      {lot.houseName ?? "Auktionshus"}
+                    </p>
+                  </div>
+                  {images.length > 1 && (
+                    <p className="shrink-0 text-xs font-medium text-brand-600">
+                      Bild {imgIndex + 1} av {images.length}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
