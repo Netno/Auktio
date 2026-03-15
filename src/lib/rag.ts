@@ -17,6 +17,7 @@ import { formatDate, formatSEK } from "./utils";
 import { FEED_SOURCES } from "@/config/sources";
 import {
   buildSwedishWordRoots as buildWordRoots,
+  expandSwedishSemanticQueryTerms as expandSemanticTerms,
   extractSwedishQueryTerms as extractQueryTerms,
   normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
@@ -103,6 +104,24 @@ const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   };
 });
 
+const BROAD_BROWSE_TERMS = [
+  "fynd",
+  "prisvard",
+  "prisvärd",
+  "billig",
+  "billigt",
+  "billiga",
+  "rekommendera",
+  "tips",
+  "intressant",
+  "intressanta",
+  "visa",
+  "bra",
+  "sammanfatta",
+  "jamfor",
+  "jämför",
+];
+
 function detectAuctionHouse(query: string): DetectedAuctionHouse | null {
   const normalizedQuery = ` ${normalizeText(query)} `;
 
@@ -113,6 +132,50 @@ function detectAuctionHouse(query: string): DetectedAuctionHouse | null {
   }
 
   return null;
+}
+
+function getAuctionHouseAliasTokens(house: DetectedAuctionHouse | null) {
+  if (!house) return new Set<string>();
+
+  return new Set(
+    house.aliases
+      .flatMap((alias) => alias.split(" "))
+      .map((token) => token.trim())
+      .filter((token) => token.length >= 3),
+  );
+}
+
+function stripAuctionHouseTerms(
+  query: string,
+  house: DetectedAuctionHouse | null,
+) {
+  const normalizedQuery = normalizeSearchQuery(query);
+  if (!house) return normalizedQuery;
+
+  const aliasTokens = getAuctionHouseAliasTokens(house);
+  const stripped = normalizedQuery
+    .split(" ")
+    .filter((token) => token && !aliasTokens.has(token))
+    .join(" ")
+    .trim();
+
+  return stripped || normalizedQuery;
+}
+
+function isBroadBrowseQuery(query: string) {
+  const normalizedQuery = normalizeSearchQuery(query);
+  return BROAD_BROWSE_TERMS.some((term) => normalizedQuery.includes(term));
+}
+
+function buildNoContextAnswer(
+  userQuery: string,
+  detectedAuctionHouse: DetectedAuctionHouse | null,
+) {
+  const houseText = detectedAuctionHouse
+    ? ` hos ${detectedAuctionHouse.name}`
+    : "";
+
+  return `Jag hittade inga tydligt relevanta föremål${houseText} för frågan "${userQuery}" just nu. Prova att smalna av sökningen med föremålstyp, kategori, prisnivå eller tidsfönster, till exempel "mynt under 500 kr", "sedlar som slutar snart" eller "silver hos ${detectedAuctionHouse?.name ?? "ett visst auktionshus"}".`;
 }
 
 function normalizeAnswerBullets(answer: string): string {
@@ -127,7 +190,7 @@ function extractSignificantWords(query: string): string[] {
 
 function buildExpandedSemanticQuery(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
-  const expandedTerms = extractQueryTerms(query);
+  const expandedTerms = expandSemanticTerms(query);
 
   return Array.from(
     new Set(
@@ -202,7 +265,13 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   const startTime = Date.now();
   const supabase = createServerClient();
   const detectedAuctionHouse = detectAuctionHouse(request.query);
-  const expandedSemanticQuery = buildExpandedSemanticQuery(request.query);
+  const retrievalQuery = stripAuctionHouseTerms(
+    request.query,
+    detectedAuctionHouse,
+  );
+  const expandedSemanticQuery = buildExpandedSemanticQuery(
+    retrievalQuery || request.query,
+  );
 
   // ─── Step 1: Generate query embedding ───
   const queryEmbedding = await generateQueryEmbedding(
@@ -211,17 +280,59 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
 
   // ─── Step 2: Hybrid retrieval (vector + fulltext in parallel) ───
   const [vectorResults, fulltextResults] = await Promise.all([
-    retrieveByVector(supabase, queryEmbedding, request, detectedAuctionHouse),
-    retrieveByFulltext(supabase, request, detectedAuctionHouse),
+    retrieveByVector(
+      supabase,
+      queryEmbedding,
+      request,
+      detectedAuctionHouse,
+    ),
+    retrieveByFulltext(
+      supabase,
+      request,
+      detectedAuctionHouse,
+      retrievalQuery,
+    ),
   ]);
 
   // ─── Step 3: Merge & deduplicate results ───
   const mergedLots = mergeAndRank(
     vectorResults,
     fulltextResults,
-    request.query,
+    retrievalQuery || request.query,
   );
-  const contextLots = mergedLots.slice(0, MAX_CONTEXT_LOTS);
+
+  let contextLots = mergedLots.slice(0, MAX_CONTEXT_LOTS);
+
+  if (
+    detectedAuctionHouse &&
+    (contextLots.length < 6 || isBroadBrowseQuery(request.query))
+  ) {
+    const fallbackLots = await retrieveHouseBrowseFallbackLots(
+      supabase,
+      request,
+      detectedAuctionHouse,
+      retrievalQuery || request.query,
+    );
+    const seenIds = new Set(contextLots.map((lot) => lot.id));
+
+    contextLots = [
+      ...contextLots,
+      ...fallbackLots.filter((lot) => !seenIds.has(lot.id)),
+    ].slice(0, MAX_CONTEXT_LOTS);
+  }
+
+  if (contextLots.length === 0) {
+    return {
+      answer: buildNoContextAnswer(request.query, detectedAuctionHouse),
+      sources: [],
+      retrievalStats: {
+        vectorMatches: vectorResults.length,
+        fulltextMatches: fulltextResults.length,
+        totalContextLots: 0,
+        queryTimeMs: Date.now() - startTime,
+      },
+    };
+  }
 
   // ─── Step 4: Generate answer with Gemini ───
   const answer = await generateAnswer(request.query, contextLots);
@@ -334,12 +445,13 @@ async function retrieveByFulltext(
   supabase: any,
   request: RAGRequest,
   detectedAuctionHouse: DetectedAuctionHouse | null,
+  retrievalQuery: string,
 ): Promise<RAGSourceLot[]> {
   try {
-    const searchWords = extractSignificantWords(request.query);
+    const searchWords = extractSignificantWords(retrievalQuery || request.query);
     const searchQuery = searchWords.length
       ? searchWords.join(" ")
-      : request.query;
+      : retrievalQuery || request.query;
 
     let query = supabase
       .from("auc_lots")
@@ -399,6 +511,128 @@ async function retrieveByFulltext(
     }));
   } catch (err) {
     console.error("[RAG] Fulltext retrieval failed:", err);
+    return [];
+  }
+}
+
+async function retrieveHouseBrowseFallbackLots(
+  supabase: any,
+  request: RAGRequest,
+  detectedAuctionHouse: DetectedAuctionHouse,
+  rankingQuery: string,
+): Promise<RAGSourceLot[]> {
+  try {
+    let query = supabase
+      .from("auc_lots")
+      .select(
+        `id, title, description, categories, current_bid, estimate,
+         currency, city, url, thumbnail_url, end_time,
+         auc_auction_houses!inner(name)`,
+      )
+      .eq("house_id", detectedAuctionHouse.id)
+      .limit(36);
+
+    if (!request.includeEnded) {
+      query = query
+        .gt("end_time", new Date().toISOString())
+        .is("availability", null)
+        .order("end_time", { ascending: true });
+    } else {
+      query = query.order("end_time", { ascending: false });
+    }
+
+    if (request.categories?.length) {
+      query = query.overlaps("categories", request.categories);
+    }
+
+    if (request.city) {
+      query = query.eq("city", request.city);
+    }
+
+    if (request.minPrice != null) {
+      query = query.gte("current_bid", request.minPrice);
+    }
+
+    if (request.maxPrice != null) {
+      query = query.lte("current_bid", request.maxPrice);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("[RAG] House browse fallback error:", error.message);
+      return [];
+    }
+
+    const queryTerms = extractQueryTerms(rankingQuery);
+    const normalizedQuery = normalizeSearchQuery(rankingQuery);
+
+    const rankedFallbackLots: Array<{ lot: RAGSourceLot; score: number }> = (
+      data ?? []
+    ).map((lot: any) => {
+        const mappedLot: RAGSourceLot = {
+          id: lot.id,
+          title: lot.title,
+          description: lot.description,
+          categories: lot.categories,
+          currentBid: lot.current_bid,
+          estimate: lot.estimate,
+          currency: lot.currency,
+          city: lot.city,
+          url: lot.url,
+          thumbnailUrl: lot.thumbnail_url,
+          endTime: lot.end_time,
+          houseName: lot.auc_auction_houses?.name,
+        };
+
+        const lexical = getLexicalMatch(mappedLot, queryTerms);
+        const exactPhrase =
+          normalizedQuery.length >= 3 &&
+          normalizeText(mappedLot.title ?? "").includes(normalizedQuery);
+        const endsAt = mappedLot.endTime
+          ? new Date(mappedLot.endTime).getTime()
+          : null;
+        const msLeft = endsAt != null ? endsAt - Date.now() : Number.POSITIVE_INFINITY;
+        const urgencyBoost =
+          msLeft <= 86_400_000
+            ? 1.5
+            : msLeft <= 3 * 86_400_000
+              ? 0.9
+              : 0.35;
+        const bidAmount = mappedLot.currentBid ?? 0;
+        const estimateAmount = mappedLot.estimate ?? 0;
+        const bargainDelta =
+          estimateAmount > 0
+            ? (estimateAmount - bidAmount) / estimateAmount
+            : 0;
+        const bargainBoost =
+          estimateAmount > 0
+            ? bargainDelta > 0
+              ? bargainDelta * 4
+              : bargainDelta * 1.5
+            : bidAmount === 0
+              ? 0.6
+              : 0;
+
+        return {
+          lot: mappedLot,
+          score:
+            lexical.score * 1.15 +
+            (exactPhrase ? 4 : 0) +
+            urgencyBoost +
+            bargainBoost,
+        };
+      });
+
+    return rankedFallbackLots
+      .sort(
+        (left: { lot: RAGSourceLot; score: number }, right: { lot: RAGSourceLot; score: number }) =>
+          right.score - left.score,
+      )
+      .map((entry: { lot: RAGSourceLot; score: number }) => entry.lot)
+      .slice(0, MAX_CONTEXT_LOTS);
+  } catch (err) {
+    console.error("[RAG] House browse fallback failed:", err);
     return [];
   }
 }
@@ -561,12 +795,13 @@ REGLER:
 - Referera till specifika föremål med deras titel och auktionshus
 - Om du rekommenderar föremål, förklara VARFÖR de matchar frågan
 - Om kontexten inte innehåller relevant information, säg det ärligt
+- Ge inte generella auktionsråd om de inte tydligt stöds av kontexten
 - Om sluttid finns i kontexten ska du använda den, särskilt vid frågor om "slutar snart"
 - Var koncis men informativ
 - Nämn prisuppgifter (bud och utrop) när det är relevant
 - Inkludera ALDRIG föremålsnummer som [1], [2] etc i ditt svar — referera med namn istället
 - Om användaren frågar om trender eller jämförelser, analysera de tillgängliga föremålen
-- Du kan ge generella auktionsråd baserat på din kunskap
+- Om kontexten är tunn eller svag, säg att underlaget är begränsat i stället för att fylla ut med allmänna råd
 
 FORMAT:
 - Om du nämner två eller fler konkreta föremål, börja med rubriken "Föremål:" och lista dem på separata rader

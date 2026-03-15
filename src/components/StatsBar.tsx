@@ -59,14 +59,19 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
   ];
 
   return (
-    <div className="mb-4 grid gap-2 rounded-xl border border-brand-200/40 bg-white px-4 py-3 shadow-card sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:px-5">
+    <div className="mb-4 grid grid-cols-3 gap-x-2 rounded-xl border border-brand-200/40 bg-white px-3 py-2 shadow-card sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:px-5 sm:py-3">
       {stats.map((stat, i) => (
-        <div key={stat.label} className="flex items-center gap-3 sm:gap-5">
-          <div className="flex min-w-0 items-baseline gap-1.5">
-            <span className="font-semibold text-sm text-brand-900">
+        <div
+          key={stat.label}
+          className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-5"
+        >
+          <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-1.5">
+            <span className="truncate font-semibold text-[13px] text-brand-900 sm:text-sm">
               {stat.num}
             </span>
-            <span className="text-xs text-brand-400">{stat.label}</span>
+            <span className="text-[11px] leading-tight text-brand-400 sm:text-xs">
+              {stat.label}
+            </span>
           </div>
           {i < stats.length - 1 && (
             <div className="w-px h-5 bg-brand-200 hidden sm:block" />

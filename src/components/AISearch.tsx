@@ -131,22 +131,23 @@ export function AISearch({ suggestedQueries }: AISearchProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-50 flex items-center gap-2
-          px-4 py-3 rounded-full shadow-elevated-lg transition-all duration-300 sm:px-5
+          rounded-full shadow-elevated-lg transition-all duration-300 sm:px-5
           ${
             isOpen
               ? "bg-brand-900 text-white scale-95"
               : "bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:shadow-[0_12px_40px_rgba(196,93,62,0.3)] hover:scale-105"
-          } max-sm:bottom-4 max-sm:left-4 max-sm:right-4 max-sm:justify-center`}
+          } px-4 py-3 max-sm:bottom-4 max-sm:right-4 max-sm:h-12 max-sm:w-12 max-sm:justify-center max-sm:gap-0 max-sm:p-0`}
+        aria-label={isOpen ? "Stäng AI-sök" : "Öppna AI-sök"}
       >
         {isOpen ? (
           <>
             <ChevronDown size={18} />
-            Stäng
+            <span className="max-sm:hidden">Stäng</span>
           </>
         ) : (
           <>
             <Sparkles size={18} />
-            AI-sök
+            <span className="max-sm:hidden">AI-sök</span>
           </>
         )}
       </button>
