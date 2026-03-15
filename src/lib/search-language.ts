@@ -69,6 +69,30 @@ const SWEDISH_CANONICAL_QUERY_TERMS: Record<string, string> = {
   guldfärgade: "guld",
 };
 
+const SWEDISH_SEMANTIC_QUERY_EXPANSIONS: Record<string, string[]> = {
+  djur: [
+    "animal",
+    "fauna",
+    "leopard",
+    "lejon",
+    "tiger",
+    "panter",
+    "jaguar",
+    "lodjur",
+    "hund",
+    "katt",
+    "häst",
+    "fågel",
+    "fisk",
+  ],
+  kattdjur: ["leopard", "lejon", "tiger", "panter", "jaguar", "lodjur"],
+  katt: ["kattdjur", "leopard", "lejon", "tiger", "panter", "lodjur"],
+  fågel: ["bird", "örn", "uggla", "svan"],
+  fisk: ["fish", "marin", "akvatisk"],
+  häst: ["ponny", "ryttare", "equine"],
+  hund: ["jakthund", "valp", "dog"],
+};
+
 const SWEDISH_COMPOUND_PREFIXES = [
   "silver",
   "guld",
@@ -159,4 +183,26 @@ export function extractSwedishQueryTerms(query: string): string[] {
         ),
     ),
   );
+}
+
+export function expandSwedishSemanticQueryTerms(query: string): string[] {
+  const baseTerms = extractSwedishQueryTerms(query);
+  const expandedTerms = new Set<string>(baseTerms);
+
+  for (const term of baseTerms) {
+    const semanticTerms = SWEDISH_SEMANTIC_QUERY_EXPANSIONS[term] ?? [];
+    for (const semanticTerm of semanticTerms) {
+      const normalizedTerm = normalizeSearchText(semanticTerm);
+      if (!normalizedTerm) continue;
+
+      expandedTerms.add(normalizedTerm);
+      for (const token of normalizedTerm.split(" ").filter(Boolean)) {
+        if (token.length >= 3) {
+          expandedTerms.add(token);
+        }
+      }
+    }
+  }
+
+  return Array.from(expandedTerms);
 }
