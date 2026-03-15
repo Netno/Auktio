@@ -158,6 +158,7 @@ function HomePage() {
     selectedCity,
     selectedHouseId,
     hasBids,
+    soldOnly,
     status,
     minPrice,
     maxPrice,
@@ -172,6 +173,7 @@ function HomePage() {
     setCity,
     setHouseId,
     setHasBids,
+    setSoldOnly,
     setMinPrice,
     setMaxPrice,
     setSortBy,
@@ -187,6 +189,7 @@ function HomePage() {
     (selectedCity ? 1 : 0) +
     (selectedHouseId ? 1 : 0) +
     (hasBids ? 1 : 0) +
+    (soldOnly ? 1 : 0) +
     (status !== "active" ? 1 : 0) +
     (minPrice != null ? 1 : 0) +
     (maxPrice != null ? 1 : 0) +
@@ -351,6 +354,7 @@ function HomePage() {
           selectedHouseId={selectedHouseId}
           hasQuery={Boolean(query.trim())}
           hasBids={hasBids}
+          soldOnly={soldOnly}
           status={status}
           minPrice={minPrice}
           maxPrice={maxPrice}
@@ -363,6 +367,7 @@ function HomePage() {
           onSetCity={setCity}
           onSetHouseId={setHouseId}
           onSetHasBids={setHasBids}
+          onSetSoldOnly={setSoldOnly}
           onSetMinPrice={setMinPrice}
           onSetMaxPrice={setMaxPrice}
           onSetSort={setSortBy}

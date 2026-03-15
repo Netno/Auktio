@@ -9,6 +9,17 @@ const supabase = createServerClient();
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY_MS = 2000; // exponential: 2s, 4s, 8s
 const PRICE_BANK_LOOKBACK_DAYS = 30;
+const SOLD_PRICE_SITE_LOOKBACK_DAYS = 7;
+const SOLD_PRICE_SITE_BATCH_LIMIT = 40;
+
+type RecentEndedLotRow = {
+  id: number;
+  url: string | null;
+  end_time: string | null;
+  availability: string | null;
+  current_bid: number | null;
+  sold_price: number | null;
+};
 
 /**
  * Ingest all configured feed sources.
@@ -205,7 +216,8 @@ async function ingestFeed(
       }
     }
 
-    soldPricesUpdated = await ingestPriceBankFeed(houseId, feedUrl);
+    soldPricesUpdated += await ingestPriceBankFeed(houseId, feedUrl);
+    soldPricesUpdated += await refreshEndedLotsFromSite(houseId);
 
     const result: IngestResult = {
       houseId,
@@ -393,6 +405,122 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
     );
     return 0;
   }
+}
+
+function extractSoldOfferFromHtml(html: string) {
+  const jsonLdMatches = Array.from(
+    html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi),
+  );
+
+  for (const match of jsonLdMatches) {
+    const payload = match[1]?.trim();
+    if (!payload) continue;
+
+    try {
+      const parsed = JSON.parse(payload);
+      const entries = Array.isArray(parsed) ? parsed : [parsed];
+
+      for (const entry of entries) {
+        const offer = entry?.offers;
+        const price = Number(offer?.price);
+        const availability = String(offer?.availability ?? "");
+
+        if (!Number.isFinite(price)) continue;
+
+        return {
+          soldPrice: price,
+          isSold:
+            availability.includes("schema.org/SoldOut") ||
+            availability.toLowerCase().includes("soldout"),
+        };
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
+async function refreshEndedLotsFromSite(houseId: string) {
+  const now = new Date();
+  const fromDate = new Date(
+    now.getTime() - SOLD_PRICE_SITE_LOOKBACK_DAYS * 86_400_000,
+  ).toISOString();
+
+  const { data, error } = await supabase
+    .from("auc_lots")
+    .select("id, url, end_time, availability, current_bid, sold_price")
+    .eq("house_id", houseId)
+    .gte("end_time", fromDate)
+    .lte("end_time", now.toISOString())
+    .limit(SOLD_PRICE_SITE_BATCH_LIMIT);
+
+  if (error) {
+    console.warn(`[ingest] Site sold-price lookup failed for ${houseId}:`, error.message);
+    return 0;
+  }
+
+  const candidates = ((data ?? []) as RecentEndedLotRow[]).filter(
+    (lot) => lot.url && (lot.availability !== "sold" || lot.sold_price == null),
+  );
+
+  let updatedCount = 0;
+
+  for (const lot of candidates) {
+    try {
+      const response = await fetchWithRetry(lot.url!, {
+        headers: { Accept: "text/html" },
+        signal: AbortSignal.timeout(8000),
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const html = await response.text();
+      const offer = extractSoldOfferFromHtml(html);
+
+      if (!offer?.isSold || !Number.isFinite(offer.soldPrice)) {
+        continue;
+      }
+
+      if (
+        lot.availability === "sold" &&
+        lot.current_bid === offer.soldPrice &&
+        lot.sold_price === offer.soldPrice
+      ) {
+        continue;
+      }
+
+      const { error: updateError } = await supabase
+        .from("auc_lots")
+        .update({
+          availability: "sold",
+          current_bid: offer.soldPrice,
+          sold_price: offer.soldPrice,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", lot.id);
+
+      if (updateError) {
+        console.warn(
+          `[ingest] Site sold-price update failed for lot ${lot.id}:`,
+          updateError.message,
+        );
+        continue;
+      }
+
+      updatedCount += 1;
+    } catch (error) {
+      console.warn(
+        `[ingest] Site sold-price fetch failed for lot ${lot.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return updatedCount;
 }
 
 function buildPriceBankFeedUrl(feedUrl: string) {

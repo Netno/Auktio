@@ -138,6 +138,7 @@ export interface SearchParams {
   city?: string;
   houseId?: string;
   hasBids?: boolean;
+  soldOnly?: boolean;
   minPrice?: number;
   maxPrice?: number;
   sortBy?: SortOption;
@@ -156,6 +157,7 @@ export type SortOption =
   | "newly-listed"
   | "price-asc"
   | "price-desc"
+  | "sold-price-desc"
   | "estimate-desc"
   | "most-bids"
   | "least-bids"

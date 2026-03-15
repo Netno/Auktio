@@ -14,7 +14,9 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
   const totalValue = lots.reduce((sum, lot) => {
     const amount = lot.isActive
       ? lot.currentBid
-      : (lot.soldPrice ?? lot.currentBid);
+      : lot.availability === "sold"
+        ? (lot.currentBid ?? lot.soldPrice)
+        : (lot.soldPrice ?? lot.currentBid);
     return sum + (amount ?? 0);
   }, 0);
 

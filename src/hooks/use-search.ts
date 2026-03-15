@@ -38,6 +38,7 @@ interface UseSearchReturn {
   selectedCity: string;
   selectedHouseId: string;
   hasBids: boolean;
+  soldOnly: boolean;
   minPrice: number | undefined;
   maxPrice: number | undefined;
   searchMode: SearchMode;
@@ -54,6 +55,7 @@ interface UseSearchReturn {
   setCity: (city: string) => void;
   setHouseId: (id: string) => void;
   setHasBids: (value: boolean) => void;
+  setSoldOnly: (value: boolean) => void;
   setMinPrice: (v: number | undefined) => void;
   setMaxPrice: (v: number | undefined) => void;
   setSortBy: (sort: SortOption) => void;
@@ -106,6 +108,9 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   );
   const [hasBids, setHasBidsState] = useState(
     searchParams.get("hasBids") === "true",
+  );
+  const [soldOnly, setSoldOnlyState] = useState(
+    searchParams.get("soldOnly") === "true",
   );
   const [minPrice, setMinPriceState] = useState<number | undefined>(
     searchParams.get("minPrice")
@@ -188,6 +193,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       city: string;
       houseId: string;
       hasBids: boolean;
+      soldOnly: boolean;
       minPrice: number | undefined;
       maxPrice: number | undefined;
       sortBy: SortOption;
@@ -228,6 +234,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       if (params.houseId) requestParams.set("houseId", params.houseId);
       if (params.hasBids) urlParams.set("hasBids", "true");
       if (params.hasBids) requestParams.set("hasBids", "true");
+      if (params.soldOnly) urlParams.set("soldOnly", "true");
+      if (params.soldOnly) requestParams.set("soldOnly", "true");
       if (params.minPrice != null)
         urlParams.set("minPrice", String(params.minPrice));
       if (params.minPrice != null)
@@ -284,6 +292,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       city: selectedCity,
       houseId: selectedHouseId,
       hasBids,
+      soldOnly,
       minPrice,
       maxPrice,
       sortBy,
@@ -299,6 +308,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     selectedCity,
     selectedHouseId,
     hasBids,
+    soldOnly,
     minPrice,
     maxPrice,
     sortBy,
@@ -345,6 +355,11 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setPageState(1);
   };
 
+  const setSoldOnly = (value: boolean) => {
+    setSoldOnlyState(value);
+    setPageState(1);
+  };
+
   const setMaxPrice = (v: number | undefined) => {
     setMaxPriceState(v);
     setPageState(1);
@@ -359,6 +374,9 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setLoading(true);
     setError(null);
     setStatusState(nextStatus);
+    if (nextStatus === "active") {
+      setSoldOnlyState(false);
+    }
     setSortByState((currentSort) => {
       if (!sortIsManual) {
         return getDefaultSort(nextStatus, debouncedQuery);
@@ -366,7 +384,10 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       if (nextStatus === "ended" && currentSort === "ending-soon") {
         return "recently-ended";
       }
-      if (nextStatus !== "ended" && currentSort === "recently-ended") {
+      if (
+        nextStatus === "active" &&
+        (currentSort === "recently-ended" || currentSort === "sold-price-desc")
+      ) {
         return "ending-soon";
       }
       return currentSort;
@@ -390,6 +411,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setCityState("");
     setHouseIdState("");
     setHasBidsState(false);
+    setSoldOnlyState(false);
     setMinPriceState(undefined);
     setMaxPriceState(undefined);
     setStatusState(DEFAULT_STATUS);
@@ -414,6 +436,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     selectedCity,
     selectedHouseId,
     hasBids,
+    soldOnly,
     minPrice,
     maxPrice,
     sortBy,
@@ -426,6 +449,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setCity,
     setHouseId,
     setHasBids,
+    setSoldOnly,
     setMinPrice,
     setMaxPrice,
     setSortBy,

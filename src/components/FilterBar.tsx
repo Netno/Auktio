@@ -17,6 +17,7 @@ interface FilterBarProps {
   selectedHouseId: string;
   hasQuery: boolean;
   hasBids: boolean;
+  soldOnly: boolean;
   status: SearchStatus;
   minPrice: number | undefined;
   maxPrice: number | undefined;
@@ -29,6 +30,7 @@ interface FilterBarProps {
   onSetCity: (city: string) => void;
   onSetHouseId: (id: string) => void;
   onSetHasBids: (value: boolean) => void;
+  onSetSoldOnly: (value: boolean) => void;
   onSetMinPrice: (v: number | undefined) => void;
   onSetMaxPrice: (v: number | undefined) => void;
   onSetSort: (sort: SortOption) => void;
@@ -47,6 +49,7 @@ export function FilterBar({
   selectedHouseId,
   hasQuery,
   hasBids,
+  soldOnly,
   status,
   minPrice,
   maxPrice,
@@ -59,6 +62,7 @@ export function FilterBar({
   onSetCity,
   onSetHouseId,
   onSetHasBids,
+  onSetSoldOnly,
   onSetMinPrice,
   onSetMaxPrice,
   onSetSort,
@@ -129,6 +133,9 @@ export function FilterBar({
       : []),
     ...(status !== "active"
       ? [{ value: "recently-ended", label: "Senast avslutade" }]
+      : []),
+    ...(status !== "active"
+      ? [{ value: "sold-price-desc", label: "Högsta slutpris" }]
       : []),
     { value: "newly-listed", label: "Senast inkommet" },
     { value: "price-desc", label: "Högsta bud" },
@@ -380,6 +387,34 @@ export function FilterBar({
               />
               <span>Har bud</span>
             </button>
+          </div>
+
+          <div className="md:min-w-[170px]">
+            <label className="block text-[11px] font-semibold text-brand-400 uppercase tracking-wider mb-2">
+              Slutfilter
+            </label>
+            <button
+              type="button"
+              onClick={() => onSetSoldOnly(!soldOnly)}
+              disabled={status === "active"}
+              className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                soldOnly
+                  ? "border-emerald-600 bg-emerald-600 text-white"
+                  : "border-brand-200 bg-brand-50 text-brand-700 hover:border-brand-300"
+              }`}
+            >
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${
+                  soldOnly ? "bg-white" : "bg-brand-300"
+                }`}
+              />
+              <span>Visa bara sålda</span>
+            </button>
+            {status === "active" && (
+              <p className="mt-2 text-xs text-brand-400">
+                Tillgängligt för avslutade eller alla objekt.
+              </p>
+            )}
           </div>
 
           {/* Price range slider */}

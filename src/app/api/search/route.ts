@@ -260,7 +260,9 @@ function getBlendedSearchScore(
   const vectorScore = getVectorRankScore(vectorOrder, lot.id);
   const normalizedTitle = normalizeText(lot.title ?? "");
   const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
-  const normalizedAiCategories = normalizeText((lot.aiCategories ?? []).join(" "));
+  const normalizedAiCategories = normalizeText(
+    (lot.aiCategories ?? []).join(" "),
+  );
   const normalizedDescription = normalizeText(lot.description ?? "");
   const combinedSearchText = [
     normalizedTitle,
@@ -324,7 +326,10 @@ function getBlendedSearchScore(
     }
   }
 
-  if (queryTerms.includes("djurmotiv") && normalizedAiCategories.includes("djurmotiv")) {
+  if (
+    queryTerms.includes("djurmotiv") &&
+    normalizedAiCategories.includes("djurmotiv")
+  ) {
     score += 6;
   }
 
@@ -435,6 +440,12 @@ function sortLots(
         return compareNumbers(a.currentBid, b.currentBid, "asc");
       case "price-desc":
         return compareNumbers(a.currentBid, b.currentBid, "desc");
+      case "sold-price-desc":
+        return compareNumbers(
+          a.currentBid ?? a.soldPrice,
+          b.currentBid ?? b.soldPrice,
+          "desc",
+        );
       case "estimate-desc":
         return compareNumbers(a.estimate, b.estimate, "desc");
       case "relevance":
@@ -629,6 +640,10 @@ function applyNonQueryCriteria(
 
   if (params.hasBids) {
     query = query.or("current_bid.gt.0,sold_price.gt.0");
+  }
+
+  if (params.soldOnly) {
+    query = query.eq("availability", "sold");
   }
 
   if (params.minPrice != null) {
@@ -901,6 +916,7 @@ export async function GET(request: NextRequest) {
     city: searchParams.get("city") ?? undefined,
     houseId: searchParams.get("houseId") ?? undefined,
     hasBids: searchParams.get("hasBids") === "true",
+    soldOnly: searchParams.get("soldOnly") === "true",
     minPrice: searchParams.get("minPrice")
       ? Number(searchParams.get("minPrice"))
       : undefined,
@@ -1012,6 +1028,12 @@ export async function GET(request: NextRequest) {
           });
           break;
         case "price-desc":
+          query = query.order("current_bid", {
+            ascending: false,
+            nullsFirst: false,
+          });
+          break;
+        case "sold-price-desc":
           query = query.order("current_bid", {
             ascending: false,
             nullsFirst: false,
