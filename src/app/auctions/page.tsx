@@ -624,37 +624,39 @@ export default function AuctionsPage() {
               </label>
             </div>
 
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:min-w-[320px] lg:gap-2">
-              <div className="rounded-lg bg-brand-50 px-2.5 py-2 sm:px-3 sm:py-2.5">
-                <div className="text-[9px] uppercase tracking-[0.1em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
-                  Pågår
+            <div className="overflow-hidden rounded-xl border border-brand-200/50 bg-brand-50/70 lg:min-w-[320px]">
+              <div className="grid grid-cols-4 divide-x divide-brand-200/70">
+                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                  <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
+                    Pågår
+                  </div>
+                  <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
+                    {data?.stats.ongoing ?? 0}
+                  </div>
                 </div>
-                <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
-                  {data?.stats.ongoing ?? 0}
+                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                  <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
+                    Kommande
+                  </div>
+                  <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
+                    {data?.stats.upcoming ?? 0}
+                  </div>
                 </div>
-              </div>
-              <div className="rounded-lg bg-brand-50 px-2.5 py-2 sm:px-3 sm:py-2.5">
-                <div className="text-[9px] uppercase tracking-[0.1em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
-                  Kommande
+                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                  <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
+                    Avslutade
+                  </div>
+                  <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
+                    {data?.stats.ended ?? 0}
+                  </div>
                 </div>
-                <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
-                  {data?.stats.upcoming ?? 0}
-                </div>
-              </div>
-              <div className="rounded-lg bg-brand-50 px-2.5 py-2 sm:px-3 sm:py-2.5">
-                <div className="text-[9px] uppercase tracking-[0.1em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
-                  Avslutade
-                </div>
-                <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
-                  {data?.stats.ended ?? 0}
-                </div>
-              </div>
-              <div className="rounded-lg bg-brand-50 px-2.5 py-2 sm:px-3 sm:py-2.5">
-                <div className="text-[9px] uppercase tracking-[0.1em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
-                  Osäkra
-                </div>
-                <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
-                  {data?.stats.uncertain ?? 0}
+                <div className="px-2 py-2 sm:px-3 sm:py-2.5">
+                  <div className="text-[9px] uppercase tracking-[0.08em] text-brand-400 sm:text-[10px] sm:tracking-[0.12em]">
+                    Osäkra
+                  </div>
+                  <div className="mt-0.5 text-[15px] font-semibold leading-none text-brand-900 sm:mt-1 sm:text-lg">
+                    {data?.stats.uncertain ?? 0}
+                  </div>
                 </div>
               </div>
             </div>
