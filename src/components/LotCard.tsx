@@ -27,6 +27,7 @@ const MOBILE_ZOOM_MIN_SCALE = 1;
 const MOBILE_ZOOM_MAX_SCALE = 4;
 const MOBILE_ZOOM_STEP = 0.5;
 const DOUBLE_TAP_DELAY_MS = 280;
+const TALL_IMAGE_CONTAIN_THRESHOLD = 0.68;
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -57,6 +58,10 @@ export function LotCard({
   const PREVIEW_MARGIN_PX = 24;
   const PREVIEW_ASPECT_RATIO = 4 / 3;
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [currentImageAspectRatio, setCurrentImageAspectRatio] = useState(1);
+  const [currentImageFit, setCurrentImageFit] = useState<"cover" | "contain">(
+    "cover",
+  );
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -158,6 +163,16 @@ export function LotCard({
       ? (lot.currentBid ?? lot.soldPrice)
       : (lot.soldPrice ?? lot.currentBid);
   const showSoldPrice = !lot.isActive && lot.availability === "sold";
+
+  useEffect(() => {
+    setImgLoaded(false);
+    setCurrentImageAspectRatio(1);
+    setCurrentImageFit("cover");
+  }, [currentImage]);
+
+  const isTallPortraitImage =
+    currentImageFit === "contain" &&
+    currentImageAspectRatio < TALL_IMAGE_CONTAIN_THRESHOLD;
 
   const prevImage = useCallback(
     (e: React.MouseEvent) => {
@@ -637,6 +652,8 @@ export function LotCard({
           onTouchCancel={handleTouchEnd}
           style={{ touchAction: "pan-y" }}
         >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.99),rgba(255,255,255,0.97)_58%,rgba(248,248,248,0.98)_100%)]" />
+
           {/* Placeholder */}
           <div
             className="absolute inset-0 flex items-center justify-center text-brand-300 transition-opacity"
@@ -656,9 +673,28 @@ export function LotCard({
               loading={imagePriority ? "eager" : "lazy"}
               fetchPriority={imagePriority ? "high" : "auto"}
               unoptimized
-              className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              className={`${
+                currentImageFit === "contain"
+                  ? isTallPortraitImage
+                    ? "object-contain px-0 py-0 scale-[1.08] group-hover:scale-[1.1]"
+                    : "object-contain p-1 group-hover:scale-[1.04]"
+                  : "object-cover group-hover:scale-[1.04]"
+              } transition-transform duration-500`}
               style={{ opacity: imgLoaded ? 1 : 0 }}
-              onLoad={() => setImgLoaded(true)}
+              onLoad={(event) => {
+                const image = event.currentTarget;
+                const aspectRatio =
+                  image.naturalHeight > 0
+                    ? image.naturalWidth / image.naturalHeight
+                    : 1;
+                setCurrentImageAspectRatio(aspectRatio);
+                setCurrentImageFit(
+                  aspectRatio < TALL_IMAGE_CONTAIN_THRESHOLD
+                    ? "contain"
+                    : "cover",
+                );
+                setImgLoaded(true);
+              }}
             />
           )}
 
