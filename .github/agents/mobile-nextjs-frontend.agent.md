@@ -52,6 +52,13 @@ Balance:
 - Watch for sticky headers, bottom bars, modals, drawers, and tap targets on smaller screens.
 - Improve usability, not just appearance.
 
+## Design Consistency
+
+- Keep shared UI patterns visually consistent across pages. Similar information should keep the same alignment, spacing, density, and hierarchy unless there is a clear product reason to differ.
+- Do not create page-specific variants of the same pattern without first checking whether that pattern already exists elsewhere in the product.
+- When updating a shared treatment on one page, align equivalent treatments on sibling pages or explicitly preserve the existing shared pattern.
+- Avoid changes that make the product feel visually inconsistent, improvised, or differently art-directed from page to page.
+
 ## Code Quality Standards
 
 - Write clean, explicit, production-ready TypeScript.

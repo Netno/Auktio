@@ -10,6 +10,8 @@
     "ingest": "npx tsx --env-file=.env.local src/lib/feed-ingester.ts",
     "embed": "npx tsx --env-file=.env.local src/lib/embedding-ingester.ts",
     "describe": "npx tsx --env-file=.env.local src/lib/vision-describer.ts",
+    "subjects": "npx tsx --env-file=.env.local src/lib/subject-enricher.ts",
+    "subjects:import": "npx tsx --env-file=.env.local exports/import-ai-categories.ts",
     "db:setup": "npx tsx supabase/setup.ts"
   },
   "dependencies": {

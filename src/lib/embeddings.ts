@@ -134,6 +134,7 @@ export function buildLotEmbeddingText(lot: {
   title: string;
   description?: string | null;
   categories?: string[];
+  aiCategories?: string[];
   artists?: string[];
   city?: string | null;
   estimate?: number | null;
@@ -150,6 +151,10 @@ export function buildLotEmbeddingText(lot: {
 
   if (lot.categories?.length) {
     parts.push(`Kategori: ${lot.categories.join(", ")}`);
+  }
+
+  if (lot.aiCategories?.length) {
+    parts.push(`Semantik: ${lot.aiCategories.join(", ")}`);
   }
 
   if (lot.description) {
