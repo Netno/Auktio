@@ -102,7 +102,43 @@ type DetectedAuctionHouse = {
   aliases: string[];
 };
 
-function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
+const STRONG_ANIMAL_EXPANSION_TERMS = new Set([
+  "leopard",
+  "lejon",
+  "tiger",
+  "panter",
+  "jaguar",
+  "lodjur",
+]);
+
+const WEAK_ANIMAL_EXPANSION_TERMS = new Set([
+  "animal",
+  "fauna",
+  "hund",
+  "katt",
+  "häst",
+  "fågel",
+  "fisk",
+]);
+
+const DECORATIVE_OBJECT_TERMS = new Set([
+  "porslin",
+  "keramik",
+  "fat",
+  "fiskfat",
+  "tallrik",
+  "skal",
+  "skål",
+  "vas",
+  "urna",
+  "servis",
+]);
+
+function getLexicalScore(
+  lot: NormalizedLot,
+  queryTerms: string[],
+  termWeight: (term: string) => number = () => 1,
+) {
   if (!queryTerms.length) {
     return 0;
   }
@@ -134,23 +170,38 @@ function getLexicalScore(lot: NormalizedLot, queryTerms: string[]) {
 
   let score = 0;
   for (const term of queryTerms) {
+    const weight = termWeight(term);
+
     if (matchesTerm(titleTokens, term)) {
-      score += 6;
+      score += 6 * weight;
       if (normalizedTitle.includes(term)) {
-        score += 2;
+        score += 2 * weight;
       }
     } else if (matchesTerm(artistTokens, term)) {
-      score += 4;
+      score += 4 * weight;
     } else if (matchesTerm(categoryTokens, term)) {
-      score += 3;
+      score += 3 * weight;
     } else if (matchesTerm(aiCategoryTokens, term)) {
-      score += 2;
+      score += 2 * weight;
     } else if (matchesTerm(descriptionTokens, term)) {
-      score += 1;
+      score += 1 * weight;
     }
   }
 
   return score;
+}
+
+function hasAnyNormalizedTerm(value: string, terms: Set<string>) {
+  const normalizedValue = normalizeText(value);
+  if (!normalizedValue) return false;
+
+  return Array.from(terms).some((term) => normalizedValue.includes(term));
+}
+
+function getExpandedTermWeight(term: string) {
+  if (STRONG_ANIMAL_EXPANSION_TERMS.has(term)) return 1.35;
+  if (WEAK_ANIMAL_EXPANSION_TERMS.has(term)) return 0.6;
+  return 0.9;
 }
 
 function isConcreteObjectQuery(query: string) {
@@ -174,19 +225,48 @@ function getBlendedSearchScore(
   concreteQuery: boolean,
 ) {
   const lexicalScore = getLexicalScore(lot, queryTerms);
-  const expandedLexicalScore = getLexicalScore(lot, expandedQueryTerms);
+  const expandedLexicalScore = getLexicalScore(
+    lot,
+    expandedQueryTerms,
+    getExpandedTermWeight,
+  );
   const vectorScore = getVectorRankScore(vectorOrder, lot.id);
   const normalizedTitle = normalizeText(lot.title ?? "");
   const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
+  const normalizedDescription = normalizeText(lot.description ?? "");
   const hasExactPhrase =
     normalizedQuery.length >= 3 &&
     (normalizedTitle.includes(normalizedQuery) ||
       normalizedCategories.includes(normalizedQuery));
+  const strongAnimalMatch = hasAnyNormalizedTerm(
+    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    STRONG_ANIMAL_EXPANSION_TERMS,
+  );
+  const weakAnimalMatch = hasAnyNormalizedTerm(
+    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    WEAK_ANIMAL_EXPANSION_TERMS,
+  );
+  const decorativeObjectMatch = hasAnyNormalizedTerm(
+    `${normalizedTitle} ${normalizedDescription} ${normalizedCategories}`,
+    DECORATIVE_OBJECT_TERMS,
+  );
 
   let score =
     lexicalScore * (concreteQuery ? 1.8 : 1.2) +
     expandedLexicalScore * (concreteQuery ? 1.15 : 0.75) +
     vectorScore * 3;
+
+  if (lexicalScore === 0 && expandedLexicalScore > 0) {
+    if (strongAnimalMatch) {
+      score += 3;
+    } else if (weakAnimalMatch) {
+      score += 0.5;
+    }
+
+    if (decorativeObjectMatch && !strongAnimalMatch) {
+      score -= 2.25;
+    }
+  }
 
   if (hasExactPhrase) {
     score += concreteQuery ? 14 : 8;
