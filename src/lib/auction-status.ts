@@ -215,8 +215,20 @@ function deriveAuctionStatus(
   let status: AuctionStatus = "uncertain";
   let statusSource: AuctionStatusSource = "uncertain";
 
+  const hasStarted =
+    effectiveStartTime != null &&
+    new Date(effectiveStartTime).getTime() <= nowMs;
+  const hasEndedLotsOnly =
+    lotStats.endedLotCount > 0 && lotStats.activeLotCount === 0;
+
   if (lotStats.activeLotCount > 0) {
     status = "ongoing";
+    statusSource = "derived-from-lots";
+  } else if (hasStarted && hasEndedLotsOnly) {
+    // Feed-level auction times can lag behind lot reality. If the auction has
+    // already started, has ended lots, and no active lots remain, treat it as
+    // ended rather than upcoming/uncertain.
+    status = "ended";
     statusSource = "derived-from-lots";
   } else if (
     effectiveStartTime &&
