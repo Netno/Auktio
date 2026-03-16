@@ -108,11 +108,30 @@ function shouldTreatLotAsActive(lot: LotRow, nowMs: number) {
     return false;
   }
 
-  if (!lot.end_time) {
+  const displayEndTime = getLotDisplayEndTime(lot);
+
+  if (!displayEndTime) {
     return true;
   }
 
-  return new Date(lot.end_time).getTime() > nowMs;
+  return new Date(displayEndTime).getTime() > nowMs;
+}
+
+function shouldAcceptSiteVerifiedStatus(
+  derivedStatus: AuctionStatus,
+  siteStatus: AuctionStatus,
+  lotStats: AuctionLotStats,
+) {
+  const isConfidentlyEnded =
+    derivedStatus === "ended" &&
+    lotStats.activeLotCount === 0 &&
+    lotStats.endedLotCount > 0;
+
+  if (isConfidentlyEnded && siteStatus !== "ended") {
+    return false;
+  }
+
+  return true;
 }
 
 function initializeStats(): AuctionLotStats {
@@ -554,12 +573,31 @@ export async function verifyAuctionStatuses(auctionIds: number[]) {
   const supabase = createServerClient();
   const { data, error } = await supabase
     .from("auc_auctions")
-    .select("id, url")
+    .select("id, house_id, start_time, end_time, url")
     .in("id", ids);
 
   if (error) {
     throw error;
   }
+
+  const auctionRows = (data ?? []) as Array<
+    Pick<AuctionRow, "id" | "house_id" | "start_time" | "end_time" | "url">
+  >;
+  const lotStatsByAuctionId = await getLotStatsByAuctions(
+    auctionRows.map((row) => ({
+      id: row.id,
+      house_id: row.house_id,
+      title: "",
+      description: null,
+      url: row.url,
+      is_live: null,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      image_url: null,
+      auc_auction_houses: null,
+    })),
+  );
+  const nowMs = Date.now();
 
   const results: Array<{
     id: number;
@@ -568,13 +606,37 @@ export async function verifyAuctionStatuses(auctionIds: number[]) {
     verificationPending: false;
   }> = [];
 
-  for (const row of data ?? []) {
+  for (const row of auctionRows) {
     if (!row.url) {
       continue;
     }
 
+    const lotStats =
+      lotStatsByAuctionId.get(getAuctionKey(row.house_id, row.id)) ??
+      initializeStats();
+    const derived = deriveAuctionStatus(
+      {
+        id: row.id,
+        house_id: row.house_id,
+        title: "",
+        description: null,
+        url: row.url,
+        is_live: null,
+        start_time: row.start_time,
+        end_time: row.end_time,
+        image_url: null,
+        auc_auction_houses: null,
+      },
+      lotStats,
+      nowMs,
+    );
+
     const siteStatus = await verifyAuctionStatusFromSite(row.url);
     if (!siteStatus) {
+      continue;
+    }
+
+    if (!shouldAcceptSiteVerifiedStatus(derived.status, siteStatus, lotStats)) {
       continue;
     }
 
