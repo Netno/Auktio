@@ -48,6 +48,25 @@ export function Header({
         </div>
 
         <div className="mt-2 grid grid-cols-2 gap-2 sm:mt-0 sm:flex sm:items-center sm:gap-2">
+          {onToggleFavs && (
+            <button
+              onClick={onToggleFavs}
+              className={`hidden sm:inline-flex sm:min-h-9 sm:items-center sm:gap-2 sm:rounded-lg sm:px-4 sm:py-1.5 sm:text-[13px] sm:font-medium sm:transition-all ${
+                showFavsOnly
+                  ? "bg-accent-500 text-white"
+                  : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
+              }`}
+            >
+              <Heart size={14} fill={showFavsOnly ? "currentColor" : "none"} />
+              <span>Bevakade</span>
+              {(favoritesCount ?? 0) > 0 && (
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">
+                  {favoritesCount}
+                </span>
+              )}
+            </button>
+          )}
+
           <Link
             href="/"
             className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium transition-all sm:min-h-9 sm:rounded-lg sm:px-4 sm:py-1.5 ${
@@ -69,25 +88,6 @@ export function Header({
           >
             Auktioner
           </Link>
-
-          {onToggleFavs && (
-            <button
-              onClick={onToggleFavs}
-              className={`hidden sm:inline-flex sm:min-h-9 sm:items-center sm:gap-2 sm:rounded-lg sm:px-4 sm:py-1.5 sm:text-[13px] sm:font-medium sm:transition-all ${
-                showFavsOnly
-                  ? "bg-accent-500 text-white"
-                  : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
-              }`}
-            >
-              <Heart size={14} fill={showFavsOnly ? "currentColor" : "none"} />
-              <span>Bevakade</span>
-              {(favoritesCount ?? 0) > 0 && (
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">
-                  {favoritesCount}
-                </span>
-              )}
-            </button>
-          )}
         </div>
       </div>
     </header>

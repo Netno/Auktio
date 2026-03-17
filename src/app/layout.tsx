@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
+import Script from "next/script";
+import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
 import "./globals.css";
+
+const GA_MEASUREMENT_ID = "G-WK3BHYK9ND";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -52,7 +56,22 @@ export default function RootLayout({
         />
         <link rel="dns-prefetch" href="https://media.skeleton.bbys.io" />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+          `}
+        </Script>
+        <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
+        {children}
+      </body>
     </html>
   );
 }

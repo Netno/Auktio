@@ -66,6 +66,7 @@ interface SearchHeroProps {
   suggestionsLoading: boolean;
   onSuggestionSelect: (suggestion: SearchSuggestion) => void;
   onSuggestionsOpenChange?: (isOpen: boolean) => void;
+  onMobileSearchActivate?: () => void;
 }
 
 export function SearchHero({
@@ -81,6 +82,7 @@ export function SearchHero({
   suggestionsLoading,
   onSuggestionSelect,
   onSuggestionsOpenChange,
+  onMobileSearchActivate,
 }: SearchHeroProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -97,6 +99,12 @@ export function SearchHero({
     setIsSuggestionsOpen(false);
     setActiveSuggestionIndex(-1);
     inputRef.current?.focus();
+  };
+
+  const handleMobileSearchActivate = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      onMobileSearchActivate?.();
+    }
   };
 
   const handleSuggestionSelect = (suggestion: SearchSuggestion) => {
@@ -233,8 +241,10 @@ export function SearchHero({
           onChange={(e) => {
             onQueryChange(e.target.value);
             setIsSuggestionsOpen(true);
+            handleMobileSearchActivate();
           }}
           onFocus={() => {
+            handleMobileSearchActivate();
             if (hasQuery) {
               setIsSuggestionsOpen(true);
             }

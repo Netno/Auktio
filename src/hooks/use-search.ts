@@ -19,6 +19,7 @@ interface UseSearchReturn {
   // State
   lots: Lot[];
   total: number;
+  didYouMean: string | null;
   loading: boolean;
   error: string | null;
   facets: {
@@ -166,6 +167,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   // Results
   const [lots, setLots] = useState<Lot[]>([]);
   const [total, setTotal] = useState(0);
+  const [didYouMean, setDidYouMean] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [facets, setFacets] = useState<{
@@ -271,11 +273,13 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         const data: SearchResponse = await res.json();
         setLots(data.lots);
         setTotal(data.total);
+        setDidYouMean(data.didYouMean ?? null);
         setFacets(data.facets);
         setStats(data.stats);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Search failed");
         setLots([]);
+        setDidYouMean(null);
         setStats({ windowCount: 0 });
       } finally {
         setLoading(false);
@@ -434,6 +438,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   return {
     lots,
     total,
+    didYouMean,
     loading,
     error,
     facets,

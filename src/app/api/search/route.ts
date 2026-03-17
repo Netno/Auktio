@@ -22,6 +22,7 @@ import {
   shouldRequireModifierMatch,
   type DetectedObjectIntent,
 } from "@/lib/search-object-intent";
+import { getDidYouMeanQuery } from "@/lib/search-spelling";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
   SearchParams,
@@ -35,6 +36,7 @@ const PAGE_SIZE_MAX = 100;
 const FACET_BATCH_SIZE = 1000;
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 const FACET_CACHE_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_LANDING_SEARCH_CACHE_TTL_MS = 3 * 60 * 1000;
 
 /** 60 requests per minute per IP */
 const RATE_LIMIT_CONFIG = { maxRequests: 60, windowMs: 60_000 };
@@ -45,10 +47,89 @@ type FacetBundle = {
   houses: Array<{ value: string; label: string; count: number }>;
 };
 
+type SearchResponsePayload = {
+  lots: NormalizedLot[];
+  total: number;
+  page: number | undefined;
+  pageSize: number | undefined;
+  didYouMean?: string;
+  stats: {
+    windowCount: number;
+  };
+  facets: FacetBundle;
+};
+
+async function getVerifiedDidYouMean(
+  supabase: any,
+  params: SearchParams,
+  nowIso: string,
+) {
+  if (!params.query?.trim()) {
+    return undefined;
+  }
+
+  const correctedQuery = getDidYouMeanQuery(params.query);
+  if (!correctedQuery) {
+    return undefined;
+  }
+
+  const correctedParams: SearchParams = {
+    ...params,
+    query: correctedQuery,
+    searchMode: "keyword",
+    sortBy: getDefaultSort(params.status ?? "active", correctedQuery),
+    page: 1,
+    pageSize: 1,
+  };
+
+  let query = supabase.from("auc_lots").select("id", {
+    count: "exact",
+    head: true,
+  });
+  query = applySearchCriteria(query, correctedParams, null, nowIso);
+
+  const { count, error } = await query;
+
+  if (error) {
+    console.error("[api/search] Did-you-mean verification error:", error);
+    return undefined;
+  }
+
+  return (count ?? 0) > 0 ? correctedQuery : undefined;
+}
+
 const facetCache = new Map<
   SearchStatus,
   { expiresAt: number; value: FacetBundle }
 >();
+const defaultLandingSearchCache = new Map<
+  string,
+  {
+    expiresAt: number;
+    value: SearchResponsePayload;
+  }
+>();
+
+function getSearchResponseCacheKey(params: SearchParams) {
+  return JSON.stringify({
+    query: params.query ?? null,
+    searchMode: params.searchMode ?? DEFAULT_SEARCH_MODE,
+    status: params.status ?? "active",
+    auctionIds: params.auctionIds ?? [],
+    lotIds: params.lotIds ?? [],
+    categories: params.categories ?? [],
+    city: params.city ?? null,
+    houseId: params.houseId ?? null,
+    hasBids: Boolean(params.hasBids),
+    soldOnly: Boolean(params.soldOnly),
+    minPrice: params.minPrice ?? null,
+    maxPrice: params.maxPrice ?? null,
+    sortBy: params.sortBy ?? null,
+    activeOnly: Boolean(params.activeOnly),
+    page: params.page ?? 1,
+    pageSize: params.pageSize ?? PAGE_SIZE_DEFAULT,
+  });
+}
 
 type SearchRow = {
   id: number;
@@ -1000,6 +1081,24 @@ export async function GET(request: NextRequest) {
     houseId: params.houseId ?? detectedHouseMatch?.house.id,
   };
 
+  const defaultLandingSearch = isDefaultLandingSearch(effectiveParams);
+  const searchResponseCacheKey = defaultLandingSearch
+    ? getSearchResponseCacheKey(effectiveParams)
+    : null;
+  const nowMs = Date.now();
+
+  if (defaultLandingSearch && searchResponseCacheKey) {
+    const cached = defaultLandingSearchCache.get(searchResponseCacheKey);
+    if (cached && cached.expiresAt > nowMs) {
+      const response = NextResponse.json(cached.value);
+      response.headers.set(
+        "Cache-Control",
+        "public, s-maxage=180, stale-while-revalidate=600",
+      );
+      return response;
+    }
+  }
+
   const offset = (effectiveParams.page! - 1) * effectiveParams.pageSize!;
   const nowIso = new Date().toISOString();
   const needsVector =
@@ -1255,11 +1354,17 @@ export async function GET(request: NextRequest) {
       resultTotal = count ?? 0;
     }
 
-    const response = NextResponse.json({
+    const didYouMean =
+      resultTotal === 0
+        ? await getVerifiedDidYouMean(supabase, effectiveParams, nowIso)
+        : undefined;
+
+    const payload: SearchResponsePayload = {
       lots,
       total: resultTotal,
       page: effectiveParams.page,
       pageSize: effectiveParams.pageSize,
+      didYouMean,
       stats: {
         windowCount,
       },
@@ -1268,12 +1373,21 @@ export async function GET(request: NextRequest) {
         cities: facetBundle.cities,
         houses: facetBundle.houses,
       },
-    });
+    };
 
-    if (isDefaultLandingSearch(effectiveParams)) {
+    if (defaultLandingSearch && searchResponseCacheKey) {
+      defaultLandingSearchCache.set(searchResponseCacheKey, {
+        expiresAt: nowMs + DEFAULT_LANDING_SEARCH_CACHE_TTL_MS,
+        value: payload,
+      });
+    }
+
+    const response = NextResponse.json(payload);
+
+    if (defaultLandingSearch) {
       response.headers.set(
         "Cache-Control",
-        "public, s-maxage=60, stale-while-revalidate=300",
+        "public, s-maxage=180, stale-while-revalidate=600",
       );
     }
 

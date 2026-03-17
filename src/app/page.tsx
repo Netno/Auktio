@@ -190,6 +190,7 @@ function HomePage() {
   const {
     lots,
     total,
+    didYouMean,
     loading,
     facets,
     stats,
@@ -341,6 +342,15 @@ function HomePage() {
     [scrollToResults, setQuery],
   );
 
+  const applyDidYouMean = useCallback(() => {
+    if (!didYouMean) {
+      return;
+    }
+
+    setQuery(didYouMean);
+    scrollToSearchTop();
+  }, [didYouMean, scrollToSearchTop, setQuery]);
+
   useEffect(() => {
     if (!pendingMobileResultsJump || loading) {
       return;
@@ -405,6 +415,7 @@ function HomePage() {
         suggestionsLoading={suggestionsLoading}
         onSuggestionSelect={handleSuggestionSelect}
         onSuggestionsOpenChange={setMobileSuggestionsOpen}
+        onMobileSearchActivate={scrollToSearchTop}
       />
 
       <main
@@ -518,6 +529,26 @@ function HomePage() {
             />
           }
         />
+
+        {!loading && displayLots.length === 0 && didYouMean && (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-4 text-sm text-amber-900 shadow-card sm:px-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-600">
+              Menade du
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={applyDidYouMean}
+                className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-amber-950 shadow-sm transition-colors hover:bg-amber-100"
+              >
+                {didYouMean}
+              </button>
+              <p className="text-sm text-amber-800/80">
+                Tryck för att ersätta sökningen och prova igen.
+              </p>
+            </div>
+          </div>
+        )}
 
         <LotGrid
           lots={displayLots}

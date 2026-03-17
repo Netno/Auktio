@@ -177,6 +177,7 @@ export interface SearchResponse {
   total: number;
   page: number;
   pageSize: number;
+  didYouMean?: string;
   stats: {
     windowCount: number;
   };
