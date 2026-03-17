@@ -264,10 +264,6 @@ export function SearchHero({
         </div>
 
         {hasQuery && isSuggestionsOpen && (
-          <div className="fixed inset-0 z-20 bg-brand-950/8 backdrop-blur-[1px] sm:hidden" />
-        )}
-
-        {hasQuery && isSuggestionsOpen && (
           <div
             id="search-suggestions"
             className="absolute inset-x-0 top-[calc(100%+0.45rem)] z-30 overflow-hidden rounded-[1.15rem] border border-brand-200/90 bg-white text-left shadow-[0_18px_44px_rgba(26,26,24,0.16)] sm:top-[calc(100%+0.5rem)] sm:rounded-[1.4rem] sm:bg-white/95 sm:shadow-[0_24px_60px_rgba(26,26,24,0.18)] sm:backdrop-blur"
