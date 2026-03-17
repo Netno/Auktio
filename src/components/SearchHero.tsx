@@ -1,14 +1,57 @@
 "use client";
 
-import { Search, Sparkles, Layers, Brain, X } from "lucide-react";
-import { useRef, useEffect } from "react";
-import type { SearchMode } from "@/lib/types";
+import {
+  Brain,
+  Building2,
+  ChevronRight,
+  Layers,
+  Search,
+  Sparkles,
+  Tag,
+  X,
+} from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ElementType,
+  type KeyboardEvent,
+} from "react";
+import type { SearchMode, SearchSuggestion } from "@/lib/types";
 
-const MODES: { value: SearchMode; label: string; icon: React.ElementType }[] = [
+const MODES: { value: SearchMode; label: string; icon: ElementType }[] = [
   { value: "keyword", label: "Nyckelord", icon: Search },
   { value: "vector", label: "Semantisk", icon: Brain },
   { value: "hybrid", label: "Hybrid", icon: Layers },
 ];
+
+function getSuggestionIcon(type: SearchSuggestion["type"]) {
+  switch (type) {
+    case "house":
+      return Building2;
+    case "category":
+      return Tag;
+    case "lot":
+    case "query":
+    default:
+      return Search;
+  }
+}
+
+function getSuggestionTypeLabel(type: SearchSuggestion["type"]) {
+  switch (type) {
+    case "house":
+      return "Hus";
+    case "category":
+      return "Kategori";
+    case "lot":
+      return "Föremål";
+    case "query":
+    default:
+      return "Sök";
+  }
+}
 
 interface SearchHeroProps {
   query: string;
@@ -19,6 +62,9 @@ interface SearchHeroProps {
   loading: boolean;
   onViewResults: () => void;
   onSubmitSearch: () => void;
+  suggestions: SearchSuggestion[];
+  suggestionsLoading: boolean;
+  onSuggestionSelect: (suggestion: SearchSuggestion) => void;
 }
 
 export function SearchHero({
@@ -30,17 +76,71 @@ export function SearchHero({
   loading,
   onViewResults,
   onSubmitSearch,
+  suggestions,
+  suggestionsLoading,
+  onSuggestionSelect,
 }: SearchHeroProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const hasQuery = query.trim().length > 0;
+  const visibleSuggestions = useMemo(
+    () => (hasQuery ? suggestions : []),
+    [hasQuery, suggestions],
+  );
 
   const clearQuery = () => {
     onQueryChange("");
+    setIsSuggestionsOpen(false);
+    setActiveSuggestionIndex(-1);
     inputRef.current?.focus();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSuggestionSelect = (suggestion: SearchSuggestion) => {
+    onSuggestionSelect(suggestion);
+    setIsSuggestionsOpen(false);
+    setActiveSuggestionIndex(-1);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown" && visibleSuggestions.length > 0) {
+      e.preventDefault();
+      setIsSuggestionsOpen(true);
+      setActiveSuggestionIndex((current) =>
+        current >= visibleSuggestions.length - 1 ? 0 : current + 1,
+      );
+      return;
+    }
+
+    if (e.key === "ArrowUp" && visibleSuggestions.length > 0) {
+      e.preventDefault();
+      setIsSuggestionsOpen(true);
+      setActiveSuggestionIndex((current) =>
+        current <= 0 ? visibleSuggestions.length - 1 : current - 1,
+      );
+      return;
+    }
+
+    if (
+      e.key === "Enter" &&
+      isSuggestionsOpen &&
+      activeSuggestionIndex >= 0 &&
+      activeSuggestionIndex < visibleSuggestions.length
+    ) {
+      e.preventDefault();
+      handleSuggestionSelect(visibleSuggestions[activeSuggestionIndex]);
+      return;
+    }
+
+    if (e.key === "Escape") {
+      setIsSuggestionsOpen(false);
+      setActiveSuggestionIndex(-1);
+      return;
+    }
+
     if (e.key === "Enter" && hasQuery) {
+      setIsSuggestionsOpen(false);
       onSubmitSearch();
     }
   };
@@ -55,6 +155,28 @@ export function SearchHero({
 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!hasQuery) {
+      setIsSuggestionsOpen(false);
+      setActiveSuggestionIndex(-1);
+    }
+  }, [hasQuery]);
+
+  useEffect(() => {
+    setActiveSuggestionIndex(-1);
+  }, [query, visibleSuggestions.length]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) {
+        setIsSuggestionsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
   }, []);
 
   return (
@@ -87,7 +209,7 @@ export function SearchHero({
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-[680px]">
+      <div ref={wrapperRef} className="relative mx-auto max-w-[680px]">
         <Search
           size={17}
           className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-brand-400 sm:left-[18px] sm:size-5"
@@ -102,8 +224,19 @@ export function SearchHero({
               : "Beskriv vad du letar efter..."
           }
           value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
+          onChange={(e) => {
+            onQueryChange(e.target.value);
+            setIsSuggestionsOpen(true);
+          }}
+          onFocus={() => {
+            if (hasQuery) {
+              setIsSuggestionsOpen(true);
+            }
+          }}
           onKeyDown={handleKeyDown}
+          aria-expanded={isSuggestionsOpen}
+          aria-controls="search-suggestions"
+          aria-autocomplete="list"
         />
         <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
           {searchMode !== "keyword" && (
@@ -123,6 +256,85 @@ export function SearchHero({
             </button>
           )}
         </div>
+
+        {hasQuery && isSuggestionsOpen && (
+          <div
+            id="search-suggestions"
+            className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-30 overflow-hidden rounded-[1.4rem] border border-brand-200/80 bg-white/95 text-left shadow-[0_24px_60px_rgba(26,26,24,0.18)] backdrop-blur"
+          >
+            <div className="flex items-center justify-between border-b border-brand-100 px-4 py-2.5">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400">
+                Sökförslag
+              </p>
+              <p className="text-[11px] text-brand-400">
+                {suggestionsLoading ? "Uppdaterar..." : "Pil upp/ner • Enter"}
+              </p>
+            </div>
+
+            <div className="max-h-[356px] overflow-y-auto py-1.5">
+              {visibleSuggestions.map((suggestion, index) => {
+                const Icon = getSuggestionIcon(suggestion.type);
+                const isActive = index === activeSuggestionIndex;
+
+                return (
+                  <button
+                    key={suggestion.id}
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                    onMouseEnter={() => setActiveSuggestionIndex(index)}
+                    className={`grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      isActive
+                        ? "bg-brand-900 text-white"
+                        : "text-brand-900 hover:bg-brand-50"
+                    }`}
+                  >
+                    <span
+                      className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${
+                        isActive
+                          ? "bg-white/14 text-white"
+                          : "bg-brand-50 text-brand-500"
+                      }`}
+                    >
+                      <Icon size={16} />
+                    </span>
+
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-[14px] font-medium">
+                          {suggestion.label}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                            isActive
+                              ? "bg-white/12 text-white/82"
+                              : "bg-brand-100 text-brand-500"
+                          }`}
+                        >
+                          {getSuggestionTypeLabel(suggestion.type)}
+                        </span>
+                      </span>
+                      {suggestion.subtitle && (
+                        <span
+                          className={`mt-0.5 block truncate text-[12px] ${
+                            isActive ? "text-white/72" : "text-brand-500"
+                          }`}
+                        >
+                          {suggestion.subtitle}
+                        </span>
+                      )}
+                    </span>
+
+                    <ChevronRight
+                      size={16}
+                      className={isActive ? "text-white/72" : "text-brand-300"}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {hasQuery && (

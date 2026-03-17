@@ -67,6 +67,28 @@ const QUERY_DEBOUNCE_MS = 500;
 const DEFAULT_STATUS: SearchStatus = "active";
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 
+function getInitialStatus(searchParams: ReturnType<typeof useSearchParams>) {
+  const statusParam = searchParams.get("status") as SearchStatus | null;
+
+  if (
+    statusParam === "active" ||
+    statusParam === "ended" ||
+    statusParam === "all"
+  ) {
+    return statusParam;
+  }
+
+  if (searchParams.get("activeOnly") === "false") {
+    return "all";
+  }
+
+  if (searchParams.get("auctionId")) {
+    return "all";
+  }
+
+  return DEFAULT_STATUS;
+}
+
 function getDefaultSortForStatus(status: SearchStatus): SortOption {
   return status === "ended" ? "recently-ended" : "ending-soon";
 }
@@ -125,24 +147,13 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   const [searchMode, setSearchModeState] = useState<SearchMode>(
     (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
   );
-  const [status, setStatusState] = useState<SearchStatus>(() => {
-    const statusParam = searchParams.get("status") as SearchStatus | null;
-    if (
-      statusParam === "active" ||
-      statusParam === "ended" ||
-      statusParam === "all"
-    ) {
-      return statusParam;
-    }
-    return searchParams.get("activeOnly") === "false" ? "all" : DEFAULT_STATUS;
-  });
+  const [status, setStatusState] = useState<SearchStatus>(() =>
+    getInitialStatus(searchParams),
+  );
   const [sortBy, setSortByState] = useState<SortOption>(
     (searchParams.get("sort") as SortOption) ??
       getDefaultSort(
-        ((searchParams.get("status") as SearchStatus | null) ??
-          (searchParams.get("activeOnly") === "false"
-            ? "all"
-            : DEFAULT_STATUS)) as SearchStatus,
+        getInitialStatus(searchParams),
         searchParams.get("q") ?? "",
       ),
   );

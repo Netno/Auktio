@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { Header } from "@/components/Header";
 import { SearchHero } from "@/components/SearchHero";
@@ -10,8 +10,10 @@ import { LotGrid } from "@/components/LotGrid";
 import { Pagination } from "@/components/Pagination";
 import { AISearch } from "@/components/AISearch";
 import { useSearch } from "@/hooks/use-search";
+import { useSearchSuggestions } from "@/hooks/use-search-suggestions";
 import { useFavorites } from "@/hooks/use-favorites";
-import type { Lot, SearchStatus } from "@/lib/types";
+import { normalizeSearchText } from "@/lib/search-language";
+import type { Lot, SearchStatus, SearchSuggestion } from "@/lib/types";
 
 const DEFAULT_AI_QUERIES = [
   "Finns det några skandinaviska designmöbler från 50-talet?",
@@ -136,6 +138,43 @@ function buildAiSuggestedQueries(params: {
   return mergedSuggestions.slice(0, 4);
 }
 
+function getSuggestionStatusSubtitle(status: SearchStatus) {
+  switch (status) {
+    case "ended":
+      return "Sök bland avslutade objekt";
+    case "all":
+      return "Sök bland alla objekt";
+    case "active":
+    default:
+      return "Sök bland aktiva objekt";
+  }
+}
+
+function buildResultDrivenSuggestions(lots: Lot[]): SearchSuggestion[] {
+  const seen = new Set<string>();
+
+  return lots
+    .filter((lot) => Boolean(lot.title?.trim()))
+    .filter((lot) => {
+      const key = normalizeSearchText(lot.title ?? "");
+
+      if (!key || seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 4)
+    .map((lot) => ({
+      id: `result-lot:${lot.id}`,
+      type: "lot" as const,
+      label: lot.title,
+      query: lot.title,
+      subtitle: lot.houseName ? `Föremål hos ${lot.houseName}` : "Föremål",
+    }));
+}
+
 function HomePage() {
   const [showFavsOnly, setShowFavsOnly] = useState(false);
   const [pendingMobileResultsJump, setPendingMobileResultsJump] =
@@ -184,6 +223,14 @@ function HomePage() {
   } = useSearch({
     lotIds: showFavsOnly ? Array.from(favorites) : undefined,
   });
+  const { suggestions: remoteSuggestions, loading: suggestionsLoading } =
+    useSearchSuggestions({
+      query,
+      status,
+      selectedCategories,
+      selectedCity,
+      selectedHouseId,
+    });
 
   const activeFilterCount =
     selectedCategories.length +
@@ -214,6 +261,39 @@ function HomePage() {
     maxPrice,
     visibleLots: displayLots,
   });
+  const resultDrivenSuggestions = useMemo(
+    () => buildResultDrivenSuggestions(displayLots),
+    [displayLots],
+  );
+  const searchSuggestions = useMemo<SearchSuggestion[]>(() => {
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      return [];
+    }
+
+    const directSuggestion: SearchSuggestion = {
+      id: `query:${trimmedQuery.toLowerCase()}`,
+      type: "query",
+      label: `Sök efter \"${trimmedQuery}\"`,
+      query: trimmedQuery,
+      subtitle: getSuggestionStatusSubtitle(status),
+    };
+
+    const preferredSuggestions =
+      resultDrivenSuggestions.length > 0
+        ? resultDrivenSuggestions
+        : remoteSuggestions;
+
+    return Array.from(
+      new Map(
+        [directSuggestion, ...preferredSuggestions].map((suggestion) => [
+          suggestion.id,
+          suggestion,
+        ]),
+      ).values(),
+    ).slice(0, 8);
+  }, [query, remoteSuggestions, resultDrivenSuggestions, status]);
 
   const scrollToResults = useCallback(() => {
     const resultsTop = document.getElementById("search-results-top");
@@ -245,6 +325,13 @@ function HomePage() {
 
     scrollToResults();
   }, [scrollToResults]);
+
+  const handleSuggestionSelect = useCallback(
+    (suggestion: SearchSuggestion) => {
+      setQuery(suggestion.query);
+    },
+    [setQuery],
+  );
 
   useEffect(() => {
     if (!pendingMobileResultsJump || loading) {
@@ -306,6 +393,9 @@ function HomePage() {
         loading={loading}
         onViewResults={scrollToResults}
         onSubmitSearch={submitSearchFromHero}
+        suggestions={searchSuggestions}
+        suggestionsLoading={suggestionsLoading}
+        onSuggestionSelect={handleSuggestionSelect}
       />
 
       <main

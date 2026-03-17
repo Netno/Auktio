@@ -187,6 +187,20 @@ export interface SearchResponse {
   };
 }
 
+export type SearchSuggestionType = "query" | "lot" | "category" | "house";
+
+export interface SearchSuggestion {
+  id: string;
+  type: SearchSuggestionType;
+  label: string;
+  query: string;
+  subtitle?: string;
+}
+
+export interface SearchSuggestionsResponse {
+  suggestions: SearchSuggestion[];
+}
+
 export interface FacetCount {
   value: string;
   count: number;
