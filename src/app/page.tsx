@@ -180,6 +180,7 @@ function HomePage() {
   const [pendingMobileResultsJump, setPendingMobileResultsJump] =
     useState(false);
   const [showMobileTopShortcut, setShowMobileTopShortcut] = useState(false);
+  const [mobileSuggestionsOpen, setMobileSuggestionsOpen] = useState(false);
   const {
     favorites,
     toggleFavorite,
@@ -329,8 +330,15 @@ function HomePage() {
   const handleSuggestionSelect = useCallback(
     (suggestion: SearchSuggestion) => {
       setQuery(suggestion.query);
+
+      if (typeof window !== "undefined" && window.innerWidth < 640) {
+        setPendingMobileResultsJump(true);
+        return;
+      }
+
+      scrollToResults();
     },
-    [setQuery],
+    [scrollToResults, setQuery],
   );
 
   useEffect(() => {
@@ -396,13 +404,14 @@ function HomePage() {
         suggestions={searchSuggestions}
         suggestionsLoading={suggestionsLoading}
         onSuggestionSelect={handleSuggestionSelect}
+        onSuggestionsOpenChange={setMobileSuggestionsOpen}
       />
 
       <main
         id="search-results-top"
         className="mx-auto max-w-[1360px] px-4 pb-20 sm:px-6"
       >
-        {query.trim() && (
+        {query.trim() && !mobileSuggestionsOpen && (
           <div className="sticky top-12 z-30 -mx-4 mb-3 border-b border-brand-200/70 bg-brand-50/95 px-4 py-2 backdrop-blur sm:static sm:mx-0 sm:mb-0 sm:hidden sm:border-b-0 sm:bg-transparent sm:px-0 sm:py-0">
             <div className="flex items-center justify-between gap-3 rounded-full border border-brand-200 bg-white px-3 py-2 shadow-card">
               <div className="min-w-0">

@@ -65,6 +65,7 @@ interface SearchHeroProps {
   suggestions: SearchSuggestion[];
   suggestionsLoading: boolean;
   onSuggestionSelect: (suggestion: SearchSuggestion) => void;
+  onSuggestionsOpenChange?: (isOpen: boolean) => void;
 }
 
 export function SearchHero({
@@ -79,6 +80,7 @@ export function SearchHero({
   suggestions,
   suggestionsLoading,
   onSuggestionSelect,
+  onSuggestionsOpenChange,
 }: SearchHeroProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -165,18 +167,22 @@ export function SearchHero({
   }, [hasQuery]);
 
   useEffect(() => {
+    onSuggestionsOpenChange?.(hasQuery && isSuggestionsOpen);
+  }, [hasQuery, isSuggestionsOpen, onSuggestionsOpenChange]);
+
+  useEffect(() => {
     setActiveSuggestionIndex(-1);
   }, [query, visibleSuggestions.length]);
 
   useEffect(() => {
-    const handlePointerDown = (event: MouseEvent) => {
+    const handlePointerDown = (event: globalThis.PointerEvent) => {
       if (!wrapperRef.current?.contains(event.target as Node)) {
         setIsSuggestionsOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, []);
 
   return (
@@ -258,20 +264,24 @@ export function SearchHero({
         </div>
 
         {hasQuery && isSuggestionsOpen && (
+          <div className="fixed inset-0 z-20 bg-brand-950/8 backdrop-blur-[1px] sm:hidden" />
+        )}
+
+        {hasQuery && isSuggestionsOpen && (
           <div
             id="search-suggestions"
-            className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-30 overflow-hidden rounded-[1.4rem] border border-brand-200/80 bg-white/95 text-left shadow-[0_24px_60px_rgba(26,26,24,0.18)] backdrop-blur"
+            className="absolute inset-x-0 top-[calc(100%+0.45rem)] z-30 overflow-hidden rounded-[1.15rem] border border-brand-200/90 bg-white text-left shadow-[0_18px_44px_rgba(26,26,24,0.16)] sm:top-[calc(100%+0.5rem)] sm:rounded-[1.4rem] sm:bg-white/95 sm:shadow-[0_24px_60px_rgba(26,26,24,0.18)] sm:backdrop-blur"
           >
-            <div className="flex items-center justify-between border-b border-brand-100 px-4 py-2.5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400">
+            <div className="flex items-center justify-between border-b border-brand-100 px-3.5 py-2.5 sm:px-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-400 sm:text-[11px]">
                 Sökförslag
               </p>
-              <p className="text-[11px] text-brand-400">
-                {suggestionsLoading ? "Uppdaterar..." : "Pil upp/ner • Enter"}
+              <p className="text-[10px] text-brand-400 sm:text-[11px]">
+                {suggestionsLoading ? "Uppdaterar..." : "Tryck för att välja"}
               </p>
             </div>
 
-            <div className="max-h-[356px] overflow-y-auto py-1.5">
+            <div className="max-h-[min(52vh,24rem)] overflow-y-auto py-1.5 sm:max-h-[356px]">
               {visibleSuggestions.map((suggestion, index) => {
                 const Icon = getSuggestionIcon(suggestion.type);
                 const isActive = index === activeSuggestionIndex;
@@ -283,14 +293,14 @@ export function SearchHero({
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => handleSuggestionSelect(suggestion)}
                     onMouseEnter={() => setActiveSuggestionIndex(index)}
-                    className={`grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 text-left transition-colors ${
+                    className={`grid min-h-[62px] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3.5 py-3 text-left transition-colors sm:min-h-0 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-4 ${
                       isActive
                         ? "bg-brand-900 text-white"
                         : "text-brand-900 hover:bg-brand-50"
                     }`}
                   >
                     <span
-                      className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${
+                      className={`inline-flex h-10 w-10 items-center justify-center rounded-full sm:h-9 sm:w-9 ${
                         isActive
                           ? "bg-white/14 text-white"
                           : "bg-brand-50 text-brand-500"
@@ -300,12 +310,12 @@ export function SearchHero({
                     </span>
 
                     <span className="min-w-0">
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-[14px] font-medium">
+                      <span className="flex items-start gap-2 sm:items-center">
+                        <span className="line-clamp-2 text-[14px] font-medium leading-[1.25] sm:truncate">
                           {suggestion.label}
                         </span>
                         <span
-                          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                          className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] sm:inline-flex ${
                             isActive
                               ? "bg-white/12 text-white/82"
                               : "bg-brand-100 text-brand-500"
@@ -316,7 +326,7 @@ export function SearchHero({
                       </span>
                       {suggestion.subtitle && (
                         <span
-                          className={`mt-0.5 block truncate text-[12px] ${
+                          className={`mt-0.5 block truncate pr-1 text-[12px] ${
                             isActive ? "text-white/72" : "text-brand-500"
                           }`}
                         >
@@ -327,7 +337,9 @@ export function SearchHero({
 
                     <ChevronRight
                       size={16}
-                      className={isActive ? "text-white/72" : "text-brand-300"}
+                      className={`hidden sm:block ${
+                        isActive ? "text-white/72" : "text-brand-300"
+                      }`}
                     />
                   </button>
                 );
