@@ -161,6 +161,7 @@ export type SearchStatus = "active" | "ended" | "all";
 export type SortOption =
   | "ending-soon"
   | "recently-ended"
+  | "recently-sold"
   | "newly-listed"
   | "price-asc"
   | "price-desc"

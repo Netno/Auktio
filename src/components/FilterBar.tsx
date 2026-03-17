@@ -22,6 +22,7 @@ interface FilterBarProps {
   minPrice: number | undefined;
   maxPrice: number | undefined;
   sortBy: SortOption;
+  pageSize: number;
   categoryFacets: FacetCount[];
   cityFacets: FacetCount[];
   houseFacets: HouseFacet[];
@@ -34,6 +35,7 @@ interface FilterBarProps {
   onSetMinPrice: (v: number | undefined) => void;
   onSetMaxPrice: (v: number | undefined) => void;
   onSetSort: (sort: SortOption) => void;
+  onSetPageSize: (pageSize: number) => void;
   onClearFilters: () => void;
   activeFilterCount: number;
   topPagination?: ReactNode;
@@ -42,6 +44,7 @@ interface FilterBarProps {
 const PRICE_MIN = 0;
 const PRICE_MAX = 100_000;
 const PRICE_STEP = 500;
+const PAGE_SIZE_OPTIONS = [48, 72, 96] as const;
 
 export function FilterBar({
   selectedCategories,
@@ -54,6 +57,7 @@ export function FilterBar({
   minPrice,
   maxPrice,
   sortBy,
+  pageSize,
   categoryFacets,
   cityFacets,
   houseFacets,
@@ -66,6 +70,7 @@ export function FilterBar({
   onSetMinPrice,
   onSetMaxPrice,
   onSetSort,
+  onSetPageSize,
   onClearFilters,
   activeFilterCount,
   topPagination,
@@ -132,7 +137,10 @@ export function FilterBar({
       ? [{ value: "ending-soon", label: "Kortast tid kvar" }]
       : []),
     ...(status !== "active"
-      ? [{ value: "recently-ended", label: "Senast avslutade" }]
+      ? [{ value: "recently-ended", label: "Senast klubbat" }]
+      : []),
+    ...(status === "ended"
+      ? [{ value: "recently-sold", label: "Senast sålt" }]
       : []),
     ...(status !== "active"
       ? [{ value: "sold-price-desc", label: "Högsta slutpris" }]
@@ -147,31 +155,35 @@ export function FilterBar({
 
   return (
     <div className="space-y-3 mb-4">
-      <div className="md:hidden space-y-3">
-        <button
-          type="button"
-          onClick={() => setMobileFiltersOpen((open) => !open)}
-          className="flex w-full items-center justify-between rounded-2xl border border-brand-200 bg-white px-4 py-3 text-left shadow-card"
-        >
-          <span className="flex items-center gap-2 text-sm font-medium text-brand-700">
-            <Filter size={16} />
-            Filter och sortering
-            {activeFilterCount > 0 && (
-              <span className="rounded-full bg-accent-500 px-2 py-px text-[11px] font-semibold text-white">
-                {activeFilterCount}
-              </span>
-            )}
-          </span>
-          {mobileFiltersOpen ? (
-            <ChevronUp size={18} className="text-brand-500" />
-          ) : (
-            <ChevronDown size={18} className="text-brand-500" />
+      <div className="space-y-3 md:hidden">
+        <div className="flex items-center gap-2">
+          {topPagination && (
+            <div id="search-results-top-pagination" className="min-w-0 flex-1">
+              {topPagination}
+            </div>
           )}
-        </button>
 
-        {topPagination && (
-          <div className="flex justify-center">{topPagination}</div>
-        )}
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen((open) => !open)}
+            className="flex shrink-0 items-center gap-1.5 rounded-2xl border border-brand-200 bg-white px-3 py-2.5 text-left shadow-card"
+          >
+            <span className="flex items-center gap-1.5 text-[12px] font-medium text-brand-700">
+              <Filter size={14} />
+              Filter
+              {activeFilterCount > 0 && (
+                <span className="rounded-full bg-accent-500 px-2 py-px text-[11px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </span>
+            {mobileFiltersOpen ? (
+              <ChevronUp size={16} className="text-brand-500" />
+            ) : (
+              <ChevronDown size={16} className="text-brand-500" />
+            )}
+          </button>
+        </div>
 
         {mobileFiltersOpen && (
           <div className="space-y-3 rounded-2xl border border-brand-200/70 bg-white p-4 shadow-card animate-fade-in">
@@ -197,7 +209,7 @@ export function FilterBar({
               ))}
             </div>
 
-            <div className="grid grid-cols-[1fr_auto] gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <select
                 value={sortBy}
                 onChange={(e) => onSetSort(e.target.value as SortOption)}
@@ -206,6 +218,19 @@ export function FilterBar({
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={pageSize}
+                onChange={(e) => onSetPageSize(Number(e.target.value))}
+                className="min-w-0 rounded-xl border border-brand-200 bg-white px-3 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
+                aria-label="Antal föremål per sida"
+              >
+                {PAGE_SIZE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option} föremål per sida
                   </option>
                 ))}
               </select>
@@ -256,11 +281,11 @@ export function FilterBar({
           <div className="hidden md:block" />
         )}
 
-        <div className="grid grid-cols-[1fr_auto] gap-2 md:flex md:flex-wrap md:items-center md:justify-self-end md:justify-end">
+        <div className="grid grid-cols-[1fr_auto] gap-2 md:flex md:flex-nowrap md:items-center md:justify-self-end md:justify-end">
           <button
             onClick={() => setExpandedFilters(!expandedFilters)}
             className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-brand-200 bg-white px-3 py-2
-              text-[12px] font-medium text-brand-600
+              whitespace-nowrap text-[12px] font-medium text-brand-600
               hover:border-brand-400 transition-all"
           >
             <Filter size={14} />
@@ -276,7 +301,7 @@ export function FilterBar({
             value={sortBy}
             onChange={(e) => onSetSort(e.target.value as SortOption)}
             className="min-w-0 max-w-full rounded-xl border border-brand-200 bg-white px-3 py-2
-              text-[12px] text-brand-600 outline-none cursor-pointer md:min-w-[9rem] md:rounded-lg md:py-1.5"
+              text-[12px] text-brand-600 outline-none cursor-pointer md:min-w-[9rem] md:shrink-0 md:rounded-lg md:py-1.5"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -288,7 +313,7 @@ export function FilterBar({
           <button
             onClick={onClearFilters}
             disabled={!hasClearableFilters}
-            className="col-span-2 px-2 py-1 text-center text-xs text-brand-400 transition-colors hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-40 md:col-auto"
+            className="col-span-2 px-2 py-1 text-center text-xs text-brand-400 transition-colors hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-40 md:col-auto md:shrink-0 md:whitespace-nowrap"
           >
             Rensa alla
           </button>

@@ -31,7 +31,7 @@ import type {
   SearchStatus,
 } from "@/lib/types";
 
-const PAGE_SIZE_DEFAULT = 40;
+const PAGE_SIZE_DEFAULT = 48;
 const PAGE_SIZE_MAX = 100;
 const FACET_BATCH_SIZE = 1000;
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
@@ -563,6 +563,16 @@ function sortLots(
     switch (sortBy) {
       case "recently-ended":
         return compareDates(a.endTime, b.endTime, "desc");
+      case "recently-sold": {
+        const aIsSold = a.availability === "sold";
+        const bIsSold = b.availability === "sold";
+
+        if (aIsSold !== bIsSold) {
+          return aIsSold ? -1 : 1;
+        }
+
+        return compareDates(a.endTime, b.endTime, "desc");
+      }
       case "newly-listed":
         return compareDates(a.createdAt, b.createdAt, "desc");
       case "price-asc":
@@ -1165,6 +1175,11 @@ export async function GET(request: NextRequest) {
           break;
         case "recently-ended":
           query = query.order("end_time", { ascending: false });
+          break;
+        case "recently-sold":
+          query = query
+            .order("availability", { ascending: true, nullsFirst: false })
+            .order("end_time", { ascending: false });
           break;
         case "newly-listed":
           query = query.order("created_at", { ascending: false });

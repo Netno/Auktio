@@ -181,6 +181,8 @@ function HomePage() {
     useState(false);
   const [showMobileTopShortcut, setShowMobileTopShortcut] = useState(false);
   const [mobileSuggestionsOpen, setMobileSuggestionsOpen] = useState(false);
+  const [pendingResultsControlsScroll, setPendingResultsControlsScroll] =
+    useState(false);
   const {
     favorites,
     toggleFavorite,
@@ -221,6 +223,7 @@ function HomePage() {
     setMaxPrice,
     setSortBy,
     setPage,
+    setPageSize,
     clearFilters,
   } = useSearch({
     lotIds: showFavsOnly ? Array.from(favorites) : undefined,
@@ -302,14 +305,39 @@ function HomePage() {
     resultsTop?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const scrollToResultsControls = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const controlsTop = document.getElementById(
+      "search-results-top-pagination",
+    );
+    if (!controlsTop) {
+      const fallbackControls = document.getElementById(
+        "search-results-controls",
+      );
+      if (!fallbackControls) {
+        scrollToResults();
+        return;
+      }
+
+      const fallbackTop =
+        fallbackControls.getBoundingClientRect().top + window.scrollY - 8;
+      window.scrollTo({ top: fallbackTop, behavior: "smooth" });
+      return;
+    }
+
+    const top = controlsTop.getBoundingClientRect().top + window.scrollY - 8;
+    window.scrollTo({ top, behavior: "smooth" });
+  }, [scrollToResults]);
+
   const handlePageChange = useCallback(
     (nextPage: number) => {
       setPage(nextPage);
-      requestAnimationFrame(() => {
-        scrollToResults();
-      });
+      setPendingResultsControlsScroll(true);
     },
-    [scrollToResults, setPage],
+    [setPage],
   );
 
   const handleTopPageChange = useCallback(
@@ -342,6 +370,14 @@ function HomePage() {
     [scrollToResults, setQuery],
   );
 
+  const scrollToSearchTop = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const applyDidYouMean = useCallback(() => {
     if (!didYouMean) {
       return;
@@ -359,6 +395,17 @@ function HomePage() {
     scrollToResults();
     setPendingMobileResultsJump(false);
   }, [loading, pendingMobileResultsJump, scrollToResults]);
+
+  useEffect(() => {
+    if (!pendingResultsControlsScroll || loading) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      scrollToResultsControls();
+      setPendingResultsControlsScroll(false);
+    });
+  }, [loading, pendingResultsControlsScroll, scrollToResultsControls]);
 
   useEffect(() => {
     const updateMobileTopShortcut = () => {
@@ -384,14 +431,6 @@ function HomePage() {
       window.removeEventListener("scroll", updateMobileTopShortcut);
       window.removeEventListener("resize", updateMobileTopShortcut);
     };
-  }, []);
-
-  const scrollToSearchTop = useCallback(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
@@ -494,41 +533,47 @@ function HomePage() {
             </div>
           )}
 
-        <FilterBar
-          selectedCategories={selectedCategories}
-          selectedCity={selectedCity}
-          selectedHouseId={selectedHouseId}
-          hasQuery={Boolean(query.trim())}
-          hasBids={hasBids}
-          soldOnly={soldOnly}
-          status={status}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          sortBy={sortBy}
-          categoryFacets={facets.categories}
-          cityFacets={facets.cities}
-          houseFacets={facets.houses}
-          onToggleCategory={toggleCategory}
-          onSetStatus={setStatus}
-          onSetCity={setCity}
-          onSetHouseId={setHouseId}
-          onSetHasBids={setHasBids}
-          onSetSoldOnly={setSoldOnly}
-          onSetMinPrice={setMinPrice}
-          onSetMaxPrice={setMaxPrice}
-          onSetSort={setSortBy}
-          onClearFilters={clearFilters}
-          activeFilterCount={activeFilterCount}
-          topPagination={
-            <Pagination
-              page={page}
-              pageSize={pageSize}
-              total={total}
-              onPageChange={handleTopPageChange}
-              className="!mt-0"
-            />
-          }
-        />
+        <div id="search-results-controls">
+          <FilterBar
+            selectedCategories={selectedCategories}
+            selectedCity={selectedCity}
+            selectedHouseId={selectedHouseId}
+            hasQuery={Boolean(query.trim())}
+            hasBids={hasBids}
+            soldOnly={soldOnly}
+            status={status}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            sortBy={sortBy}
+            pageSize={pageSize}
+            categoryFacets={facets.categories}
+            cityFacets={facets.cities}
+            houseFacets={facets.houses}
+            onToggleCategory={toggleCategory}
+            onSetStatus={setStatus}
+            onSetCity={setCity}
+            onSetHouseId={setHouseId}
+            onSetHasBids={setHasBids}
+            onSetSoldOnly={setSoldOnly}
+            onSetMinPrice={setMinPrice}
+            onSetMaxPrice={setMaxPrice}
+            onSetSort={setSortBy}
+            onSetPageSize={setPageSize}
+            onClearFilters={clearFilters}
+            activeFilterCount={activeFilterCount}
+            topPagination={
+              <Pagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                onPageChange={handleTopPageChange}
+                onPageSizeChange={setPageSize}
+                showPageSizeSelector
+                className="!mt-0"
+              />
+            }
+          />
+        </div>
 
         {!loading && displayLots.length === 0 && didYouMean && (
           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-4 text-sm text-amber-900 shadow-card sm:px-5">

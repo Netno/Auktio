@@ -146,23 +146,24 @@ export function LotCard({
   const googleMapsExternalUrl = mapQuery
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : undefined;
+  const hasEndedBids =
+    !lot.isActive && (lot.soldPrice != null || lot.currentBid != null);
+  const shouldShowValuationOnly =
+    !lot.isActive && !hasEndedBids && lot.estimate != null;
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
-    : lot.availability === "sold"
+    : lot.availability === "sold" || lot.soldPrice != null
       ? "Slutpris"
-      : lot.soldPrice != null
-        ? "Slutpris"
-        : lot.currentBid != null
-          ? "Sista bud"
-          : lot.soldPrice != null
-            ? "Slutpris"
-            : "Bud";
+      : lot.currentBid != null
+        ? "Sista bud"
+        : "Värdering";
   const primaryPriceValue = lot.isActive
     ? lot.currentBid
-    : lot.availability === "sold"
-      ? (lot.currentBid ?? lot.soldPrice)
-      : (lot.soldPrice ?? lot.currentBid);
+    : lot.availability === "sold" || lot.soldPrice != null
+      ? (lot.soldPrice ?? lot.currentBid)
+      : (lot.currentBid ?? lot.estimate);
   const showSoldPrice = !lot.isActive && lot.availability === "sold";
+  const shouldShowEstimateColumn = lot.isActive;
 
   useEffect(() => {
     setImgLoaded(false);
@@ -912,14 +913,16 @@ export function LotCard({
                 {formatSEK(primaryPriceValue)}
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-400 mb-0.5">
-                Utrop
+            {shouldShowEstimateColumn && (
+              <div className="text-right">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-400 mb-0.5">
+                  Utrop
+                </div>
+                <div className="text-sm font-medium text-brand-400">
+                  {formatSEK(lot.estimate)}
+                </div>
               </div>
-              <div className="text-sm font-medium text-brand-400">
-                {formatSEK(lot.estimate)}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </a>

@@ -61,12 +61,14 @@ interface UseSearchReturn {
   setMaxPrice: (v: number | undefined) => void;
   setSortBy: (sort: SortOption) => void;
   setPage: (page: number) => void;
+  setPageSize: (pageSize: number) => void;
   clearFilters: () => void;
 }
 
 const QUERY_DEBOUNCE_MS = 500;
 const DEFAULT_STATUS: SearchStatus = "active";
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
+const DEFAULT_PAGE_SIZE = 48;
 
 function getInitialStatus(searchParams: ReturnType<typeof useSearchParams>) {
   const statusParam = searchParams.get("status") as SearchStatus | null;
@@ -162,7 +164,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     Boolean(searchParams.get("sort")),
   );
   const [page, setPageState] = useState(Number(searchParams.get("page")) || 1);
-  const pageSize = 40;
+  const [pageSize, setPageSizeState] = useState(() => {
+    const rawValue = Number(searchParams.get("pageSize"));
+    return Number.isFinite(rawValue) && rawValue > 0
+      ? rawValue
+      : DEFAULT_PAGE_SIZE;
+  });
 
   // Results
   const [lots, setLots] = useState<Lot[]>([]);
@@ -211,6 +218,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       maxPrice: number | undefined;
       sortBy: SortOption;
       page: number;
+      pageSize: number;
     }) => {
       setLoading(true);
       setError(null);
@@ -263,8 +271,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       }
       if (params.page > 1) urlParams.set("page", String(params.page));
       if (params.page > 1) requestParams.set("page", String(params.page));
-      urlParams.set("pageSize", String(pageSize));
-      requestParams.set("pageSize", String(pageSize));
+      urlParams.set("pageSize", String(params.pageSize));
+      requestParams.set("pageSize", String(params.pageSize));
 
       try {
         const res = await fetch(`/api/search?${requestParams.toString()}`);
@@ -312,6 +320,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       maxPrice,
       sortBy,
       page,
+      pageSize,
     });
   }, [
     debouncedQuery,
@@ -328,6 +337,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     maxPrice,
     sortBy,
     page,
+    pageSize,
     fetchResults,
     lotIdsKey,
   ]);
@@ -401,7 +411,9 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       }
       if (
         nextStatus === "active" &&
-        (currentSort === "recently-ended" || currentSort === "sold-price-desc")
+        (currentSort === "recently-ended" ||
+          currentSort === "recently-sold" ||
+          currentSort === "sold-price-desc")
       ) {
         return "ending-soon";
       }
@@ -418,6 +430,11 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
 
   const setPage = (p: number) => setPageState(p);
 
+  const setPageSize = (nextPageSize: number) => {
+    setPageSizeState(nextPageSize);
+    setPageState(1);
+  };
+
   const clearFilters = () => {
     setQueryState("");
     setCategories([]);
@@ -432,6 +449,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setStatusState(DEFAULT_STATUS);
     setSortIsManual(false);
     setSortByState(getDefaultSort(DEFAULT_STATUS, ""));
+    setPageSizeState(DEFAULT_PAGE_SIZE);
     setPageState(1);
   };
 
@@ -470,6 +488,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setMaxPrice,
     setSortBy,
     setPage,
+    setPageSize,
     clearFilters,
   };
 }

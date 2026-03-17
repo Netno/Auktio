@@ -25,9 +25,12 @@ const STOP_WORDS = new Set([
 const COMMON_SEARCH_TERMS = [
   "antik",
   "antikviteter",
+  "arabia",
   "armbandsur",
   "bestick",
+  "bing",
   "bord",
+  "boda",
   "byrå",
   "design",
   "djur",
@@ -36,12 +39,14 @@ const COMMON_SEARCH_TERMS = [
   "fågel",
   "gammal",
   "glas",
+  "gustavsberg",
   "guld",
   "hund",
   "katt",
   "keramik",
   "klocka",
   "konst",
+  "kosta",
   "lampa",
   "leopard",
   "målning",
@@ -50,10 +55,15 @@ const COMMON_SEARCH_TERMS = [
   "mattor",
   "möbler",
   "mynt",
+  "orrefors",
   "olja",
   "oljemålning",
   "porslin",
   "retro",
+  "rorstrand",
+  "rörstrand",
+  "royal",
+  "copenhagen",
   "servis",
   "silver",
   "skål",
@@ -67,6 +77,19 @@ const COMMON_SEARCH_TERMS = [
   "urna",
   "vas",
 ];
+
+const TYPO_CORRECTIONS: Record<string, string> = {
+  rostrand: "rörstrand",
+  rostrnad: "rörstrand",
+  röstrand: "rörstrand",
+  röstrnad: "rörstrand",
+  rorstarnd: "rörstrand",
+  rorstrnad: "rörstrand",
+  gustavsber: "gustavsberg",
+  orrefor: "orrefors",
+  kostabod: "kosta boda",
+  kostaboda: "kosta boda",
+};
 
 const KNOWN_SEARCH_TERMS = buildKnownSearchTerms();
 
@@ -140,6 +163,11 @@ function getLevenshteinDistance(left: string, right: string) {
 }
 
 function getCorrectedToken(token: string) {
+  const directCorrection = TYPO_CORRECTIONS[token];
+  if (directCorrection) {
+    return directCorrection;
+  }
+
   if (
     token.length < 4 ||
     STOP_WORDS.has(token) ||

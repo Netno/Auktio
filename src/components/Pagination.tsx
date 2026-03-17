@@ -7,8 +7,12 @@ interface PaginationProps {
   pageSize: number;
   total: number;
   onPageChange: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  showPageSizeSelector?: boolean;
   className?: string;
 }
+
+const PAGE_SIZE_OPTIONS = [48, 72, 96] as const;
 
 /**
  * Build a page-number array like [1, '…', 4, 5, 6, 7, 8, '…', 20]
@@ -37,6 +41,8 @@ export function Pagination({
   pageSize,
   total,
   onPageChange,
+  onPageSizeChange,
+  showPageSizeSelector = false,
   className,
 }: PaginationProps) {
   const totalPages = Math.ceil(total / pageSize);
@@ -51,60 +57,56 @@ export function Pagination({
 
   return (
     <div className={`${className ?? "mt-10"}`}>
-      <div className="flex items-center justify-center gap-1.5 sm:hidden">
-        <button
-          onClick={() => onPageChange(page - 1)}
-          disabled={page <= 1}
-          className={`${mobileBtn} border-brand-200 bg-white text-brand-600
-          disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
-        >
-          <ChevronLeft size={16} />
-        </button>
+      <div className="sm:hidden">
+        <div className="flex items-center justify-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => onPageChange(page - 1)}
+            disabled={page <= 1}
+            className={`${mobileBtn} border-brand-200 bg-white text-brand-600
+            disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
+          >
+            <ChevronLeft size={16} />
+          </button>
 
-        <div className="max-w-[calc(100vw-7.5rem)] overflow-x-auto px-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex min-w-max items-center gap-1.5">
-            {pages.map((p, idx) =>
-              p === "…" ? (
-                <span
-                  key={`mobile-ellipsis-${idx}`}
-                  className="flex h-10 min-w-8 items-center justify-center text-brand-400 text-sm select-none"
-                >
-                  …
-                </span>
-              ) : (
-                <button
-                  key={`mobile-${p}`}
-                  onClick={() => onPageChange(p)}
-                  className={`${mobileBtn} ${
-                    p === page
-                      ? "bg-brand-900 border-brand-900 text-white"
-                      : "border-brand-200 bg-white text-brand-600 hover:bg-brand-50"
-                  }`}
-                >
-                  {p}
-                </button>
-              ),
-            )}
+          <div className="flex min-w-[4.75rem] items-center justify-center rounded-lg border border-brand-200 bg-white px-2 py-2 text-center shadow-sm">
+            <span className="text-sm font-semibold text-brand-900">{page}</span>
+            <span className="mx-1.5 text-xs text-brand-300">/</span>
+            <span className="text-xs font-medium text-brand-500">
+              {totalPages}
+            </span>
           </div>
+
+          <button
+            type="button"
+            onClick={() => onPageChange(page + 1)}
+            disabled={page >= totalPages}
+            className={`${mobileBtn} border-brand-200 bg-white text-brand-600
+            disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
+          >
+            <ChevronRight size={16} />
+          </button>
+          {showPageSizeSelector && onPageSizeChange && (
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="min-w-[4.75rem] rounded-lg border border-brand-200 bg-white px-2 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
+              aria-label="Antal föremål per sida"
+            >
+              {PAGE_SIZE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option} st
+                </option>
+              ))}
+            </select>
+          )}
         </div>
-
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={page >= totalPages}
-          className={`${mobileBtn} border-brand-200 bg-white text-brand-600
-          disabled:cursor-not-allowed disabled:opacity-30 hover:bg-brand-50`}
-        >
-          <ChevronRight size={16} />
-        </button>
       </div>
 
-      <div className="mt-2 text-center text-xs text-brand-400 sm:hidden">
-        Sida {page} av {totalPages}
-      </div>
-
-      <div className="hidden items-center justify-center gap-1.5 sm:flex">
+      <div className="hidden items-center justify-center gap-3 sm:flex">
         {/* Prev */}
         <button
+          type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
           className={`${btn} h-10 min-w-10 border-brand-200 bg-white px-2 text-brand-600
@@ -126,6 +128,7 @@ export function Pagination({
             ) : (
               <button
                 key={p}
+                type="button"
                 onClick={() => onPageChange(p)}
                 className={`${btn} w-9 h-9 ${
                   p === page
@@ -141,6 +144,7 @@ export function Pagination({
 
         {/* Next */}
         <button
+          type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           className={`${btn} h-10 min-w-10 border-brand-200 bg-white px-2 text-brand-600
@@ -149,9 +153,24 @@ export function Pagination({
           <ChevronRight size={16} />
         </button>
 
-        <span className="ml-2 hidden text-xs text-brand-400 sm:inline">
+        <span className="ml-1 hidden text-xs text-brand-400 sm:inline">
           Sida {page} av {totalPages}
         </span>
+
+        {showPageSizeSelector && onPageSizeChange && (
+          <select
+            value={pageSize}
+            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            className="ml-2 min-w-[5.5rem] rounded-lg border border-brand-200 bg-white px-2.5 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
+            aria-label="Antal föremål per sida"
+          >
+            {PAGE_SIZE_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option} st
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );
