@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
@@ -69,7 +70,9 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
           `}
         </Script>
-        <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
+        <Suspense fallback={null}>
+          <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
+        </Suspense>
         {children}
       </body>
     </html>
