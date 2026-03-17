@@ -61,7 +61,7 @@ export function AuctionListRow({
   onToggleSelect,
   showStartTime = false,
 }: AuctionListRowProps) {
-  const lotsLink = `/?auctionId=${auction.id}&houseId=${encodeURIComponent(auction.houseId)}&auctionTitle=${encodeURIComponent(auction.title)}`;
+  const lotsLink = `/?auctionId=${auction.id}&houseId=${encodeURIComponent(auction.houseId)}&auctionTitle=${encodeURIComponent(auction.title)}&status=all`;
   const desktopGridClass = getAuctionDesktopGridClass(showStartTime);
   const actionButtonClass = `inline-flex min-h-10 items-center justify-center gap-1 whitespace-nowrap rounded-lg border px-3 py-2 text-[13px] font-semibold transition-colors ${
     isSelected

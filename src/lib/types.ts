@@ -91,8 +91,15 @@ export interface AuctionSummary {
   verificationPending?: boolean;
 }
 
+export interface AuctionHouseAvailability {
+  value: string;
+  label: string;
+  count: number;
+}
+
 export interface AuctionsResponse {
   auctions: AuctionSummary[];
+  availableHouses: AuctionHouseAvailability[];
   stats: Record<AuctionStatus, number>;
   daysBack: number;
   daysForward: number;

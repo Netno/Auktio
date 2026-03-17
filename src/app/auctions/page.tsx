@@ -8,7 +8,6 @@ import {
   AuctionListRow,
   getAuctionDesktopGridClass,
 } from "@/components/AuctionListRow";
-import { FEED_SOURCES } from "@/config/sources";
 import type {
   AuctionsResponse,
   AuctionStatus,
@@ -24,10 +23,6 @@ const STATUS_OPTIONS: Array<{ value: AuctionStatus | "all"; label: string }> = [
   { value: "upcoming", label: "Kommande" },
   { value: "ended", label: "Avslutade" },
 ];
-
-const SORTED_FEED_SOURCES = [...FEED_SOURCES].sort((left, right) =>
-  left.name.localeCompare(right.name, "sv-SE"),
-);
 
 function getAuctionKey(auction: Pick<AuctionSummary, "id" | "houseId">) {
   return `${auction.houseId}:${auction.id}`;
@@ -418,6 +413,20 @@ export default function AuctionsPage() {
     return () => controller.abort();
   }, [data, loading]);
 
+  useEffect(() => {
+    if (!houseId || !data) {
+      return;
+    }
+
+    const houseStillAvailable = data.availableHouses.some(
+      (house) => house.value === houseId,
+    );
+
+    if (!houseStillAvailable) {
+      setHouseId("");
+    }
+  }, [data, houseId]);
+
   const grouped = useMemo(() => {
     const auctions = data?.auctions ?? [];
     return {
@@ -427,6 +436,8 @@ export default function AuctionsPage() {
       uncertain: auctions.filter((auction) => auction.status === "uncertain"),
     };
   }, [data]);
+
+  const availableHouses = useMemo(() => data?.availableHouses ?? [], [data]);
 
   const selectedIds = useMemo(
     () => new Set(selectedAuctions.map((auction) => getAuctionKey(auction))),
@@ -439,6 +450,7 @@ export default function AuctionsPage() {
     }
 
     const params = new URLSearchParams();
+    params.set("status", "all");
     params.set(
       "auctionId",
       selectedAuctions.map((auction) => auction.id).join(","),
@@ -582,9 +594,9 @@ export default function AuctionsPage() {
                   className="rounded-lg border border-brand-200 bg-white px-3 py-2 text-[13px] text-brand-900 outline-none"
                 >
                   <option value="">Alla hus</option>
-                  {SORTED_FEED_SOURCES.map((source) => (
-                    <option key={source.id} value={source.id}>
-                      {source.name}
+                  {availableHouses.map((house) => (
+                    <option key={house.value} value={house.value}>
+                      {house.label}
                     </option>
                   ))}
                 </select>

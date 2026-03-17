@@ -1,6 +1,7 @@
 import { createServerClient } from "./supabase";
 import { normalizeAuctionTitle } from "./utils";
 import type {
+  AuctionHouseAvailability,
   AuctionStatus,
   AuctionStatusSource,
   AuctionSummary,
@@ -22,6 +23,7 @@ type ListAuctionSummariesOptions = {
 
 type AuctionsSummaryResponse = {
   auctions: AuctionSummary[];
+  availableHouses: AuctionHouseAvailability[];
   stats: Record<AuctionStatus, number>;
   daysBack: number;
   daysForward: number;
@@ -69,7 +71,7 @@ const auctionSummaryCache = new Map<
   string,
   { expiresAt: number; value: AuctionsSummaryResponse }
 >();
-const AUCTION_SUMMARY_CACHE_TTL_MS = 30_000;
+const AUCTION_SUMMARY_CACHE_TTL_MS = 90_000;
 
 function getAuctionSummaryCacheKey(
   options: Required<ListAuctionSummariesOptions>,
@@ -388,6 +390,35 @@ function buildStatsRecord(auctions: AuctionSummary[]) {
   );
 }
 
+function buildAvailableHouses(auctions: AuctionSummary[]) {
+  const counts = new Map<
+    string,
+    { value: string; label: string; count: number }
+  >();
+
+  for (const auction of auctions) {
+    if (auction.lotCount <= 0) {
+      continue;
+    }
+
+    const current = counts.get(auction.houseId);
+    if (current) {
+      current.count += 1;
+      continue;
+    }
+
+    counts.set(auction.houseId, {
+      value: auction.houseId,
+      label: auction.houseName,
+      count: 1,
+    });
+  }
+
+  return Array.from(counts.values()).sort((left, right) =>
+    left.label.localeCompare(right.label, "sv-SE"),
+  );
+}
+
 export async function listAuctionSummaries(
   options: ListAuctionSummariesOptions = {},
 ) {
@@ -439,10 +470,6 @@ export async function listAuctionSummaries(
     .lte("start_time", windowEnd)
     .order("start_time", { ascending: true })
     .limit(200);
-
-  if (houseId) {
-    query = query.eq("house_id", houseId);
-  }
 
   const { data, error } = await query;
 
@@ -506,10 +533,16 @@ export async function listAuctionSummaries(
     });
   }
 
-  const filteredAuctions =
+  const statusFilteredAuctions =
     status === "all"
       ? auctions
       : auctions.filter((auction) => auction.status === status);
+
+  const availableHouses = buildAvailableHouses(statusFilteredAuctions);
+
+  const filteredAuctions = houseId
+    ? statusFilteredAuctions.filter((auction) => auction.houseId === houseId)
+    : statusFilteredAuctions;
 
   filteredAuctions.sort((left, right) => {
     if (left.status !== right.status) {
@@ -544,6 +577,7 @@ export async function listAuctionSummaries(
 
   const result: AuctionsSummaryResponse = {
     auctions: filteredAuctions,
+    availableHouses,
     stats: buildStatsRecord(filteredAuctions),
     daysBack,
     daysForward,
