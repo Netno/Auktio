@@ -16,7 +16,7 @@ import {
   useRef,
   useState,
   type ElementType,
-  type KeyboardEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import type { SearchMode, SearchSuggestion } from "@/lib/types";
 
@@ -103,7 +103,7 @@ export function SearchHero({
     setActiveSuggestionIndex(-1);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown" && visibleSuggestions.length > 0) {
       e.preventDefault();
       setIsSuggestionsOpen(true);
@@ -146,7 +146,7 @@ export function SearchHero({
   };
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
+    const handler = (e: globalThis.KeyboardEvent) => {
       if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
         e.preventDefault();
         inputRef.current?.focus();
