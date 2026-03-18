@@ -8,7 +8,7 @@ import type { AuctionHouse } from "@/lib/types";
 export const FEED_SOURCES: Omit<AuctionHouse, "active" | "lastSynced">[] = [
   {
     id: "olsens-auktioner",
-    name: "Olsens Auktioner",
+    name: "Olséns Auktioner",
     feedUrl: "https://www.olsensauktioner.se/api/feed?apiVersion=2.0",
     websiteUrl: "https://www.olsensauktioner.se",
     city: "Norrköping",

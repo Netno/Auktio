@@ -30,7 +30,7 @@ $$;
 -- ============================================
 create table if not exists auc_auction_houses (
   id            text primary key,           -- slug: "olsens-auktioner"
-  name          text not null,              -- "Olsens Auktioner"
+  name          text not null,              -- "Olséns Auktioner"
   feed_url      text not null,              -- API feed URL
   website_url   text,
   city          text,
@@ -326,7 +326,7 @@ alter table auc_sync_log enable row level security;
 insert into auc_auction_houses (id, name, feed_url, website_url, city, country)
 values (
   'olsens-auktioner',
-  'Olsens Auktioner',
+  'Olséns Auktioner',
   'https://www.olsensauktioner.se/api/feed?apiVersion=2.0',
   'https://www.olsensauktioner.se',
   'Norrköping',
