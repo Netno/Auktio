@@ -8,9 +8,9 @@ const supabase = createServerClient();
 /** Retry config */
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY_MS = 2000; // exponential: 2s, 4s, 8s
-const PRICE_BANK_LOOKBACK_DAYS = 30;
-const SOLD_PRICE_SITE_LOOKBACK_DAYS = 7;
-const SOLD_PRICE_SITE_BATCH_LIMIT = 40;
+const PRICE_BANK_LOOKBACK_DAYS = 365;
+const SOLD_PRICE_SITE_LOOKBACK_DAYS = 30;
+const SOLD_PRICE_SITE_BATCH_LIMIT = 250;
 
 type RecentEndedLotRow = {
   id: number;
@@ -409,7 +409,9 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
 
 function extractSoldOfferFromHtml(html: string) {
   const jsonLdMatches = Array.from(
-    html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi),
+    html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi,
+    ),
   );
 
   for (const match of jsonLdMatches) {
@@ -454,10 +456,14 @@ async function refreshEndedLotsFromSite(houseId: string) {
     .eq("house_id", houseId)
     .gte("end_time", fromDate)
     .lte("end_time", now.toISOString())
+    .order("end_time", { ascending: false })
     .limit(SOLD_PRICE_SITE_BATCH_LIMIT);
 
   if (error) {
-    console.warn(`[ingest] Site sold-price lookup failed for ${houseId}:`, error.message);
+    console.warn(
+      `[ingest] Site sold-price lookup failed for ${houseId}:`,
+      error.message,
+    );
     return 0;
   }
 
@@ -498,7 +504,6 @@ async function refreshEndedLotsFromSite(houseId: string) {
         .from("auc_lots")
         .update({
           availability: "sold",
-          current_bid: offer.soldPrice,
           sold_price: offer.soldPrice,
           updated_at: new Date().toISOString(),
         })

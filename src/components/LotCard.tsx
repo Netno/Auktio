@@ -11,7 +11,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { timeLeft, formatSEK, imgSize } from "@/lib/utils";
+import { timeLeft, formatDateTimeStamp, formatSEK, imgSize } from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
 interface LotCardProps {
@@ -146,23 +146,26 @@ export function LotCard({
   const googleMapsExternalUrl = mapQuery
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : undefined;
-  const hasEndedBids =
-    !lot.isActive && (lot.soldPrice != null || lot.currentBid != null);
-  const shouldShowValuationOnly =
-    !lot.isActive && !hasEndedBids && lot.estimate != null;
+  const hasActualSoldPrice = !lot.isActive && lot.soldPrice != null;
+  const hasEndedBid = !lot.isActive && lot.currentBid != null;
+  const endedAtLabel = !lot.isActive
+    ? formatDateTimeStamp(lot.localEndTime ?? lot.endTime)
+    : "";
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
-    : lot.availability === "sold" || lot.soldPrice != null
+    : hasActualSoldPrice
       ? "Slutpris"
-      : lot.currentBid != null
+      : hasEndedBid
         ? "Sista bud"
         : "Värdering";
   const primaryPriceValue = lot.isActive
     ? lot.currentBid
-    : lot.availability === "sold" || lot.soldPrice != null
-      ? (lot.soldPrice ?? lot.currentBid)
-      : (lot.currentBid ?? lot.estimate);
-  const showSoldPrice = !lot.isActive && lot.availability === "sold";
+    : hasActualSoldPrice
+      ? lot.soldPrice
+      : hasEndedBid
+        ? lot.currentBid
+        : lot.estimate;
+  const showSoldPrice = hasActualSoldPrice;
   const shouldShowEstimateColumn = lot.isActive;
 
   useEffect(() => {
@@ -775,13 +778,19 @@ export function LotCard({
           )}
 
           {/* Time badge */}
-          {tl && (
+          {lot.isActive && tl && (
             <span
               className={`absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full
               text-[11px] font-medium text-white backdrop-blur-md
               ${tl.ended ? "bg-brand-900/50" : tl.urgent ? "bg-accent-500" : "bg-brand-900/70"}`}
             >
               {tl.text}
+            </span>
+          )}
+
+          {!lot.isActive && endedAtLabel && (
+            <span className="absolute bottom-2.5 right-2.5 rounded-full bg-brand-900/70 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
+              {endedAtLabel}
             </span>
           )}
 
