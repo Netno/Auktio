@@ -35,6 +35,7 @@ import {
   shouldRequirePrimaryObjectMatch,
   shouldRequireModifierMatch,
 } from "@/lib/search-object-intent";
+import { detectCategoryIntent } from "@/lib/search-category-intent";
 
 const GEMINI_GENERATE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -430,18 +431,24 @@ function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
 export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   const startTime = Date.now();
   const supabase = createServerClient();
+  const detectedCategory = detectCategoryIntent(request.query);
+  const effectiveRequest =
+    request.categories?.length || !detectedCategory
+      ? request
+      : { ...request, categories: [detectedCategory] };
   const detectedAuctionHouse = detectAuctionHouse(request.query);
   const retrievalQuery = stripAuctionHouseTerms(
-    request.query,
+    effectiveRequest.query,
     detectedAuctionHouse,
   );
   const rankingQuery = stripRetrievalNoiseTerms(
-    retrievalQuery || request.query,
+    retrievalQuery || effectiveRequest.query,
   );
-  const semanticSeedQuery = rankingQuery || retrievalQuery || request.query;
+  const semanticSeedQuery =
+    rankingQuery || retrievalQuery || effectiveRequest.query;
   const derivedIntent = deriveRetrievalIntent(
-    request.query,
-    request.includeEnded,
+    effectiveRequest.query,
+    effectiveRequest.includeEnded,
   );
 
   let vectorResults: RAGSourceLot[] = [];
@@ -461,13 +468,13 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
       retrieveByVector(
         supabase,
         queryEmbedding,
-        request,
+        effectiveRequest,
         detectedAuctionHouse,
         derivedIntent,
       ),
       retrieveByFulltext(
         supabase,
-        request,
+        effectiveRequest,
         detectedAuctionHouse,
         semanticSeedQuery,
         derivedIntent,
@@ -487,7 +494,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   if (contextLots.length < 6 || derivedIntent.prefersBrowse) {
     const browseFallbackLots = await retrieveBrowseFallbackLots(
       supabase,
-      request,
+      effectiveRequest,
       detectedAuctionHouse,
       derivedIntent,
       semanticSeedQuery,
@@ -506,7 +513,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   ) {
     const fallbackLots = await retrieveHouseBrowseFallbackLots(
       supabase,
-      request,
+      effectiveRequest,
       detectedAuctionHouse,
       derivedIntent,
       semanticSeedQuery,
@@ -533,7 +540,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   }
 
   // ─── Step 4: Generate answer with Gemini ───
-  const answer = await generateAnswer(request.query, contextLots);
+  const answer = await generateAnswer(effectiveRequest.query, contextLots);
 
   return {
     answer,

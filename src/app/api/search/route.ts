@@ -22,6 +22,7 @@ import {
   shouldRequireModifierMatch,
   type DetectedObjectIntent,
 } from "@/lib/search-object-intent";
+import { detectCategoryIntent } from "@/lib/search-category-intent";
 import { getDidYouMeanQuery } from "@/lib/search-spelling";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
@@ -1082,12 +1083,17 @@ export async function GET(request: NextRequest) {
         detectedHouseMatch.matchedAlias,
       )
     : params.query?.trim();
+  const detectedCategory = detectCategoryIntent(effectiveQuery);
   const normalizedEffectiveQuery = effectiveQuery
     ? normalizeSearchQuery(effectiveQuery)
     : undefined;
   const effectiveParams: SearchParams = {
     ...params,
     query: normalizedEffectiveQuery || effectiveQuery || undefined,
+    categories:
+      params.categories?.length || !detectedCategory
+        ? params.categories
+        : [detectedCategory],
     houseId: params.houseId ?? detectedHouseMatch?.house.id,
   };
 
