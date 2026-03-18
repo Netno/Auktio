@@ -210,9 +210,7 @@ export function HomePageClient() {
     sortBy,
     page,
     pageSize,
-    searchMode,
     setQuery,
-    setSearchMode,
     setStatus,
     toggleCategory,
     setCity,
@@ -444,8 +442,6 @@ export function HomePageClient() {
       <SearchHero
         query={query}
         onQueryChange={setQuery}
-        searchMode={searchMode}
-        onSearchModeChange={setSearchMode}
         total={total}
         loading={loading}
         onViewResults={scrollToResults}

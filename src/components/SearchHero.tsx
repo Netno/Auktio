@@ -1,30 +1,14 @@
 "use client";
 
-import {
-  Brain,
-  Building2,
-  ChevronRight,
-  Layers,
-  Search,
-  Sparkles,
-  Tag,
-  X,
-} from "lucide-react";
+import { Building2, ChevronRight, Search, Tag, X } from "lucide-react";
 import {
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ElementType,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
-import type { SearchMode, SearchSuggestion } from "@/lib/types";
-
-const MODES: { value: SearchMode; label: string; icon: ElementType }[] = [
-  { value: "keyword", label: "Nyckelord", icon: Search },
-  { value: "vector", label: "Semantisk", icon: Brain },
-  { value: "hybrid", label: "Hybrid", icon: Layers },
-];
+import type { SearchSuggestion } from "@/lib/types";
 
 function getSuggestionIcon(type: SearchSuggestion["type"]) {
   switch (type) {
@@ -56,8 +40,6 @@ function getSuggestionTypeLabel(type: SearchSuggestion["type"]) {
 interface SearchHeroProps {
   query: string;
   onQueryChange: (q: string) => void;
-  searchMode: SearchMode;
-  onSearchModeChange: (mode: SearchMode) => void;
   total: number;
   loading: boolean;
   onViewResults: () => void;
@@ -72,8 +54,6 @@ interface SearchHeroProps {
 export function SearchHero({
   query,
   onQueryChange,
-  searchMode,
-  onSearchModeChange,
   total,
   loading,
   onViewResults,
@@ -204,25 +184,6 @@ export function SearchHero({
         Sök bland tusentals föremål från landets främsta auktionshus
       </p>
 
-      <div className="mb-3 flex justify-center overflow-x-auto px-1 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex min-w-max gap-1.5">
-          {MODES.map(({ value, label, icon: Icon }) => (
-            <button
-              key={value}
-              onClick={() => onSearchModeChange(value)}
-              className={`flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium transition-all sm:min-h-9 sm:px-3.5 sm:text-xs ${
-                searchMode === value
-                  ? "bg-white text-brand-900 shadow-sm"
-                  : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white/80"
-              }`}
-            >
-              <Icon size={13} />
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div ref={wrapperRef} className="relative mx-auto max-w-[680px]">
         <Search
           size={17}
@@ -232,11 +193,7 @@ export function SearchHero({
           ref={inputRef}
           type="text"
           className="w-full rounded-2xl border-2 border-transparent bg-white py-2.5 pl-11 pr-12 text-sm text-brand-900 placeholder:text-brand-400 shadow-elevated-lg outline-none transition-all focus:border-accent-500 focus:shadow-[0_12px_40px_rgba(26,26,24,0.1),0_0_0_4px_theme(colors.accent.100)] sm:py-3 sm:pl-[52px] sm:pr-[152px] sm:text-base"
-          placeholder={
-            searchMode === "keyword"
-              ? "Sök föremål, kategori, konstnär..."
-              : "Beskriv vad du letar efter..."
-          }
+          placeholder="Sök föremål, kategori, konstnär eller beskriv det du letar efter..."
           value={query}
           onChange={(e) => {
             onQueryChange(e.target.value);
@@ -255,12 +212,6 @@ export function SearchHero({
           aria-autocomplete="list"
         />
         <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
-          {searchMode !== "keyword" && (
-            <span className="hidden bg-gold-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-gold-500 sm:flex sm:items-center sm:gap-1">
-              <Sparkles size={12} />
-              AI-sök
-            </span>
-          )}
           {hasQuery && (
             <button
               type="button"

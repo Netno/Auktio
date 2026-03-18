@@ -788,12 +788,6 @@ export function LotCard({
             </span>
           )}
 
-          {!lot.isActive && endedAtLabel && (
-            <span className="absolute bottom-2.5 right-2.5 rounded-full bg-brand-900/70 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
-              {endedAtLabel}
-            </span>
-          )}
-
           {/* Category chip */}
           {lot.categories?.[0] && (
             <span
@@ -871,7 +865,7 @@ export function LotCard({
             </h3>
 
             {lot.description && (
-              <div className="relative mb-3.5">
+              <div className="relative mb-2">
                 <p
                   className={`peer text-xs text-brand-400 leading-snug ${
                     isDescriptionExpanded ? "line-clamp-none" : "line-clamp-2"
@@ -905,33 +899,42 @@ export function LotCard({
             )}
           </div>
 
-          <div className="mt-auto flex items-end justify-between pt-3 border-t border-brand-100">
-            <div>
-              <div
-                className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${
-                  showSoldPrice ? "text-emerald-600" : "text-brand-400"
-                }`}
-              >
-                {primaryPriceLabel}
-              </div>
-              <div
-                className={`text-lg font-bold tracking-tight ${
-                  showSoldPrice ? "text-emerald-700" : "text-brand-900"
-                }`}
-              >
-                {formatSEK(primaryPriceValue)}
-              </div>
-            </div>
-            {shouldShowEstimateColumn && (
-              <div className="text-right">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-400 mb-0.5">
-                  Utrop
-                </div>
-                <div className="text-sm font-medium text-brand-400">
-                  {formatSEK(lot.estimate)}
-                </div>
+          <div className="mt-auto">
+            {!lot.isActive && endedAtLabel && (
+              <div className="mb-2 flex items-center gap-1.5 text-[11px] font-medium text-brand-500">
+                <Gavel size={12} className="shrink-0 text-brand-400" />
+                <span>Avslutad {endedAtLabel}</span>
               </div>
             )}
+
+            <div className="flex items-end justify-between border-t border-brand-100 pt-3">
+              <div>
+                <div
+                  className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${
+                    showSoldPrice ? "text-emerald-600" : "text-brand-400"
+                  }`}
+                >
+                  {primaryPriceLabel}
+                </div>
+                <div
+                  className={`text-lg font-bold tracking-tight ${
+                    showSoldPrice ? "text-emerald-700" : "text-brand-900"
+                  }`}
+                >
+                  {formatSEK(primaryPriceValue)}
+                </div>
+              </div>
+              {shouldShowEstimateColumn && (
+                <div className="text-right">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-brand-400 mb-0.5">
+                    Utrop
+                  </div>
+                  <div className="text-sm font-medium text-brand-400">
+                    {formatSEK(lot.estimate)}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </a>

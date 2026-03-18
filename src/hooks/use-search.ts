@@ -147,9 +147,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       ? Number(searchParams.get("maxPrice"))
       : undefined,
   );
-  const [searchMode, setSearchModeState] = useState<SearchMode>(
-    (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
-  );
+  const [searchMode, setSearchModeState] =
+    useState<SearchMode>(DEFAULT_SEARCH_MODE);
   const [status, setStatusState] = useState<SearchStatus>(() =>
     getInitialStatus(searchParams),
   );
@@ -227,10 +226,6 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       const requestParams = new URLSearchParams();
       if (params.query) urlParams.set("q", params.query);
       if (params.query) requestParams.set("q", params.query);
-      if (params.searchMode !== DEFAULT_SEARCH_MODE)
-        urlParams.set("mode", params.searchMode);
-      if (params.searchMode !== DEFAULT_SEARCH_MODE)
-        requestParams.set("mode", params.searchMode);
       if (params.status !== DEFAULT_STATUS)
         urlParams.set("status", params.status);
       if (params.status !== DEFAULT_STATUS)
@@ -391,7 +386,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   };
 
   const setSearchMode = (mode: SearchMode) => {
-    setSearchModeState(mode);
+    setSearchModeState(DEFAULT_SEARCH_MODE);
     setPageState(1);
   };
 
