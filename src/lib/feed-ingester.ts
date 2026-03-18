@@ -1,5 +1,6 @@
 import { createServerClient } from "./supabase";
 import { FEED_SOURCES } from "../config/sources";
+import { normalizeLotCategories } from "./category-normalization";
 import type { FeedResponse, FeedLot, IngestResult } from "./types";
 import { normalizeAuctionTitle } from "./utils";
 
@@ -112,6 +113,11 @@ async function fetchWithRetry(
  * Used to skip re-upserting lots that haven't changed since last sync.
  */
 function computeLotHash(lot: FeedLot): string {
+  const normalizedCategories = normalizeLotCategories({
+    rawCategories: lot.category,
+    title: lot.title,
+    description: lot.description,
+  });
   const key = [
     lot.title,
     lot.price.bid ?? "",
@@ -119,6 +125,7 @@ function computeLotHash(lot: FeedLot): string {
     lot.price.estimate ?? "",
     lot.availability ?? "",
     lot.end,
+    normalizedCategories.join(","),
   ].join("|");
 
   // Simple fast hash (djb2) — sufficient for change detection
@@ -580,15 +587,20 @@ function buildPriceBankFeedUrl(feedUrl: string) {
  * Normalize a feed lot into our database row format.
  */
 function normalizeLot(lot: FeedLot, auctionId: number, houseId: string) {
+  const description = stripHtml(lot.description);
   return {
     id: lot.id,
     auction_id: auctionId,
     house_id: houseId,
     serial_number: lot.serialNumber,
     title: lot.title,
-    description: stripHtml(lot.description),
+    description,
     url: lot.url,
-    categories: lot.category ?? [],
+    categories: normalizeLotCategories({
+      rawCategories: lot.category,
+      title: lot.title,
+      description,
+    }),
     artists: lot.artist ?? [],
     images: lot.image ?? [],
     thumbnail_url: lot.image?.[0] ?? null,
