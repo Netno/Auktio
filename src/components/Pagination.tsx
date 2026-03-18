@@ -86,20 +86,6 @@ export function Pagination({
           >
             <ChevronRight size={16} />
           </button>
-          {showPageSizeSelector && onPageSizeChange && (
-            <select
-              value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="min-w-[4.75rem] rounded-lg border border-brand-200 bg-white px-2 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
-              aria-label="Antal föremål per sida"
-            >
-              {PAGE_SIZE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option} st
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
 
