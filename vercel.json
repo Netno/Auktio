@@ -3,7 +3,11 @@
   "crons": [
     {
       "path": "/api/ingest",
-      "schedule": "0 6 * * *"
+      "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/ingest/sold-prices",
+      "schedule": "0 23 * * *"
     }
   ]
 }

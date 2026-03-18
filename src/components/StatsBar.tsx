@@ -1,6 +1,6 @@
 "use client";
 
-import { formatSEK } from "@/lib/utils";
+import { formatAmount } from "@/lib/utils";
 import type { Lot, SearchStatus } from "@/lib/types";
 
 interface StatsBarProps {
@@ -11,14 +11,36 @@ interface StatsBarProps {
 }
 
 export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
-  const totalValue = lots.reduce((sum, lot) => {
-    const amount = lot.isActive
-      ? lot.currentBid
-      : lot.availability === "sold"
-        ? (lot.currentBid ?? lot.soldPrice)
-        : (lot.soldPrice ?? lot.currentBid);
-    return sum + (amount ?? 0);
-  }, 0);
+  const valueLots = lots
+    .map((lot) => {
+      const amount = lot.isActive
+        ? lot.currentBid
+        : lot.availability === "sold"
+          ? lot.soldPrice
+          : lot.currentBid;
+
+      return {
+        amount,
+        currency: (lot.currency || "SEK").toUpperCase(),
+      };
+    })
+    .filter(
+      (lot): lot is { amount: number; currency: string } => lot.amount != null,
+    );
+
+  const currencies = Array.from(new Set(valueLots.map((lot) => lot.currency)));
+  const hasMixedCurrencies = currencies.length > 1;
+  const totalValue = valueLots.reduce((sum, lot) => sum + lot.amount, 0);
+  const totalValueDisplay = hasMixedCurrencies
+    ? "Flera valutor"
+    : formatAmount(totalValue, currencies[0] ?? "SEK");
+  const totalValueLabel = hasMixedCurrencies
+    ? status === "ended"
+      ? "slutvärde ej summerat"
+      : "budvärde ej summerat"
+    : status === "ended"
+      ? "slutvärde"
+      : "totalt budvärde";
 
   const fallbackWindowCount = lots.filter((lot) => {
     if (!lot.endTime) return false;
@@ -51,8 +73,8 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
             : "aktiva föremål",
     },
     {
-      num: formatSEK(totalValue),
-      label: status === "ended" ? "slutvärde" : "totalt budvärde",
+      num: totalValueDisplay,
+      label: totalValueLabel,
     },
     {
       num: String(resolvedWindowCount),

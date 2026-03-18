@@ -35,6 +35,29 @@ export function formatSEK(amount: number | null | undefined): string {
   return amount.toLocaleString("sv-SE") + " kr";
 }
 
+export function formatAmount(
+  amount: number | null | undefined,
+  currency: string | null | undefined,
+): string {
+  if (amount == null) return "–";
+
+  const resolvedCurrency = currency?.toUpperCase() || "SEK";
+  if (resolvedCurrency === "SEK") {
+    return formatSEK(amount);
+  }
+
+  return `${amount.toLocaleString("sv-SE")} ${resolvedCurrency}`;
+}
+
+export function getCountryFlag(country: string | null | undefined): string {
+  const code = (country ?? "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(code)) {
+    return "";
+  }
+
+  return String.fromCodePoint(...Array.from(code).map((char) => 127397 + char.charCodeAt(0)));
+}
+
 /**
  * Format a date for display.
  */

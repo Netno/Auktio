@@ -11,7 +11,13 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { timeLeft, formatDateTimeStamp, formatSEK, imgSize } from "@/lib/utils";
+import {
+  timeLeft,
+  formatAmount,
+  formatDateTimeStamp,
+  getCountryFlag,
+  imgSize,
+} from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
 interface LotCardProps {
@@ -134,6 +140,8 @@ export function LotCard({
   const MAGNIFIER_SIZE_PX = 220;
   const MAGNIFIER_ZOOM_PERCENT = 520;
   const showCountryCode = Boolean(lot.country && lot.country !== "SE");
+  const countryFlag = getCountryFlag(lot.country);
+  const showCountryBadge = Boolean(showCountryCode && countryFlag);
   const locationLabel = [lot.city, showCountryCode ? lot.country : undefined]
     .filter(Boolean)
     .join(", ");
@@ -146,26 +154,28 @@ export function LotCard({
   const googleMapsExternalUrl = mapQuery
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : undefined;
-  const hasActualSoldPrice = !lot.isActive && lot.soldPrice != null;
-  const hasEndedBid = !lot.isActive && lot.currentBid != null;
+  const hasVerifiedSoldPrice =
+    !lot.isActive && lot.availability === "sold" && lot.soldPrice != null;
+  const hasEndedBid =
+    !lot.isActive && !hasVerifiedSoldPrice && lot.currentBid != null;
   const endedAtLabel = !lot.isActive
     ? formatDateTimeStamp(lot.localEndTime ?? lot.endTime)
     : "";
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
-    : hasActualSoldPrice
+    : hasVerifiedSoldPrice
       ? "Slutpris"
       : hasEndedBid
         ? "Sista bud"
         : "Värdering";
   const primaryPriceValue = lot.isActive
     ? lot.currentBid
-    : hasActualSoldPrice
+    : hasVerifiedSoldPrice
       ? lot.soldPrice
       : hasEndedBid
         ? lot.currentBid
         : lot.estimate;
-  const showSoldPrice = hasActualSoldPrice;
+  const showSoldPrice = hasVerifiedSoldPrice;
   const shouldShowEstimateColumn = lot.isActive;
 
   useEffect(() => {
@@ -814,6 +824,12 @@ export function LotCard({
                 />
               )}
               <span>{lot.houseName ?? "Auktionshus"}</span>
+              {showCountryBadge && (
+                <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-semibold tracking-normal text-brand-600">
+                  <span aria-hidden="true">{countryFlag}</span>
+                  <span>{lot.currency}</span>
+                </span>
+              )}
               {locationLabel && (
                 <div
                   className="relative"
@@ -921,7 +937,7 @@ export function LotCard({
                     showSoldPrice ? "text-emerald-700" : "text-brand-900"
                   }`}
                 >
-                  {formatSEK(primaryPriceValue)}
+                    {formatAmount(primaryPriceValue, lot.currency)}
                 </div>
               </div>
               {shouldShowEstimateColumn && (
@@ -930,7 +946,7 @@ export function LotCard({
                     Utrop
                   </div>
                   <div className="text-sm font-medium text-brand-400">
-                    {formatSEK(lot.estimate)}
+                    {formatAmount(lot.estimate, lot.currency)}
                   </div>
                 </div>
               )}

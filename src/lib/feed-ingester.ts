@@ -11,6 +11,17 @@ const RETRY_BASE_DELAY_MS = 2000; // exponential: 2s, 4s, 8s
 const PRICE_BANK_LOOKBACK_DAYS = 365;
 const SOLD_PRICE_SITE_LOOKBACK_DAYS = 30;
 const SOLD_PRICE_SITE_BATCH_LIMIT = 250;
+const SOLD_PRICE_READY_DELAY_HOURS = 24;
+
+type IngestRunOptions = {
+  syncFeed?: boolean;
+  refreshSoldPrices?: boolean;
+};
+
+const DEFAULT_INGEST_RUN_OPTIONS: Required<IngestRunOptions> = {
+  syncFeed: true,
+  refreshSoldPrices: true,
+};
 
 type RecentEndedLotRow = {
   id: number;
@@ -26,11 +37,26 @@ type RecentEndedLotRow = {
  * Called by /api/ingest (Vercel Cron) or manually via `npm run ingest`.
  */
 export async function ingestAllFeeds(): Promise<IngestResult[]> {
+  return runIngestAcrossSources(DEFAULT_INGEST_RUN_OPTIONS);
+}
+
+export async function ingestFeedDataOnly(): Promise<IngestResult[]> {
+  return runIngestAcrossSources({ syncFeed: true, refreshSoldPrices: false });
+}
+
+export async function refreshAllSoldPrices(): Promise<IngestResult[]> {
+  return runIngestAcrossSources({ syncFeed: false, refreshSoldPrices: true });
+}
+
+async function runIngestAcrossSources(
+  options: IngestRunOptions,
+): Promise<IngestResult[]> {
   const results: IngestResult[] = [];
+  const resolvedOptions = { ...DEFAULT_INGEST_RUN_OPTIONS, ...options };
 
   for (const source of FEED_SOURCES) {
     console.log(`[ingest] Starting: ${source.name} (${source.id})`);
-    const result = await ingestFeed(source.id, source.feedUrl);
+    const result = await ingestFeed(source.id, source.feedUrl, resolvedOptions);
     results.push(result);
     console.log(
       `[ingest] ${source.name}: +${result.lotsAdded} added, ~${result.lotsUpdated} updated, =${result.lotsSkipped ?? 0} skipped, ${result.soldPricesUpdated ?? 0} sold prices refreshed (${result.durationMs}ms)`,
@@ -109,25 +135,13 @@ function computeLotHash(lot: FeedLot): string {
 async function ingestFeed(
   houseId: string,
   feedUrl: string,
+  options: IngestRunOptions = DEFAULT_INGEST_RUN_OPTIONS,
 ): Promise<IngestResult> {
   const startTime = Date.now();
+  const resolvedOptions = { ...DEFAULT_INGEST_RUN_OPTIONS, ...options };
 
   try {
-    // 1. Fetch feed (with retry)
-    const response = await fetchWithRetry(feedUrl, {
-      headers: { Accept: "application/json" },
-      next: { revalidate: 0 },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Feed returned ${response.status}: ${response.statusText}`,
-      );
-    }
-
-    const feed: FeedResponse = await response.json();
-
-    // 2. Ensure auction house exists
+    // Ensure auction house exists
     await supabase.from("auc_auction_houses").upsert(
       {
         id: houseId,
@@ -143,81 +157,97 @@ async function ingestFeed(
     let lotsSkipped = 0;
     let soldPricesUpdated = 0;
 
-    // 3. Collect all lot IDs from this feed to check existing hashes
-    const allFeedLotIds = feed.auctions.flatMap((a) => a.lots.map((l) => l.id));
-    const existingHashes = await getExistingLotHashes(allFeedLotIds);
+    if (resolvedOptions.syncFeed) {
+      // Fetch feed and upsert the current live data set.
+      const response = await fetchWithRetry(feedUrl, {
+        headers: { Accept: "application/json" },
+        next: { revalidate: 0 },
+      });
 
-    // 4. Process each auction and its lots
-    for (const auction of feed.auctions) {
-      // Upsert auction
-      await supabase.from("auc_auctions").upsert(
-        {
-          id: auction.id,
-          house_id: houseId,
-          title: normalizeAuctionTitle(auction.title),
-          description: auction.description,
-          url: auction.url,
-          is_live: auction.isLiveAuction,
-          start_time: auction.start,
-          end_time: auction.end,
-          image_url: auction.image?.[0] ?? null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "id" },
-      );
-
-      // Filter out unchanged lots
-      const changedLots: FeedLot[] = [];
-      for (const lot of auction.lots) {
-        const newHash = computeLotHash(lot);
-        if (existingHashes.get(lot.id) === newHash) {
-          lotsSkipped++;
-        } else {
-          changedLots.push(lot);
-        }
+      if (!response.ok) {
+        throw new Error(
+          `Feed returned ${response.status}: ${response.statusText}`,
+        );
       }
 
-      if (changedLots.length === 0) continue;
+      const feed: FeedResponse = await response.json();
 
-      // Upsert lots in batches of 50
-      const lotBatches = chunkArray(changedLots, 50);
+      const allFeedLotIds = feed.auctions.flatMap((a) =>
+        a.lots.map((l) => l.id),
+      );
+      const existingHashes = await getExistingLotHashes(allFeedLotIds);
 
-      for (const batch of lotBatches) {
-        const lotRows = batch.map((lot) => ({
-          ...normalizeLot(lot, auction.id, houseId),
-          content_hash: computeLotHash(lot),
-        }));
+      for (const auction of feed.auctions) {
+        await supabase.from("auc_auctions").upsert(
+          {
+            id: auction.id,
+            house_id: houseId,
+            title: normalizeAuctionTitle(auction.title),
+            description: auction.description,
+            url: auction.url,
+            is_live: auction.isLiveAuction,
+            start_time: auction.start,
+            end_time: auction.end,
+            image_url: auction.image?.[0] ?? null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" },
+        );
 
-        const { data, error } = await supabase
-          .from("auc_lots")
-          .upsert(lotRows, { onConflict: "id" })
-          .select("id");
-
-        if (error) {
-          console.error(`[ingest] Batch error for ${houseId}:`, error.message);
-          continue;
-        }
-
-        // Track price changes
-        for (const lot of batch) {
-          if (lot.price.bid != null) {
-            await trackPriceChange(lot.id, lot.price.bid);
+        const changedLots: FeedLot[] = [];
+        for (const lot of auction.lots) {
+          const newHash = computeLotHash(lot);
+          if (existingHashes.get(lot.id) === newHash) {
+            lotsSkipped++;
+          } else {
+            changedLots.push(lot);
           }
         }
 
-        // Count: if lot was in existingHashes it's an update, else it's new
-        for (const lot of batch) {
-          if (existingHashes.has(lot.id)) {
-            lotsUpdated++;
-          } else {
-            lotsAdded++;
+        if (changedLots.length === 0) continue;
+
+        const lotBatches = chunkArray(changedLots, 50);
+
+        for (const batch of lotBatches) {
+          const lotRows = batch.map((lot) => ({
+            ...normalizeLot(lot, auction.id, houseId),
+            content_hash: computeLotHash(lot),
+          }));
+
+          const { error } = await supabase
+            .from("auc_lots")
+            .upsert(lotRows, { onConflict: "id" })
+            .select("id");
+
+          if (error) {
+            console.error(
+              `[ingest] Batch error for ${houseId}:`,
+              error.message,
+            );
+            continue;
+          }
+
+          for (const lot of batch) {
+            if (lot.price.bid != null) {
+              await trackPriceChange(lot.id, lot.price.bid);
+            }
+          }
+
+          for (const lot of batch) {
+            if (existingHashes.has(lot.id)) {
+              lotsUpdated++;
+            } else {
+              lotsAdded++;
+            }
           }
         }
       }
     }
 
-    soldPricesUpdated += await ingestPriceBankFeed(houseId, feedUrl);
-    soldPricesUpdated += await refreshEndedLotsFromSite(houseId);
+    if (resolvedOptions.refreshSoldPrices) {
+      soldPricesUpdated += await ingestPriceBankFeed(houseId, feedUrl);
+      soldPricesUpdated += await refreshEndedLotsFromSite(houseId);
+    }
 
     const result: IngestResult = {
       houseId,
@@ -449,13 +479,16 @@ async function refreshEndedLotsFromSite(houseId: string) {
   const fromDate = new Date(
     now.getTime() - SOLD_PRICE_SITE_LOOKBACK_DAYS * 86_400_000,
   ).toISOString();
+  const readyBefore = new Date(
+    now.getTime() - SOLD_PRICE_READY_DELAY_HOURS * 3_600_000,
+  ).toISOString();
 
   const { data, error } = await supabase
     .from("auc_lots")
     .select("id, url, end_time, availability, current_bid, sold_price")
     .eq("house_id", houseId)
     .gte("end_time", fromDate)
-    .lte("end_time", now.toISOString())
+    .lte("end_time", readyBefore)
     .order("end_time", { ascending: false })
     .limit(SOLD_PRICE_SITE_BATCH_LIMIT);
 

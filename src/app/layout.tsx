@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
 import "./globals.css";
 
@@ -67,12 +68,23 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+            gtag('consent', 'default', {
+              analytics_storage: 'denied',
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              functionality_storage: 'granted',
+              personalization_storage: 'granted',
+              security_storage: 'granted',
+              wait_for_update: 500
+            });
             gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
           `}
         </Script>
         <Suspense fallback={null}>
           <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
         </Suspense>
+        <ConsentBanner />
         {children}
       </body>
     </html>

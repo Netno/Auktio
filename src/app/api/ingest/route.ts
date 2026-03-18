@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ingestAllFeeds } from "@/lib/feed-ingester";
+import { ingestAllFeeds, ingestFeedDataOnly } from "@/lib/feed-ingester";
 import { generateMissingEmbeddings } from "@/lib/embedding-ingester";
 
 /**
@@ -8,7 +8,8 @@ import { generateMissingEmbeddings } from "@/lib/embedding-ingester";
  * Triggered by Vercel Cron (see vercel.json) or manually.
  * Protected by CRON_SECRET.
  *
- * Pipeline: 1) Fetch & upsert feeds → 2) Generate embeddings for new lots
+ * Default pipeline: evening feed sync and embeddings.
+ * Use ?mode=full manually when both feed sync and sold-price refresh are needed.
  */
 export async function POST(request: NextRequest) {
   // Verify cron secret
@@ -20,8 +21,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Step 1: Ingest feeds
-    const feedResults = await ingestAllFeeds();
+    const mode = request.nextUrl.searchParams.get("mode");
+    const feedResults =
+      mode === "full" ? await ingestAllFeeds() : await ingestFeedDataOnly();
 
     // Step 2: Generate embeddings for newly added lots (if Gemini key configured)
     let embeddingResult = null;
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
         ok: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
