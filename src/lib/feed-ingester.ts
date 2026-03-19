@@ -185,7 +185,9 @@ async function ingestFeed(
 
       const feed: FeedResponse = await response.json();
 
-      const allFeedLotIds = feed.auctions.flatMap((a) => a.lots.map((l) => l.id));
+      const allFeedLotIds = feed.auctions.flatMap((a) =>
+        a.lots.map((l) => l.id),
+      );
       const existingLotStates = await getExistingLotStates(allFeedLotIds);
 
       for (const auction of feed.auctions) {
@@ -348,6 +350,7 @@ async function getExistingLotsForPriceBank(
       auction_id: number;
       content_hash: string | null;
       sold_price: number | null;
+      categories: string[] | null;
     }
   >
 > {
@@ -357,6 +360,7 @@ async function getExistingLotsForPriceBank(
       auction_id: number;
       content_hash: string | null;
       sold_price: number | null;
+      categories: string[] | null;
     }
   >();
 
@@ -366,7 +370,7 @@ async function getExistingLotsForPriceBank(
   for (const chunk of chunks) {
     const { data } = await supabase
       .from("auc_lots")
-      .select("id, auction_id, content_hash, sold_price")
+      .select("id, auction_id, content_hash, sold_price, categories")
       .eq("house_id", houseId)
       .in("id", chunk);
 
@@ -375,6 +379,7 @@ async function getExistingLotsForPriceBank(
         auction_id: row.auction_id,
         content_hash: row.content_hash,
         sold_price: row.sold_price,
+        categories: row.categories ?? null,
       });
     }
   }
@@ -424,7 +429,12 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
         }
 
         return {
-          ...normalizeLot(lot, existing.auction_id, houseId),
+          ...normalizeLot(
+            lot,
+            existing.auction_id,
+            houseId,
+            existing.categories,
+          ),
           content_hash: contentHash,
         };
       })
