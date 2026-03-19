@@ -98,6 +98,11 @@ export function LotCard({
   const PREVIEW_ASPECT_RATIO = 4 / 3;
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imageVariantIndex, setImageVariantIndex] = useState(0);
+  const [resolvedFallbackImage, setResolvedFallbackImage] = useState<
+    string | null
+  >(null);
+  const [didAttemptPageImageLookup, setDidAttemptPageImageLookup] =
+    useState(false);
   const [currentImageAspectRatio, setCurrentImageAspectRatio] = useState(1);
   const [currentImageFit, setCurrentImageFit] = useState<"cover" | "contain">(
     "cover",
@@ -163,7 +168,22 @@ export function LotCard({
     : lot.thumbnailUrl
       ? [lot.thumbnailUrl]
       : [];
-  const imageSource = images[imgIndex];
+  const primaryImageSource = images[imgIndex];
+  const primaryImageCandidates = primaryImageSource
+    ? Array.from(
+        new Set(
+          [imgSize(primaryImageSource, "med"), primaryImageSource].filter(
+            Boolean,
+          ),
+        ),
+      )
+    : [];
+  const hasExhaustedPrimaryCandidates =
+    imageVariantIndex >= primaryImageCandidates.length;
+  const imageSource =
+    !primaryImageSource || hasExhaustedPrimaryCandidates
+      ? (resolvedFallbackImage ?? primaryImageSource)
+      : primaryImageSource;
   const currentImageCandidates = imageSource
     ? Array.from(
         new Set([imgSize(imageSource, "med"), imageSource].filter(Boolean)),
@@ -231,11 +251,62 @@ export function LotCard({
   const shouldShowEstimateColumn = lot.isActive;
 
   useEffect(() => {
+    setResolvedFallbackImage(null);
+    setDidAttemptPageImageLookup(false);
+  }, [lot.id]);
+
+  useEffect(() => {
     setImgLoaded(false);
     setImageVariantIndex(0);
     setCurrentImageAspectRatio(1);
     setCurrentImageFit("cover");
   }, [imageSource]);
+
+  useEffect(() => {
+    const shouldLookupFallback =
+      !!lot.url &&
+      !resolvedFallbackImage &&
+      !didAttemptPageImageLookup &&
+      (!primaryImageSource ||
+        imageVariantIndex >= currentImageCandidates.length);
+
+    if (!shouldLookupFallback) {
+      return;
+    }
+
+    let isCancelled = false;
+    setDidAttemptPageImageLookup(true);
+
+    fetch(`/api/lot-image?lotUrl=${encodeURIComponent(lot.url)}`)
+      .then((response) => {
+        if (!response.ok) {
+          return null;
+        }
+
+        return response.json() as Promise<{ imageUrl?: string | null }>;
+      })
+      .then((payload) => {
+        if (isCancelled || !payload?.imageUrl) {
+          return;
+        }
+
+        setResolvedFallbackImage(payload.imageUrl);
+      })
+      .catch(() => {
+        // Leave the placeholder visible when no recoverable image exists.
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    currentImageCandidates.length,
+    didAttemptPageImageLookup,
+    imageVariantIndex,
+    lot.url,
+    primaryImageSource,
+    resolvedFallbackImage,
+  ]);
 
   const isTallPortraitImage =
     currentImageFit === "contain" &&

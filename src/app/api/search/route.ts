@@ -38,6 +38,7 @@ const FACET_BATCH_SIZE = 1000;
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 const FACET_CACHE_TTL_MS = 5 * 60 * 1000;
 const DEFAULT_LANDING_SEARCH_CACHE_TTL_MS = 3 * 60 * 1000;
+const SEARCH_STATS_CACHE_TTL_MS = 60 * 1000;
 
 /** 60 requests per minute per IP */
 const RATE_LIMIT_CONFIG = { maxRequests: 60, windowMs: 60_000 };
@@ -67,6 +68,13 @@ type ValueStatsRow = Pick<
   SearchRow,
   "currency" | "current_bid" | "sold_price" | "availability" | "end_time"
 >;
+
+type SearchStatsPayload = {
+  windowCount: number;
+  totalValue: number;
+  totalValueCurrency: string | null;
+  totalValueHasMixedCurrencies: boolean;
+};
 
 async function getVerifiedDidYouMean(
   supabase: any,
@@ -118,6 +126,13 @@ const defaultLandingSearchCache = new Map<
     value: SearchResponsePayload;
   }
 >();
+const searchStatsCache = new Map<
+  string,
+  {
+    expiresAt: number;
+    value: SearchStatsPayload;
+  }
+>();
 
 function getSearchResponseCacheKey(params: SearchParams) {
   return JSON.stringify({
@@ -137,6 +152,28 @@ function getSearchResponseCacheKey(params: SearchParams) {
     activeOnly: Boolean(params.activeOnly),
     page: params.page ?? 1,
     pageSize: params.pageSize ?? PAGE_SIZE_DEFAULT,
+  });
+}
+
+function getSearchStatsCacheKey(
+  params: SearchParams,
+  vectorLotIds: number[] | null,
+) {
+  return JSON.stringify({
+    query: params.query ?? null,
+    searchMode: params.searchMode ?? DEFAULT_SEARCH_MODE,
+    status: params.status ?? "active",
+    auctionIds: params.auctionIds ?? [],
+    lotIds: params.lotIds ?? [],
+    categories: params.categories ?? [],
+    city: params.city ?? null,
+    houseId: params.houseId ?? null,
+    hasBids: Boolean(params.hasBids),
+    soldOnly: Boolean(params.soldOnly),
+    minPrice: params.minPrice ?? null,
+    maxPrice: params.maxPrice ?? null,
+    activeOnly: Boolean(params.activeOnly),
+    vectorLotIds: vectorLotIds ?? [],
   });
 }
 
@@ -1011,6 +1048,40 @@ async function getTotalValueStats(
   };
 }
 
+async function getCachedSearchStats(
+  supabase: any,
+  params: SearchParams,
+  vectorLotIds: number[] | null,
+  nowIso: string,
+): Promise<SearchStatsPayload> {
+  const cacheKey = getSearchStatsCacheKey(params, vectorLotIds);
+  const cached = searchStatsCache.get(cacheKey);
+  const now = Date.now();
+
+  if (cached && cached.expiresAt > now) {
+    return cached.value;
+  }
+
+  const [windowCount, totalValueStats] = await Promise.all([
+    getWindowCount(supabase, params, vectorLotIds, nowIso),
+    getTotalValueStats(supabase, params, vectorLotIds, nowIso),
+  ]);
+
+  const value = {
+    windowCount,
+    totalValue: totalValueStats.totalValue,
+    totalValueCurrency: totalValueStats.totalValueCurrency,
+    totalValueHasMixedCurrencies: totalValueStats.totalValueHasMixedCurrencies,
+  };
+
+  searchStatsCache.set(cacheKey, {
+    expiresAt: now + SEARCH_STATS_CACHE_TTL_MS,
+    value,
+  });
+
+  return value;
+}
+
 async function getFacetBundle(supabase: any, status: SearchStatus) {
   const cached = facetCache.get(status);
   const now = Date.now();
@@ -1270,11 +1341,10 @@ export async function GET(request: NextRequest) {
       query = query.range(offset, offset + effectiveParams.pageSize! - 1);
     }
 
-    const [{ data, count, error }, windowCount, totalValueStats, facetBundle] =
+    const [{ data, count, error }, searchStats, facetBundle] =
       await Promise.all([
         query,
-        getWindowCount(supabase, effectiveParams, vectorLotIds, nowIso),
-        getTotalValueStats(supabase, effectiveParams, vectorLotIds, nowIso),
+        getCachedSearchStats(supabase, effectiveParams, vectorLotIds, nowIso),
         getFacetBundle(supabase, params.status ?? "active"),
       ]);
 
@@ -1436,13 +1506,7 @@ export async function GET(request: NextRequest) {
       page: effectiveParams.page,
       pageSize: effectiveParams.pageSize,
       didYouMean,
-      stats: {
-        windowCount,
-        totalValue: totalValueStats.totalValue,
-        totalValueCurrency: totalValueStats.totalValueCurrency,
-        totalValueHasMixedCurrencies:
-          totalValueStats.totalValueHasMixedCurrencies,
-      },
+      stats: searchStats,
       facets: {
         categories: facetBundle.categories,
         cities: facetBundle.cities,
