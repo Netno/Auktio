@@ -348,11 +348,8 @@ export function HomePageClient() {
   const submitSearchFromHero = useCallback(() => {
     if (typeof window !== "undefined" && window.innerWidth < 640) {
       setPendingMobileResultsJump(true);
-      return;
     }
-
-    scrollToResults();
-  }, [scrollToResults]);
+  }, []);
 
   const handleSuggestionSelect = useCallback(
     (suggestion: SearchSuggestion) => {
@@ -360,12 +357,9 @@ export function HomePageClient() {
 
       if (typeof window !== "undefined" && window.innerWidth < 640) {
         setPendingMobileResultsJump(true);
-        return;
       }
-
-      scrollToResults();
     },
-    [scrollToResults, setQuery],
+    [setQuery],
   );
 
   const scrollToSearchTop = useCallback(() => {
