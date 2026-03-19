@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import Image from "next/image";
 import {
   Heart,
@@ -255,7 +261,7 @@ export function LotCard({
     setDidAttemptPageImageLookup(false);
   }, [lot.id]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setImgLoaded(false);
     setImageVariantIndex(0);
     setCurrentImageAspectRatio(1);
