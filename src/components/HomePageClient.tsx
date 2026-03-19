@@ -486,6 +486,9 @@ export function HomePageClient() {
           total={total}
           status={status}
           windowCount={stats.windowCount}
+          totalValue={stats.totalValue}
+          totalValueCurrency={stats.totalValueCurrency}
+          totalValueHasMixedCurrencies={stats.totalValueHasMixedCurrencies}
         />
 
         {selectedAuctionIds.length > 0 && (

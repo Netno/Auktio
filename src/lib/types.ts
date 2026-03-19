@@ -181,6 +181,9 @@ export interface SearchResponse {
   didYouMean?: string;
   stats: {
     windowCount: number;
+    totalValue: number;
+    totalValueCurrency: string | null;
+    totalValueHasMixedCurrencies: boolean;
   };
   facets: {
     categories: FacetCount[];

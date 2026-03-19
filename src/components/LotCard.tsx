@@ -97,6 +97,7 @@ export function LotCard({
   const PREVIEW_MARGIN_PX = 24;
   const PREVIEW_ASPECT_RATIO = 4 / 3;
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [imageVariantIndex, setImageVariantIndex] = useState(0);
   const [currentImageAspectRatio, setCurrentImageAspectRatio] = useState(1);
   const [currentImageFit, setCurrentImageFit] = useState<"cover" | "contain">(
     "cover",
@@ -162,14 +163,30 @@ export function LotCard({
     : lot.thumbnailUrl
       ? [lot.thumbnailUrl]
       : [];
-  const currentImage = images[imgIndex]
-    ? imgSize(images[imgIndex], "med")
-    : undefined;
-  const zoomImage = images[imgIndex]
-    ? imgSize(images[imgIndex], "lg")
-    : undefined;
-  const detailZoomImage = zoomImage ?? images[imgIndex];
-  const magnifierImage = images[imgIndex] ?? zoomImage;
+  const imageSource = images[imgIndex];
+  const currentImageCandidates = imageSource
+    ? Array.from(
+        new Set([imgSize(imageSource, "med"), imageSource].filter(Boolean)),
+      )
+    : [];
+  const zoomImageCandidates = imageSource
+    ? Array.from(
+        new Set(
+          [
+            imgSize(imageSource, "lg"),
+            imgSize(imageSource, "med"),
+            imageSource,
+          ].filter(Boolean),
+        ),
+      )
+    : [];
+  const currentImage = currentImageCandidates[imageVariantIndex];
+  const zoomImage =
+    zoomImageCandidates[
+      Math.min(imageVariantIndex, zoomImageCandidates.length - 1)
+    ] ?? zoomImageCandidates[0];
+  const detailZoomImage = zoomImage ?? currentImage ?? imageSource;
+  const magnifierImage = detailZoomImage;
   const MAGNIFIER_SIZE_PX = 220;
   const MAGNIFIER_ZOOM_PERCENT = 520;
   const showCountryCode = Boolean(lot.country && lot.country !== "SE");
@@ -215,9 +232,10 @@ export function LotCard({
 
   useEffect(() => {
     setImgLoaded(false);
+    setImageVariantIndex(0);
     setCurrentImageAspectRatio(1);
     setCurrentImageFit("cover");
-  }, [currentImage]);
+  }, [imageSource]);
 
   const isTallPortraitImage =
     currentImageFit === "contain" &&
@@ -732,7 +750,8 @@ export function LotCard({
               } transition-transform duration-500`}
               style={{ opacity: imgLoaded ? 1 : 0 }}
               onError={() => {
-                setImgLoaded(true);
+                setImgLoaded(false);
+                setImageVariantIndex((currentIndex) => currentIndex + 1);
               }}
               onLoad={(event) => {
                 const image = event.currentTarget;

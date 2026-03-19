@@ -29,6 +29,9 @@ interface UseSearchReturn {
   };
   stats: {
     windowCount: number;
+    totalValue: number;
+    totalValueCurrency: string | null;
+    totalValueHasMixedCurrencies: boolean;
   };
 
   // Params
@@ -181,7 +184,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     cities: FacetCount[];
     houses: FacetCount[];
   }>({ categories: [], cities: [], houses: [] });
-  const [stats, setStats] = useState({ windowCount: 0 });
+  const [stats, setStats] = useState({
+    windowCount: 0,
+    totalValue: 0,
+    totalValueCurrency: null as string | null,
+    totalValueHasMixedCurrencies: false,
+  });
 
   // Debounce timer
   const queryDebounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -283,7 +291,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         setError(err instanceof Error ? err.message : "Search failed");
         setLots([]);
         setDidYouMean(null);
-        setStats({ windowCount: 0 });
+        setStats({
+          windowCount: 0,
+          totalValue: 0,
+          totalValueCurrency: null,
+          totalValueHasMixedCurrencies: false,
+        });
       } finally {
         setLoading(false);
       }

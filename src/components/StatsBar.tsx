@@ -8,9 +8,20 @@ interface StatsBarProps {
   total: number;
   status: SearchStatus;
   windowCount: number;
+  totalValue: number;
+  totalValueCurrency: string | null;
+  totalValueHasMixedCurrencies: boolean;
 }
 
-export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
+export function StatsBar({
+  lots,
+  total,
+  status,
+  windowCount,
+  totalValue,
+  totalValueCurrency,
+  totalValueHasMixedCurrencies,
+}: StatsBarProps) {
   const valueLots = lots
     .map((lot) => {
       const amount = lot.isActive
@@ -30,11 +41,19 @@ export function StatsBar({ lots, total, status, windowCount }: StatsBarProps) {
 
   const currencies = Array.from(new Set(valueLots.map((lot) => lot.currency)));
   const hasMixedCurrencies = currencies.length > 1;
-  const totalValue = valueLots.reduce((sum, lot) => sum + lot.amount, 0);
-  const totalValueDisplay = hasMixedCurrencies
+  const fallbackTotalValue = valueLots.reduce(
+    (sum, lot) => sum + lot.amount,
+    0,
+  );
+  const resolvedTotalValueHasMixedCurrencies =
+    totalValueHasMixedCurrencies ?? hasMixedCurrencies;
+  const resolvedTotalValueCurrency =
+    totalValueCurrency ?? currencies[0] ?? "SEK";
+  const resolvedTotalValue = totalValue ?? fallbackTotalValue;
+  const totalValueDisplay = resolvedTotalValueHasMixedCurrencies
     ? "Flera valutor"
-    : formatAmount(totalValue, currencies[0] ?? "SEK");
-  const totalValueLabel = hasMixedCurrencies
+    : formatAmount(resolvedTotalValue, resolvedTotalValueCurrency);
+  const totalValueLabel = resolvedTotalValueHasMixedCurrencies
     ? status === "ended"
       ? "slutvärde ej summerat"
       : "budvärde ej summerat"

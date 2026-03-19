@@ -56,9 +56,17 @@ type SearchResponsePayload = {
   didYouMean?: string;
   stats: {
     windowCount: number;
+    totalValue: number;
+    totalValueCurrency: string | null;
+    totalValueHasMixedCurrencies: boolean;
   };
   facets: FacetBundle;
 };
+
+type ValueStatsRow = Pick<
+  SearchRow,
+  "currency" | "current_bid" | "sold_price" | "availability" | "end_time"
+>;
 
 async function getVerifiedDidYouMean(
   supabase: any,
@@ -264,9 +272,8 @@ function getLexicalScore(
   if (!queryTerms.length) {
     return 0;
   }
-
   const normalizedTitle = normalizeText(lot.title ?? "");
-  const titleTokens = normalizeText(lot.title ?? "")
+  const titleTokens = normalizedTitle
     .split(" ")
     .filter(Boolean)
     .flatMap((token) => buildWordRoots(token));
@@ -615,7 +622,7 @@ function applyStatusFilter(query: any, status: SearchStatus, nowIso: string) {
   }
 }
 
-function isLotActive(row: SearchRow) {
+function isLotActive(row: Pick<SearchRow, "availability" | "end_time">) {
   if (row.availability != null) return false;
   if (!row.end_time) return true;
   return new Date(row.end_time).getTime() > Date.now();
@@ -967,6 +974,43 @@ async function getWindowCount(
   return count ?? 0;
 }
 
+async function getTotalValueStats(
+  supabase: any,
+  params: SearchParams,
+  vectorLotIds: number[] | null,
+  nowIso: string,
+) {
+  const rows = await fetchAllRows<ValueStatsRow>(() => {
+    let query = supabase.from("auc_lots").select(`
+        currency, current_bid, sold_price, end_time, availability
+      `);
+
+    query = applySearchCriteria(query, params, vectorLotIds, nowIso);
+    return query.order("id", { ascending: true });
+  });
+
+  const valueRows = rows
+    .map((row) => {
+      const amount = isLotActive(row) ? row.current_bid : row.sold_price;
+
+      return {
+        amount,
+        currency: (row.currency || "SEK").toUpperCase(),
+      };
+    })
+    .filter(
+      (row): row is { amount: number; currency: string } => row.amount != null,
+    );
+
+  const currencies = Array.from(new Set(valueRows.map((row) => row.currency)));
+
+  return {
+    totalValue: valueRows.reduce((sum, row) => sum + row.amount, 0),
+    totalValueCurrency: currencies[0] ?? null,
+    totalValueHasMixedCurrencies: currencies.length > 1,
+  };
+}
+
 async function getFacetBundle(supabase: any, status: SearchStatus) {
   const cached = facetCache.get(status);
   const now = Date.now();
@@ -1226,10 +1270,11 @@ export async function GET(request: NextRequest) {
       query = query.range(offset, offset + effectiveParams.pageSize! - 1);
     }
 
-    const [{ data, count, error }, windowCount, facetBundle] =
+    const [{ data, count, error }, windowCount, totalValueStats, facetBundle] =
       await Promise.all([
         query,
         getWindowCount(supabase, effectiveParams, vectorLotIds, nowIso),
+        getTotalValueStats(supabase, effectiveParams, vectorLotIds, nowIso),
         getFacetBundle(supabase, params.status ?? "active"),
       ]);
 
@@ -1393,6 +1438,10 @@ export async function GET(request: NextRequest) {
       didYouMean,
       stats: {
         windowCount,
+        totalValue: totalValueStats.totalValue,
+        totalValueCurrency: totalValueStats.totalValueCurrency,
+        totalValueHasMixedCurrencies:
+          totalValueStats.totalValueHasMixedCurrencies,
       },
       facets: {
         categories: facetBundle.categories,
