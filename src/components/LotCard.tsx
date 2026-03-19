@@ -15,7 +15,6 @@ import {
   timeLeft,
   formatAmount,
   formatDateTimeStamp,
-  getCountryFlag,
   imgSize,
 } from "@/lib/utils";
 import type { Lot } from "@/lib/types";
@@ -34,6 +33,40 @@ const MOBILE_ZOOM_MAX_SCALE = 4;
 const MOBILE_ZOOM_STEP = 0.5;
 const DOUBLE_TAP_DELAY_MS = 280;
 const TALL_IMAGE_CONTAIN_THRESHOLD = 0.68;
+
+function getCountryFlagSwatchStyle(countryCode: string) {
+  switch (countryCode) {
+    case "DK":
+      return {
+        background:
+          "linear-gradient(90deg, #c60c30 0 30%, #ffffff 30% 38%, #c60c30 38% 100%), linear-gradient(180deg, transparent 0 43%, #ffffff 43% 57%, transparent 57% 100%), #c60c30",
+      };
+    case "NO":
+      return {
+        background:
+          "linear-gradient(90deg, #ba0c2f 0 28%, #ffffff 28% 40%, #00205b 40% 48%, #ffffff 48% 60%, #ba0c2f 60% 100%), linear-gradient(180deg, transparent 0 41%, #ffffff 41% 59%, transparent 59% 100%), linear-gradient(180deg, transparent 0 45%, #00205b 45% 55%, transparent 55% 100%), #ba0c2f",
+      };
+    case "AT":
+      return {
+        background:
+          "linear-gradient(180deg, #ed2939 0 33.33%, #ffffff 33.33% 66.66%, #ed2939 66.66% 100%)",
+      };
+    case "EE":
+      return {
+        background:
+          "linear-gradient(180deg, #4891d9 0 33.33%, #1f1f1f 33.33% 66.66%, #ffffff 66.66% 100%)",
+      };
+    case "DE":
+      return {
+        background:
+          "linear-gradient(180deg, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%)",
+      };
+    default:
+      return {
+        background: "linear-gradient(180deg, #d9e7f5 0 50%, #f7efe1 50% 100%)",
+      };
+  }
+}
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -140,11 +173,13 @@ export function LotCard({
   const MAGNIFIER_SIZE_PX = 220;
   const MAGNIFIER_ZOOM_PERCENT = 520;
   const showCountryCode = Boolean(lot.country && lot.country !== "SE");
-  const countryFlag = getCountryFlag(lot.country);
-  const showCountryBadge = Boolean(showCountryCode && countryFlag);
+  const countryCode = lot.country?.toUpperCase() ?? "";
+  const showCountryBadge = Boolean(showCountryCode && countryCode);
   const locationLabel = [lot.city, showCountryCode ? lot.country : undefined]
     .filter(Boolean)
     .join(", ");
+  const visibleLocationLabel =
+    showCountryBadge && lot.city ? lot.city : locationLabel;
   const mapQuery = [lot.city, lot.country, lot.houseName]
     .filter(Boolean)
     .join(", ");
@@ -679,6 +714,7 @@ export function LotCard({
           {/* Image */}
           {currentImage && (
             <Image
+              key={currentImage}
               src={currentImage}
               alt={lot.title}
               fill
@@ -695,6 +731,9 @@ export function LotCard({
                   : "object-cover group-hover:scale-[1.04]"
               } transition-transform duration-500`}
               style={{ opacity: imgLoaded ? 1 : 0 }}
+              onError={() => {
+                setImgLoaded(true);
+              }}
               onLoad={(event) => {
                 const image = event.currentTarget;
                 const aspectRatio =
@@ -812,68 +851,79 @@ export function LotCard({
         {/* Info */}
         <div className="relative flex flex-1 flex-col p-4 pb-5 overflow-visible">
           <div>
-            <div className="flex items-center gap-1 text-[11px] font-medium text-brand-400 uppercase tracking-wider mb-1.5">
-              {lot.houseLogoUrl && (
-                <Image
-                  src={lot.houseLogoUrl}
-                  alt={lot.houseName ?? ""}
-                  width={16}
-                  height={16}
-                  unoptimized
-                  className="rounded-sm object-contain shrink-0"
-                />
-              )}
-              <span>{lot.houseName ?? "Auktionshus"}</span>
-              {showCountryBadge && (
-                <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-semibold tracking-normal text-brand-600">
-                  <span aria-hidden="true">{countryFlag}</span>
-                  <span>{lot.currency}</span>
+            <div className="mb-1.5 space-y-1.5 min-[520px]:space-y-0 min-[520px]:flex min-[520px]:items-start min-[520px]:justify-between min-[520px]:gap-3">
+              <div className="min-w-0 flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.11em] text-brand-400 min-[520px]:flex-1 min-[520px]:pr-2">
+                {lot.houseLogoUrl && (
+                  <Image
+                    src={lot.houseLogoUrl}
+                    alt={lot.houseName ?? ""}
+                    width={16}
+                    height={16}
+                    unoptimized
+                    className="rounded-sm object-contain shrink-0"
+                  />
+                )}
+                <span className="min-w-0 leading-snug">
+                  {lot.houseName ?? "Auktionshus"}
                 </span>
-              )}
-              {locationLabel && (
-                <div
-                  className="relative"
-                  onMouseEnter={() => setShowLocationOverlay(true)}
-                  onMouseLeave={() => setShowLocationOverlay(false)}
-                >
-                  <span>·</span>
-                  <button
-                    type="button"
-                    onClick={handleMapButtonClick}
-                    className="ml-1 inline-flex min-h-8 items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold normal-case tracking-normal text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-900 sm:min-h-0 sm:px-2 sm:py-0.5"
-                    aria-label={`Visa karta för ${locationLabel}`}
-                  >
-                    <MapPin size={10} className="shrink-0" />
-                    <span>{locationLabel}</span>
-                  </button>
+              </div>
 
-                  {showLocationOverlay && googleMapsEmbedUrl && (
-                    <div
-                      className="absolute left-0 top-[calc(100%-2px)] z-30 hidden w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur sm:block"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }}
+              <div className="space-y-1.5 min-[520px]:flex min-[520px]:shrink-0 min-[520px]:items-center min-[520px]:gap-2 min-[520px]:space-y-0">
+                {showCountryBadge && (
+                  <span className="shrink-0 inline-flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-600">
+                    <span
+                      aria-hidden="true"
+                      className="h-3.5 w-[18px] shrink-0 rounded-[4px] border border-white/70 shadow-[inset_0_0_0_0.5px_rgba(58,42,20,0.08)]"
+                      style={getCountryFlagSwatchStyle(countryCode)}
+                    />
+                    <span>{lot.currency}</span>
+                  </span>
+                )}
+
+                {locationLabel && (
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setShowLocationOverlay(true)}
+                    onMouseLeave={() => setShowLocationOverlay(false)}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleMapButtonClick}
+                      className="inline-flex min-h-8 max-w-full items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold normal-case tracking-normal text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-900 sm:min-h-0 sm:px-2.5 sm:py-1"
+                      aria-label={`Visa karta för ${locationLabel}`}
                     >
-                      <div className="border-b border-sky-100 px-3 py-2">
-                        <div className="font-semibold text-sky-950">
-                          Finns i {locationLabel}
+                      <MapPin size={10} className="shrink-0" />
+                      <span>{visibleLocationLabel}</span>
+                    </button>
+
+                    {showLocationOverlay && googleMapsEmbedUrl && (
+                      <div
+                        className="absolute left-0 top-[calc(100%-2px)] z-30 hidden w-[240px] overflow-hidden rounded-xl border border-sky-200 bg-sky-50/95 text-[11px] normal-case tracking-normal text-sky-900 shadow-lg backdrop-blur sm:block"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
+                        <div className="border-b border-sky-100 px-3 py-2">
+                          <div className="font-semibold text-sky-950">
+                            Finns i {locationLabel}
+                          </div>
+                          <div className="text-sky-800/80">
+                            Snabbkarta för platsen.
+                          </div>
                         </div>
-                        <div className="text-sky-800/80">
-                          Snabbkarta för platsen.
-                        </div>
+                        <iframe
+                          title={`Karta för ${locationLabel}`}
+                          src={googleMapsEmbedUrl}
+                          className="h-[138px] w-full border-0 bg-sky-100"
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
                       </div>
-                      <iframe
-                        title={`Karta för ${locationLabel}`}
-                        src={googleMapsEmbedUrl}
-                        className="h-[138px] w-full border-0 bg-sky-100"
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <h3 className="text-sm font-medium text-brand-900 leading-snug mb-1 line-clamp-2">
@@ -937,7 +987,7 @@ export function LotCard({
                     showSoldPrice ? "text-emerald-700" : "text-brand-900"
                   }`}
                 >
-                    {formatAmount(primaryPriceValue, lot.currency)}
+                  {formatAmount(primaryPriceValue, lot.currency)}
                 </div>
               </div>
               {shouldShowEstimateColumn && (

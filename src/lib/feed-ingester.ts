@@ -1,6 +1,7 @@
 import { createServerClient } from "./supabase";
 import { FEED_SOURCES } from "../config/sources";
 import { normalizeLotCategories } from "./category-normalization";
+import { resolveCanonicalCategoriesForIngest } from "./canonical-category-review";
 import type { FeedResponse, FeedLot, IngestResult } from "./types";
 import { normalizeAuctionTitle } from "./utils";
 
@@ -31,6 +32,11 @@ type RecentEndedLotRow = {
   availability: string | null;
   current_bid: number | null;
   sold_price: number | null;
+};
+
+type ExistingLotState = {
+  content_hash: string | null;
+  categories: string[] | null;
 };
 
 /**
@@ -179,10 +185,8 @@ async function ingestFeed(
 
       const feed: FeedResponse = await response.json();
 
-      const allFeedLotIds = feed.auctions.flatMap((a) =>
-        a.lots.map((l) => l.id),
-      );
-      const existingHashes = await getExistingLotHashes(allFeedLotIds);
+      const allFeedLotIds = feed.auctions.flatMap((a) => a.lots.map((l) => l.id));
+      const existingLotStates = await getExistingLotStates(allFeedLotIds);
 
       for (const auction of feed.auctions) {
         await supabase.from("auc_auctions").upsert(
@@ -204,7 +208,7 @@ async function ingestFeed(
         const changedLots: FeedLot[] = [];
         for (const lot of auction.lots) {
           const newHash = computeLotHash(lot);
-          if (existingHashes.get(lot.id) === newHash) {
+          if (existingLotStates.get(lot.id)?.content_hash === newHash) {
             lotsSkipped++;
           } else {
             changedLots.push(lot);
@@ -217,7 +221,12 @@ async function ingestFeed(
 
         for (const batch of lotBatches) {
           const lotRows = batch.map((lot) => ({
-            ...normalizeLot(lot, auction.id, houseId),
+            ...normalizeLot(
+              lot,
+              auction.id,
+              houseId,
+              existingLotStates.get(lot.id)?.categories,
+            ),
             content_hash: computeLotHash(lot),
           }));
 
@@ -241,7 +250,7 @@ async function ingestFeed(
           }
 
           for (const lot of batch) {
-            if (existingHashes.has(lot.id)) {
+            if (existingLotStates.has(lot.id)) {
               lotsUpdated++;
             } else {
               lotsAdded++;
@@ -306,10 +315,10 @@ async function ingestFeed(
 /**
  * Load existing content hashes for given lot IDs to detect unchanged lots.
  */
-async function getExistingLotHashes(
+async function getExistingLotStates(
   lotIds: number[],
-): Promise<Map<number, string>> {
-  const map = new Map<number, string>();
+): Promise<Map<number, ExistingLotState>> {
+  const map = new Map<number, ExistingLotState>();
   if (lotIds.length === 0) return map;
 
   // Query in chunks of 500 (Supabase URL length limit)
@@ -317,10 +326,13 @@ async function getExistingLotHashes(
   for (const chunk of chunks) {
     const { data } = await supabase
       .from("auc_lots")
-      .select("id, content_hash")
+      .select("id, content_hash, categories")
       .in("id", chunk);
     for (const row of data ?? []) {
-      if (row.content_hash) map.set(row.id, row.content_hash);
+      map.set(row.id, {
+        content_hash: row.content_hash ?? null,
+        categories: row.categories ?? null,
+      });
     }
   }
   return map;
@@ -586,8 +598,19 @@ function buildPriceBankFeedUrl(feedUrl: string) {
 /**
  * Normalize a feed lot into our database row format.
  */
-function normalizeLot(lot: FeedLot, auctionId: number, houseId: string) {
+function normalizeLot(
+  lot: FeedLot,
+  auctionId: number,
+  houseId: string,
+  existingCategories: string[] | null | undefined,
+) {
   const description = stripHtml(lot.description);
+  const incomingCategories = normalizeLotCategories({
+    rawCategories: lot.category,
+    title: lot.title,
+    description,
+  });
+
   return {
     id: lot.id,
     auction_id: auctionId,
@@ -596,10 +619,10 @@ function normalizeLot(lot: FeedLot, auctionId: number, houseId: string) {
     title: lot.title,
     description,
     url: lot.url,
-    categories: normalizeLotCategories({
-      rawCategories: lot.category,
-      title: lot.title,
-      description,
+    categories: resolveCanonicalCategoriesForIngest({
+      existingCategories,
+      incomingCategories,
+      incomingRawCategories: lot.category,
     }),
     artists: lot.artist ?? [],
     images: lot.image ?? [],

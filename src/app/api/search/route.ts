@@ -1084,12 +1084,17 @@ export async function GET(request: NextRequest) {
       )
     : params.query?.trim();
   const detectedCategory = detectCategoryIntent(effectiveQuery);
+  const shouldTreatAsCategoryBrowse = Boolean(
+    detectedCategory && effectiveQuery && normalizeSearchQuery(effectiveQuery),
+  );
   const normalizedEffectiveQuery = effectiveQuery
     ? normalizeSearchQuery(effectiveQuery)
     : undefined;
   const effectiveParams: SearchParams = {
     ...params,
-    query: normalizedEffectiveQuery || effectiveQuery || undefined,
+    query: shouldTreatAsCategoryBrowse
+      ? undefined
+      : normalizedEffectiveQuery || effectiveQuery || undefined,
     categories:
       params.categories?.length || !detectedCategory
         ? params.categories

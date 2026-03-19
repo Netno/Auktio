@@ -1,13 +1,17 @@
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { normalizeSearchText } from "../src/lib/search-language";
+import { CATEGORY_ORDER } from "../src/config/sources";
 
 const INPUT_PATH =
   process.argv[2] ?? "exports/ai-categories-batch-001.result.json";
 
+const CANONICAL_CATEGORY_SET = new Set(CATEGORY_ORDER);
+
 type InputRow = {
   id: number;
-  ai_categories: string[];
+  ai_categories?: string[];
+  categories?: string[];
 };
 
 function sanitizeTags(tags: string[] | undefined) {
@@ -19,6 +23,19 @@ function sanitizeTags(tags: string[] | undefined) {
         .map((tag) => normalizeSearchText(String(tag)))
         .filter((tag) => tag.length >= 2)
         .slice(0, 12),
+    ),
+  );
+}
+
+function sanitizeCanonicalCategories(categories: string[] | undefined) {
+  if (!Array.isArray(categories)) return [];
+
+  return Array.from(
+    new Set(
+      categories
+        .map((category) => String(category).trim())
+        .filter((category) => CANONICAL_CATEGORY_SET.has(category as (typeof CATEGORY_ORDER)[number]))
+        .slice(0, 2),
     ),
   );
 }
@@ -42,14 +59,23 @@ async function main() {
     }
 
     const aiCategories = sanitizeTags(row.ai_categories);
-    if (!aiCategories.length) {
+    const categories = sanitizeCanonicalCategories(row.categories);
+    if (!aiCategories.length && !categories.length) {
       skipped++;
       continue;
     }
 
+    const nextUpdate: Record<string, unknown> = {};
+    if (aiCategories.length) {
+      nextUpdate.ai_categories = aiCategories;
+    }
+    if (categories.length) {
+      nextUpdate.categories = categories;
+    }
+
     const { error } = await supabase
       .from("auc_lots")
-      .update({ ai_categories: aiCategories })
+      .update(nextUpdate)
       .eq("id", row.id);
 
     if (error) {

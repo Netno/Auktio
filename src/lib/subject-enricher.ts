@@ -1,6 +1,8 @@
 import { createServerClient } from "./supabase";
 import { regenerateEmbeddings } from "./embedding-ingester";
 import { normalizeSearchText } from "./search-language";
+import { CATEGORY_ORDER } from "@/config/sources";
+import { needsCanonicalCategoryReview } from "./canonical-category-review";
 
 const GEMINI_GENERATE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -24,20 +26,37 @@ interface LotForSubjectEnrichment {
   ai_categories: string[] | null;
   end_time: string | null;
   availability: string | null;
+  raw_data?: {
+    category?: string[] | null;
+  } | null;
 }
 
 interface GeminiTagRow {
   id: number;
   tags?: string[];
+  categories?: string[];
 }
+
+interface EnrichmentPayload {
+  tags: string[];
+  categories: string[];
+}
+
+const CANONICAL_CATEGORIES = [...CATEGORY_ORDER];
+const CANONICAL_CATEGORY_SET = new Set(CANONICAL_CATEGORIES);
 
 const SUBJECT_PROMPT = `Du hjälper till att semantiskt märka auktionsföremål för sökning.
 
-För varje objekt ska du returnera korta svenska taggar i lowercase som hjälper användare att hitta motiv, typ och överbegrepp.
+För varje objekt ska du returnera:
+1. korta svenska taggar i lowercase som hjälper användare att hitta motiv, typ och överbegrepp
+2. 1 eller 2 KANONISKA kategorier från den tillåtna listan
 
 REGLER:
 - Returnera ENDAST strikt JSON
-- Format: [{"id":123,"tags":["tagg1","tagg2"]}]
+- Format: [{"id":123,"categories":["Kategori"],"tags":["tagg1","tagg2"]}]
+- Kategorier måste väljas EXAKT från denna lista: ${CANONICAL_CATEGORIES.join(", ")}
+- Välj högst 2 kategorier
+- Om du är osäker: välj den mest sannolika huvudkategorin hellre än många breda
 - Högst 8 taggar per objekt
 - Taggar ska vara korta, lowercase och utan punkt
 - Inkludera gärna både specifikt motiv och bredare begrepp när det stöds tydligt av texten
@@ -48,7 +67,9 @@ REGLER:
 - Var konservativ: hitta inte på detaljer som inte stöds av titel, beskrivning eller kategorier
 - Ta gärna med objektstyp om den är viktig för sökningen, som tavla, målning, skulptur, porslin, fat, vas, leksak
 - Undvik skräpord som fin, vacker, gammal, unik, samlarobjekt
-- Taggar får inte vara tomma eller duplicerade`;
+- Taggar får inte vara tomma eller duplicerade
+- Om råkategorin är generisk som Alla/Alle ska du klassificera utifrån titel och beskrivning
+- Om texten är på danska, norska eller tyska ska du ändå välja svenska kategorier från listan`;
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,9 +101,20 @@ function sanitizeTags(tags: string[] | undefined) {
   return Array.from(new Set(normalized));
 }
 
+function sanitizeCanonicalCategories(categories: string[] | undefined) {
+  if (!Array.isArray(categories)) return [];
+
+  const normalized = categories
+    .map((category) => String(category).trim())
+    .filter((category) => CANONICAL_CATEGORY_SET.has(category as (typeof CATEGORY_ORDER)[number]))
+    .slice(0, 2);
+
+  return Array.from(new Set(normalized));
+}
+
 async function generateSubjectTagsForBatch(
   lots: LotForSubjectEnrichment[],
-): Promise<Map<number, string[]>> {
+): Promise<Map<number, EnrichmentPayload>> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
 
@@ -101,6 +133,7 @@ async function generateSubjectTagsForBatch(
                   title: lot.title,
                   description: lot.description,
                   categories: lot.categories ?? [],
+                  sourceCategories: lot.raw_data?.category ?? [],
                 })),
               )}`,
             },
@@ -127,11 +160,14 @@ async function generateSubjectTagsForBatch(
       .join("\n") ?? "";
 
   const rows = JSON.parse(extractJsonArray(text)) as GeminiTagRow[];
-  const result = new Map<number, string[]>();
+  const result = new Map<number, EnrichmentPayload>();
 
   for (const row of rows) {
     if (!Number.isFinite(row.id)) continue;
-    result.set(row.id, sanitizeTags(row.tags));
+    result.set(row.id, {
+      tags: sanitizeTags(row.tags),
+      categories: sanitizeCanonicalCategories(row.categories),
+    });
   }
 
   return result;
@@ -151,7 +187,7 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
   while (true) {
     const { data, error } = await supabase
       .from("auc_lots")
-      .select("id, title, description, categories, ai_categories, end_time, availability")
+      .select("id, title, description, categories, ai_categories, end_time, availability, raw_data")
       .gt("id", lastId)
       .gt("end_time", nowIso)
       .is("availability", null)
@@ -166,7 +202,13 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
     if (!lots.length) break;
 
     const pendingLots = lots.filter(
-      (lot) => !lot.ai_categories || lot.ai_categories.length === 0,
+      (lot) =>
+        !lot.ai_categories ||
+        lot.ai_categories.length === 0 ||
+        needsCanonicalCategoryReview({
+          categories: lot.categories,
+          rawCategories: lot.raw_data?.category,
+        }),
     );
 
     if (!pendingLots.length) {
@@ -179,13 +221,39 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
       const updatedIds: number[] = [];
 
       for (const lot of pendingLots) {
-        const aiCategories = generatedTags.get(lot.id) ?? [];
+        const enrichment = generatedTags.get(lot.id) ?? {
+          tags: [],
+          categories: [],
+        };
+        const nextUpdate: Record<string, unknown> = {};
+
+        if (
+          !lot.ai_categories ||
+          lot.ai_categories.length === 0 ||
+          enrichment.tags.length > 0
+        ) {
+          nextUpdate.ai_categories = enrichment.tags;
+          nextUpdate.embedding = null;
+        }
+
+        if (
+          needsCanonicalCategoryReview({
+            categories: lot.categories,
+            rawCategories: lot.raw_data?.category,
+          }) &&
+          enrichment.categories.length > 0
+        ) {
+          nextUpdate.categories = enrichment.categories;
+          nextUpdate.embedding = null;
+        }
+
+        if (Object.keys(nextUpdate).length === 0) {
+          continue;
+        }
+
         const { error: updateError } = await supabase
           .from("auc_lots")
-          .update({
-            ai_categories: aiCategories,
-            embedding: null,
-          })
+          .update(nextUpdate)
           .eq("id", lot.id);
 
         if (updateError) {

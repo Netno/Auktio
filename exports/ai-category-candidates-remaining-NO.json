@@ -1,0 +1,91 @@
+{
+  "exportedAt": "2026-03-18T23:24:07.397Z",
+  "country": "NO",
+  "exportedLots": 3,
+  "rows": [
+    {
+      "id": 1273,
+      "title": "VW Touran ZD17064",
+      "description": "Sist godkjent 05.08.20252011 mod. 05.08.2025 358778 km.Selges uten noen form for reklamasjon eller garanti.Kjøretøyet har bruksforbud og kan ikke brukes.",
+      "categories": [
+        "Fordon"
+      ],
+      "aiCategories": [
+        "vw touran",
+        "personbil",
+        "2011",
+        "begagnad",
+        "vw",
+        "touran",
+        "zd17064",
+        "fordon"
+      ],
+      "sourceCategories": [
+        "Alle"
+      ],
+      "reviewReasons": [
+        "generic-raw-category"
+      ],
+      "house_id": "auksjoner-no",
+      "country": "NO",
+      "city": "Lena",
+      "end_time": "2026-03-24T18:00:23.897+00:00"
+    },
+    {
+      "id": 1274,
+      "title": "VW Touran AS35164",
+      "description": "Frist for godkjent EU-kontroll 01.08.27Registrert første gang 06.12.2012Kilometerstand 01.08.2025 278700Kjøretøyet har bruksforbud og kan ikke brukes. SELGES UTEN NOEN FORM FOR GARANTI ELLER REKLAMASJON.",
+      "categories": [
+        "Fordon"
+      ],
+      "aiCategories": [
+        "vw touran",
+        "personbil",
+        "2012",
+        "begagnad",
+        "vw",
+        "touran",
+        "as35164",
+        "fordon"
+      ],
+      "sourceCategories": [
+        "Alle"
+      ],
+      "reviewReasons": [
+        "generic-raw-category"
+      ],
+      "house_id": "auksjoner-no",
+      "country": "NO",
+      "city": "Lena",
+      "end_time": "2026-03-24T18:02:23.897+00:00"
+    },
+    {
+      "id": 1275,
+      "title": "VW Touran ZD17062",
+      "description": "Sist EU-godkjent 07.08.25. Registrert første gang 14.09.2011. Kilometer 384700 avlest 07.08.2025 Kjøretøyet har bruksforbud og kan ikke brukes. SELGES UTEN NOEN FORM FOR GARANTI ELLER REKLAMASJON.",
+      "categories": [
+        "Fordon"
+      ],
+      "aiCategories": [
+        "vw touran",
+        "personbil",
+        "2011",
+        "begagnad",
+        "vw",
+        "touran",
+        "zd17062",
+        "fordon"
+      ],
+      "sourceCategories": [
+        "Alle"
+      ],
+      "reviewReasons": [
+        "generic-raw-category"
+      ],
+      "house_id": "auksjoner-no",
+      "country": "NO",
+      "city": "Lena",
+      "end_time": "2026-03-24T18:04:23.897+00:00"
+    }
+  ]
+}

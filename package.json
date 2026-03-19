@@ -13,6 +13,8 @@
     "embed": "npx tsx --env-file=.env.local src/lib/embedding-ingester.ts",
     "describe": "npx tsx --env-file=.env.local src/lib/vision-describer.ts",
     "subjects": "npx tsx --env-file=.env.local src/lib/subject-enricher.ts",
+    "categories:report": "npx tsx --env-file=.env.local exports/report-ai-category-candidates.ts",
+    "categories:export": "npx tsx --env-file=.env.local exports/export-ai-category-candidates.ts",
     "subjects:import": "npx tsx --env-file=.env.local exports/import-ai-categories.ts",
     "db:setup": "npx tsx supabase/setup.ts"
   },

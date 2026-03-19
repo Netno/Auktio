@@ -432,10 +432,15 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   const startTime = Date.now();
   const supabase = createServerClient();
   const detectedCategory = detectCategoryIntent(request.query);
+  const shouldTreatAsCategoryBrowse = Boolean(detectedCategory);
   const effectiveRequest =
     request.categories?.length || !detectedCategory
       ? request
-      : { ...request, categories: [detectedCategory] };
+      : {
+          ...request,
+          query: shouldTreatAsCategoryBrowse ? "" : request.query,
+          categories: [detectedCategory],
+        };
   const detectedAuctionHouse = detectAuctionHouse(request.query);
   const retrievalQuery = stripAuctionHouseTerms(
     effectiveRequest.query,

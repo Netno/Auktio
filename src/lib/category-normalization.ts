@@ -16,11 +16,21 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
     terms: [
       "mobler",
       "möbler",
+      "møbler",
       "mobel",
       "möbel",
+      "møbel",
       "mobel",
       "furniture",
       "stol",
+      "lænestol",
+      "laenestol",
+      "slædestol",
+      "slaedestol",
+      "lufthavnsstol",
+      "lufthavnsstole",
+      "chaiselong",
+      "chaiselong",
       "soffa",
       "bord",
       "skap",
@@ -42,6 +52,7 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "inredning",
       "mid century",
       "scandinavian design",
+      "fremstillet ved",
     ],
   },
   {
@@ -64,6 +75,7 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "duk",
       "canvas",
       "signerad",
+      "signeret",
     ],
   },
   {
@@ -89,15 +101,18 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "autograf",
       "portrattfoto",
       "porträttfoto",
+      "fotografi",
     ],
   },
   {
     category: "Silver",
     terms: [
       "silver",
+      "sølv",
       "sterling",
       "argent",
       "nysilver",
+      "sølvbestik",
       "plate",
       "plater",
       "pläter",
@@ -139,10 +154,12 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "det dukade bordet",
       "tallrik",
       "tallrikar",
+      "bestik",
       "fat",
       "skal",
       "skål",
       "servis",
+      "service",
       "soppslev",
       "bestick",
       "karaff",
@@ -156,7 +173,7 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
   },
   {
     category: "Belysning",
-    terms: ["belysning", "lamp", "lampe", "lamper", "ljusstake", "lighting"],
+    terms: ["belysning", "lamp", "lampe", "lamper", "pendel", "ljusstake", "lighting"],
   },
   {
     category: "Glas",
@@ -173,6 +190,7 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "ceramic",
       "stengods",
       "servis",
+      "vase",
       "fajans",
       "tallrik",
       "tallrikar",
@@ -275,8 +293,64 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "cars",
       "vehicle",
       "vehicles",
+      "personbil",
+      "moped",
+      "cykel",
       "motorcykel",
-      "traktor",
+      "peugeot",
+      "ecoboost",
+      "hdi",
+      "reg nr",
+      "regnr",
+      "årsmodell",
+      "arsmodell",
+      "chassi",
+    ],
+  },
+  {
+    category: "Elektronik",
+    terms: [
+      "elektronik",
+      "ljudkort",
+      "audio",
+      "stereo",
+      "lenovo",
+      "tablet",
+      "tab",
+      "dator",
+      "computer",
+      "iphone",
+      "ipad",
+      "headphones",
+      "hörlurar",
+      "horlurar",
+    ],
+  },
+  {
+    category: "Verktyg & Maskiner",
+    terms: [
+      "verktyg",
+      "værktøj",
+      "maskin",
+      "maskine",
+      "maskiner",
+      "bordsav",
+      "bordsav",
+      "sav",
+      "såg",
+      "kompressor",
+      "compressor",
+      "robotplæneklipper",
+      "robotplaeneklipper",
+      "robotgräsklippare",
+      "robotgrasklippare",
+      "plæneklipper",
+      "plaeneklipper",
+      "gräsklippare",
+      "grasklippare",
+      "vaskemaskine",
+      "tvättmaskin",
+      "tvattmaskin",
     ],
   },
   {
@@ -287,11 +361,30 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "violin",
       "cello",
       "piano",
+      "digital piano",
+      "klaver",
+      "keyboard",
       "flygel",
       "trumma",
       "instrument",
       "musikinstrument",
       "mandolin",
+    ],
+  },
+  {
+    category: "Leksaker",
+    terms: [
+      "leksak",
+      "leksaker",
+      "modellbil",
+      "modellbilar",
+      "modelflygplan",
+      "modellflygplan",
+      "radiostyrd",
+      "tintin",
+      "lego",
+      "docka",
+      "samlarfigur",
     ],
   },
   {
@@ -326,8 +419,32 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
   },
 ];
 
+const STRONG_SINGLE_TERM_CATEGORY_MATCHES = new Set([
+  "Belysning",
+  "Fordon",
+  "Elektronik",
+  "Verktyg & Maskiner",
+  "Musikinstrument",
+  "Leksaker",
+  "Möbler",
+  "Silver",
+]);
+
 function normalizeCategoryValue(value: string | null | undefined) {
   return normalizeSearchText(value ?? "").trim();
+}
+
+export function hasOnlyGenericRawCategories(
+  rawCategories: string[] | null | undefined,
+) {
+  const normalizedRawCategories = (rawCategories ?? [])
+    .map((category) => normalizeCategoryValue(category))
+    .filter(Boolean);
+
+  return (
+    normalizedRawCategories.length > 0 &&
+    normalizedRawCategories.every((category) => GENERIC_CATEGORY_TERMS.has(category))
+  );
 }
 
 function buildNormalizedTerms(value: string) {
@@ -406,6 +523,17 @@ function getTopScoringCategories(
     .map((rule) => rule.category);
 }
 
+function getStrongSingleTermCategories(
+  scores: Array<{ category: string; score: number }>,
+) {
+  return scores
+    .filter(
+      (rule) =>
+        rule.score === 1 && STRONG_SINGLE_TERM_CATEGORY_MATCHES.has(rule.category),
+    )
+    .map((rule) => rule.category);
+}
+
 function reconcileCategories(
   categories: string[],
   textScores: Array<{ category: string; score: number }>,
@@ -445,6 +573,22 @@ function reconcileCategories(
       resolved.delete("Keramik");
     } else if (keramikScore > porslinScore) {
       resolved.delete("Porslin");
+    }
+  }
+
+  if (resolved.has("Fordon") && resolved.has("Elektronik")) {
+    const fordonScore = textScoreMap.get("Fordon") ?? 0;
+    const elektronikScore = textScoreMap.get("Elektronik") ?? 0;
+    if (elektronikScore >= fordonScore) {
+      resolved.delete("Fordon");
+    }
+  }
+
+  if (resolved.has("Fordon") && resolved.has("Leksaker")) {
+    const fordonScore = textScoreMap.get("Fordon") ?? 0;
+    const leksakerScore = textScoreMap.get("Leksaker") ?? 0;
+    if (leksakerScore >= fordonScore) {
+      resolved.delete("Fordon");
     }
   }
 
@@ -496,6 +640,18 @@ export function normalizeLotCategories(params: {
   }
 
   const categories = new Set(getTopScoringCategories(textScores, 2));
+
+  if (categories.size === 0 && normalizedRawCategories.length === 0) {
+    for (const category of getStrongSingleTermCategories(textScores)) {
+      categories.add(category);
+    }
+  }
+
+  if (categories.size === 0 && normalizedRawCategories.length > 0) {
+    for (const category of getStrongSingleTermCategories(textScores)) {
+      categories.add(category);
+    }
+  }
 
   if (categories.size === 0 && normalizedRawCategories.length > 0) {
     categories.add("Diverse");

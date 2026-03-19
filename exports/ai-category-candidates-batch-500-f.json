@@ -1,0 +1,5861 @@
+{
+  "exportedAt": "2026-03-18T23:19:47.190Z",
+  "totalActiveLots": 1500,
+  "exportedLots": 263,
+  "limit": 500,
+  "startAfterId": 42678,
+  "lastExportedId": 70602,
+  "rows": [
+    {
+      "id": 42679,
+      "title": "Vorderschaftrepetierflinte Winchester, 12/76, #L1949572, §A (ACHTUNG +35€ Beschusskosten)",
+      "description": "LL 47cm, Messingkorn, Choke Cyl, Druckpunktabzug, Sicherungsdrücker im Abzugsbügel, glatter Buchenholzschaft 36cm mit Pistolengriff und ventilierte Gummischafkappe, gültiger Österreichischer Beschuss, Flugrostpunkte daher Zustand 3-4",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Flinten"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T13:47:00+00:00"
+    },
+    {
+      "id": 42696,
+      "title": "Perkussionsrevolver, FLLI. Pietta, Mod. Remington New Army 1858 (Replika), .44, #142832, §B vor 1871",
+      "description": "LL 8\", gültiger Italienischer Beschuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Vorderladerwaffen"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T13:48:00+00:00"
+    },
+    {
+      "id": 42715,
+      "title": "Perkussionspistole, ME-Lindsay, Mod. 1860 (Replika), .44 samt Einstecklauf für Kal. 4,5mm (Antrieb durch Zündhütchen), #16723, §B",
+      "description": "in Originalschachtl samt Pistonschlüssel und sonstigem Zubehör, gültiger Deutscher Beschuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Vorderladerwaffen"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T13:48:30+00:00"
+    },
+    {
+      "id": 42720,
+      "title": "Flinteneinstecklauf Krieghoff, Kal. 16 auf .22 Mag., #130564, § noch frei ab 18",
+      "description": "PTB Prüfzeichen, Zustand 3, nach dem Inkrafttreten der Waffengesetzesnovelle als Wesentlicher Teil Kat C anzumelden.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:05:30+00:00"
+    },
+    {
+      "id": 42721,
+      "title": "Flinteneinstecklauf Krieghoff, Kal. 16 auf .22 Mag., #171869, § noch frei ab 18",
+      "description": "PTB Prüfzeichen, Zustand 3, nach dem Inkrafttreten der Waffengesetzesnovelle als Wesentlicher Teil Kat C anzumelden.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:06:00+00:00"
+    },
+    {
+      "id": 42722,
+      "title": "Flinteneinstecklauf Krieghoff, Kal. 12 auf .22 Mag., #169863, § noch frei ab 18",
+      "description": "PTB Prüfzeichen, Zustand 3, nach dem Inkrafttreten der Waffengesetzesnovelle als Wesentlicher Teil Kat C anzumelden.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:06:30+00:00"
+    },
+    {
+      "id": 42723,
+      "title": "Konvolut Hieb- / Stichwaffen",
+      "description": "1 US- Polizeischlagstock aus Holz sowie ein Wakizashi Samuraischwert (Replika), Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Blankwaffen"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:01:00+00:00"
+    },
+    {
+      "id": 42725,
+      "title": "Konvolut ZF Köcher und Patronentasche / Holster",
+      "description": "2 Köcher, 1 Holster, 1 Patronentaschen, 1 Mündungsschoner, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Ausrüstung"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:22:30+00:00"
+    },
+    {
+      "id": 42726,
+      "title": "Konvolut Gewehrriemen",
+      "description": "Zustand 3-4",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Ausrüstung"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:23:00+00:00"
+    },
+    {
+      "id": 42806,
+      "title": "Magazinskonvolut, H&K, Mod. G3, .308, §A (17/1/8 - 10)",
+      "description": "3 Stk á 20 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:07:00+00:00"
+    },
+    {
+      "id": 42807,
+      "title": "Magazinskonvolut, H&K, Mod. G3, .308, §A (17/1/8 - 10)",
+      "description": "3 Stk á 20 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:07:30+00:00"
+    },
+    {
+      "id": 42808,
+      "title": "Magazinskonvolut, H&K, Mod. G3, .308, §A (17/1/8 - 10)",
+      "description": "3 Stk á 20 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:08:00+00:00"
+    },
+    {
+      "id": 42809,
+      "title": "Magazinskonvolut, H&K, Mod. G3, .308, §A (17/1/8 - 10)",
+      "description": "3 Stk á 20 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:08:30+00:00"
+    },
+    {
+      "id": 42810,
+      "title": "Magazinskonvolut, SIG, Mod. PE90, .223 Rem., §A (17/1/8 - 10)",
+      "description": "2 Stk á 30 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:09:00+00:00"
+    },
+    {
+      "id": 42811,
+      "title": "Magazinskonvolut, SIG, Mod. PE90, .223 Rem., §A (17/1/8 - 10)",
+      "description": "2 Stk á 30 Schuss und 1 Stk á 20 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:09:30+00:00"
+    },
+    {
+      "id": 42812,
+      "title": "Magazinskonvolut, AR15, .223 Rem., § A (17/1/8 - 10)",
+      "description": "2 Stk á 30 Schuss aus Metall, 1 Stk á 30 Schuss aus Kunststoff, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:10:00+00:00"
+    },
+    {
+      "id": 42813,
+      "title": "Trommelmagazin, AR15, .223 Rem., §A (17/1/8 - 10)",
+      "description": "1 Stk, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:10:30+00:00"
+    },
+    {
+      "id": 42814,
+      "title": "Magazinskonvolut AK47, 7,62x39, §A (17/1/8 - 10)",
+      "description": "2 Stk á 30 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:11:00+00:00"
+    },
+    {
+      "id": 42815,
+      "title": "Magazinskonvolut AK74, 5,45x39, §A (17/1/8 - 10)",
+      "description": "3 Stk á 30 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:11:30+00:00"
+    },
+    {
+      "id": 42816,
+      "title": "Trommelmagazin AK47, 7,62x39, §A (17/1/8 - 10)",
+      "description": "1 Stk, Zustand 3-4",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:12:00+00:00"
+    },
+    {
+      "id": 42817,
+      "title": "Magazinskonvolut HK, Mod. MP5, 9mm Luger, §A (17/1/7 - 9)",
+      "description": "2 Stk á 30 Schuss, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:12:30+00:00"
+    },
+    {
+      "id": 42818,
+      "title": "Magazin unbekanntes Fabrikat, 9mm Luger, §A (17/1/7 - 9)",
+      "description": "1 Stk samt Ladehilfe, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:13:00+00:00"
+    },
+    {
+      "id": 42819,
+      "title": "Magazinskonvolut UZI, 9mm Luger, §A (17/1/7 - 9)",
+      "description": "4 Stk, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:13:30+00:00"
+    },
+    {
+      "id": 42820,
+      "title": "Magazinskonvolut UZI, 9mm Luger, §A (17/1/7 - 9)",
+      "description": "4 Stk, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:14:00+00:00"
+    },
+    {
+      "id": 42821,
+      "title": "Magazinskonvolut UZI, 9mm Luger, §A (17/1/7 - 9)",
+      "description": "4 Stk, samt Ladehilfe, Zustand 3",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Waffenzubehör"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "gun-garage-austria",
+      "country": "AT",
+      "city": "Spannberg",
+      "end_time": "2026-04-04T14:14:30+00:00"
+    },
+    {
+      "id": 51584,
+      "title": "Diverse. Bl.a Stetoskop, knivar, förstoringsglas m.m.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "stetoskop",
+        "knivar",
+        "förstoringsglas",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:11:16+00:00"
+    },
+    {
+      "id": 51585,
+      "title": "Diverse. Bl.a Bly till pennor. Tärningar m.m.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bly",
+        "pennor",
+        "tärningar",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:06:16+00:00"
+    },
+    {
+      "id": 51595,
+      "title": "3 Dockor. Bl.a John Blund.",
+      "description": "Högsta mäter ca: 25cm.Har släppt i skägg &amp; saknar knappar.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "dockor",
+        "john blund",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:56:16+00:00"
+    },
+    {
+      "id": 51597,
+      "title": "Diverse. Bl.a kompasser m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kompasser",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:25:16+00:00"
+    },
+    {
+      "id": 51598,
+      "title": "Diverse.",
+      "description": "Bruks &amp; åldersslitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T19:01:16+00:00"
+    },
+    {
+      "id": 51602,
+      "title": "Pigtittare.",
+      "description": "Mäter ca: 42cm hög &amp; 36x27,5cm.Bruksslitage, skav &amp; märken. sprickor i trä",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "pigtittare",
+        "spegel"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:32:16+00:00"
+    },
+    {
+      "id": 51604,
+      "title": "Diverse koppar.",
+      "description": "Högsta mäter ca: 23cm hög &amp; 23cm i diam.Bucklor, märken, slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "koppar",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE",
+        "KOPPAR, MALM, BRONS, MÄSSING & TENN"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:39:16+00:00"
+    },
+    {
+      "id": 51605,
+      "title": "Diverse Vinylskivor.",
+      "description": "Fodrall är ganska slitna.Ej kontrollerade.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "vinylskivor",
+        "musik",
+        "film"
+      ],
+      "sourceCategories": [
+        "MUSIK & FILM"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:29:16+00:00"
+    },
+    {
+      "id": 51606,
+      "title": "Diverse.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:13:16+00:00"
+    },
+    {
+      "id": 51607,
+      "title": "Trädgårdsredskap.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "trädgårdsredskap",
+        "verktyg",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "BYGG & TRÄDGÅRD"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:30:16+00:00"
+    },
+    {
+      "id": 51608,
+      "title": "Diverse sågar & stor yxa.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "såg",
+        "yxa",
+        "verktyg",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "BYGG & TRÄDGÅRD"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:35:16+00:00"
+    },
+    {
+      "id": 51609,
+      "title": "Diverse sågar.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "såg",
+        "verktyg",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "BYGG & TRÄDGÅRD"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:27:16+00:00"
+    },
+    {
+      "id": 51610,
+      "title": "Diverse Ytterfoder, krukor. bl.a en Waldemarsudde.",
+      "description": "Smutsiga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "ytterfoder",
+        "kruka",
+        "waldemarsudde",
+        "växt"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:03:16+00:00"
+    },
+    {
+      "id": 51611,
+      "title": "Äldre Remhjul/drivhjul.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "remhjul",
+        "drivhjul",
+        "maskindelar"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:46:16+00:00"
+    },
+    {
+      "id": 51618,
+      "title": "Diverse. Bl.a saker av trä.",
+      "description": "Blandad kompott.Elefant har skadad beta.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "trä",
+        "elefant",
+        "djur",
+        "träföremål"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:50:16+00:00"
+    },
+    {
+      "id": 51619,
+      "title": "Diverse väggbonader, Handarbete.",
+      "description": "Blandad kompott.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "väggbonad",
+        "handarbete",
+        "textil"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:37:16+00:00"
+    },
+    {
+      "id": 51620,
+      "title": "Akvarium, rund glasskål. med diverse tillbehör.",
+      "description": "Mäter ca: 23,5cm hög &amp; 32,5cm i diam.Har nagg på kanten.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "akvarium",
+        "glasskål",
+        "fisk",
+        "djur"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:15:16+00:00"
+    },
+    {
+      "id": 51624,
+      "title": "Flamskvävnad, Bonad, Flamsk.",
+      "description": "Bakstycke mäter ca: 32x41cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "flamskvävnad",
+        "bonad",
+        "flamsk",
+        "textil"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:18:16+00:00"
+    },
+    {
+      "id": 51625,
+      "title": "Diverse sytillbehör.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "sytillbehör",
+        "sömnad"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:21:16+00:00"
+    },
+    {
+      "id": 51626,
+      "title": "Flamskvävnad, Bonad/flamsk.",
+      "description": "Bakstycke mäter ca: 28x36cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "flamskvävnad",
+        "bonad",
+        "flamsk",
+        "textil"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:24:16+00:00"
+    },
+    {
+      "id": 51628,
+      "title": "Flamskvävnad, Bonad, Flamsk. Signerad IP.",
+      "description": "Mäter ca: 23,5x19cm utan frans.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "flamskvävnad",
+        "bonad",
+        "flamsk",
+        "textil"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:55:16+00:00"
+    },
+    {
+      "id": 51630,
+      "title": "Diverse påskpynt & dockor.",
+      "description": "Dockan har flera smutsfläckar.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "påskpynt",
+        "docka",
+        "leksak",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:43:16+00:00"
+    },
+    {
+      "id": 51634,
+      "title": "Spegel med hylla.",
+      "description": "Mäter ca: 56cm hög &amp; 28,5cm bred.Löst bakstycke.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "hylla",
+        "möbel"
+      ],
+      "sourceCategories": [
+        "SPEGLAR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:01:16+00:00"
+    },
+    {
+      "id": 51635,
+      "title": "Diverse märken, nyckelringar m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "märken",
+        "nyckelringar",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:31:16+00:00"
+    },
+    {
+      "id": 51636,
+      "title": "Diverse. Bl.a Midget häft apparat, piphuvud, Ljussax m.m.",
+      "description": "Blandat skick.Ej funktionstestat.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "häftapparat",
+        "piphuvud",
+        "ljussax",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:19:16+00:00"
+    },
+    {
+      "id": 51637,
+      "title": "Diverse samlar dockor.",
+      "description": "Förpackning till dockorna slitna.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "samlardockor",
+        "docka",
+        "leksak",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:45:16+00:00"
+    },
+    {
+      "id": 51638,
+      "title": "Diverse samlar dockor.",
+      "description": "Förpackning till dockor slitna.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "samlardockor",
+        "docka",
+        "leksak",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-19T18:33:16+00:00"
+    },
+    {
+      "id": 51643,
+      "title": "Diverse träsaker. Bl.a Näverburk.",
+      "description": "Näverburk mäter ca: 20cm hög.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "träsaker",
+        "näverburk",
+        "burk",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:28:23+00:00"
+    },
+    {
+      "id": 51645,
+      "title": "Diverse träsaker.",
+      "description": "Blandad kompott &amp; skick.Högsta mäter ca: 34cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "träsaker",
+        "diverse"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:03:23+00:00"
+    },
+    {
+      "id": 51660,
+      "title": "Diverse. Bl.a Brevvåg, Väggur, barometer m.m.",
+      "description": "Blandad kompott &amp; skick.Funktion okänd, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "brevvåg",
+        "väggur",
+        "barometer"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:55:23+00:00"
+    },
+    {
+      "id": 51662,
+      "title": "Knyppeldyna med tillbehör.",
+      "description": "Bruksslitage, smuts.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "knyppeldyna",
+        "textil"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:38:23+00:00"
+    },
+    {
+      "id": 51664,
+      "title": "Gravvas, Husqvarna EBE Verken, Gjutjärn.",
+      "description": "Väderslitage, ålders relaterat slitage. Rost förekommer.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gravvas",
+        "husqvarna ebe verken",
+        "gjutjärn"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:15:23+00:00"
+    },
+    {
+      "id": 51666,
+      "title": "Diverse.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "blandat",
+        "parti",
+        "samlarobjekt"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:32:23+00:00"
+    },
+    {
+      "id": 51668,
+      "title": "2 Cykelväskor, Retro.",
+      "description": "Sömmar på svart har slitage.Smärre slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "cykelväska",
+        "retro"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:10:23+00:00"
+    },
+    {
+      "id": 51669,
+      "title": "Vävnad.",
+      "description": "Mäter ca: 164x58,5cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "vävnad",
+        "textil"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:20:23+00:00"
+    },
+    {
+      "id": 51670,
+      "title": "Informationsskåp. Går att användas Liggande/Hängande.",
+      "description": "Mäter ca: 6cm djup &amp; 43,5x49,5cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "informationsskåp",
+        "skåp"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:16:23+00:00"
+    },
+    {
+      "id": 51673,
+      "title": "Diverse fiske tillbehör.",
+      "description": "Blandat skick",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "fiske",
+        "fisketillbehör"
+      ],
+      "sourceCategories": [
+        "DIVERSE",
+        "SPORT & FRITID"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:50:23+00:00"
+    },
+    {
+      "id": 51678,
+      "title": "2 Knivar. P-Holmberg, Eskilstuna & Kauhavan Finland.",
+      "description": "Ganska slitna.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kniv",
+        "p holmberg",
+        "eskilstuna",
+        "kauhavan finland"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:24:23+00:00"
+    },
+    {
+      "id": 51680,
+      "title": "Brandverktyg. Smidesjärn i mässing.",
+      "description": "Mäter ca: 60cm långt.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "brandverktyg",
+        "smidesjärn",
+        "mässing"
+      ],
+      "sourceCategories": [
+        "KOPPAR, MALM, BRONS, MÄSSING & TENN"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:26:23+00:00"
+    },
+    {
+      "id": 51686,
+      "title": "Pigtittare.",
+      "description": "Mäter ca: 70cm hög &amp; 62,5x20,5cm.Skav, märken, slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "pigtittare",
+        "spegel"
+      ],
+      "sourceCategories": [
+        "SPEGLAR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:53:23+00:00"
+    },
+    {
+      "id": 51687,
+      "title": "Stor kruka, utomhus.",
+      "description": "Har nagg nedre del av foten.Mäter ca: 46cm hög &amp; 59cm i diam.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kruka",
+        "utomhus"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:46:23+00:00"
+    },
+    {
+      "id": 51692,
+      "title": "Diverse nystan.",
+      "description": "Blandad kompott.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "nystan"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:04:23+00:00"
+    },
+    {
+      "id": 51700,
+      "title": "Diverse. Bl.a Kockums våg, struvjärn, bakformar m.m.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kockums",
+        "våg",
+        "struvjärn",
+        "bakformar"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:05:23+00:00"
+    },
+    {
+      "id": 51701,
+      "title": "Trälåda, Oljedukar & 4 Plåtburkar.",
+      "description": "Bruksslitage, smutsigt.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "trälåda",
+        "oljedukar",
+        "plåtburkar"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:49:23+00:00"
+    },
+    {
+      "id": 51702,
+      "title": "10 Förpackningar. TENA Lady, Bindor, normal. 30-pack.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "tena lady",
+        "bindor"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:57:23+00:00"
+    },
+    {
+      "id": 51704,
+      "title": "3 Förpackningar Inkontinensskydd, Attends Cover-Dri, 50-pack.",
+      "description": "60x90cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "inkontinensskydd",
+        "attends cover dri"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:37:23+00:00"
+    },
+    {
+      "id": 51708,
+      "title": "Diverse sten/marmor.",
+      "description": "Högsta mäter ca: 20,5cm.Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "sten",
+        "marmor"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:15:23+00:00"
+    },
+    {
+      "id": 51711,
+      "title": "Diverse plåtburkar m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "plåtburk",
+        "burk"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:13:23+00:00"
+    },
+    {
+      "id": 51712,
+      "title": "Diverse brickor & fat.",
+      "description": "Blandat skick.Större fat Gustavsberg har sprickor &amp; missfärgningar.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bricka",
+        "fat",
+        "gustavsberg"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:20:23+00:00"
+    },
+    {
+      "id": 51720,
+      "title": "Diverse. Bl.a Kopparkanna m.m.",
+      "description": "Blandat skick.Kannan mäter ca: 41,5cm hög",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kopparkanna",
+        "kanna"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:12:23+00:00"
+    },
+    {
+      "id": 51723,
+      "title": "Diverse, sten, snäckor, korall m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "sten",
+        "snäcka",
+        "korall"
+      ],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:14:23+00:00"
+    },
+    {
+      "id": 51725,
+      "title": "Liten kikare Hippos No 49865. 6x15. Field 7",
+      "description": "Bruksslitage/smuts, märken/bucklor.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kikare",
+        "hippos"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:10:23+00:00"
+    },
+    {
+      "id": 51726,
+      "title": "Babushka dockor 13 delar. Ryska Dockor. Bemålat trä.",
+      "description": "Högsta mäter ca: 25,5cm hög.Smärre sprickor.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "babushka",
+        "dockor",
+        "ryska dockor",
+        "träleksak",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:48:23+00:00"
+    },
+    {
+      "id": 51729,
+      "title": "Spegel. Teak, 1950/60-talet.",
+      "description": "Mäter ca: 48x100cm.Ringa slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "teak",
+        "1950 tal",
+        "1960 tal"
+      ],
+      "sourceCategories": [
+        "SPEGLAR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T19:31:23+00:00"
+    },
+    {
+      "id": 51735,
+      "title": "Motionscykel. Monark, 1960/70-talet.",
+      "description": "Höj &amp; sänkbar.Fungerar vid test.Ringa slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "motionscykel",
+        "monark",
+        "träningsredskap",
+        "sport & fritid",
+        "1960 tal",
+        "1970 tal"
+      ],
+      "sourceCategories": [
+        "SPORT & FRITID"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-22T18:25:23+00:00"
+    },
+    {
+      "id": 51743,
+      "title": "Ca: 144 vykort. A4 Storlek, 2 olika motiv.",
+      "description": "Mäter ca: 29,5x21cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:00:00+00:00"
+    },
+    {
+      "id": 51745,
+      "title": "Diverse julpynt.",
+      "description": "Bruksslitage.Kulor har tappat färg.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "JUL & PÅSK"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:22:00+00:00"
+    },
+    {
+      "id": 51746,
+      "title": "Diverse garn m.m.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:06:00+00:00"
+    },
+    {
+      "id": 51747,
+      "title": "Kudde/örngott. Skinn, Egyptisk.",
+      "description": "Mäter ca: 36cm i diam.Fyllning är lös &amp; trillar ur.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:18:00+00:00"
+    },
+    {
+      "id": 51749,
+      "title": "Diverse nystan m.m",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:44:00+00:00"
+    },
+    {
+      "id": 51750,
+      "title": "Bonader & hållare för bonader.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:41:00+00:00"
+    },
+    {
+      "id": 51753,
+      "title": "Diverse garn m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:30:00+00:00"
+    },
+    {
+      "id": 51756,
+      "title": "Glasögon & väckarklockor.",
+      "description": "Blandad kompott &amp; skick.Funktion okänd, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:15:00+00:00"
+    },
+    {
+      "id": 51760,
+      "title": "Reservoarpenna & stift, E.S.PERRY, England.",
+      "description": "Funktion okänd, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:07:00+00:00"
+    },
+    {
+      "id": 51769,
+      "title": "Diverse. Bl.a Laholms keramik & sånghäften & böcker.",
+      "description": "Laholms keramik har 2 nagg &amp; slitage.Sångböcker/häften har bruksslitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:54:20+00:00"
+    },
+    {
+      "id": 51772,
+      "title": "2 Bordslyster. Mässing, Prismor, Marmorsockel.",
+      "description": "Mäter ca: 25cm höga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "KOPPAR, MALM, BRONS, MÄSSING & TENN"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:45:00+00:00"
+    },
+    {
+      "id": 51774,
+      "title": "Jaktstol/Campingstol, Kryckor & Paraply.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:53:00+00:00"
+    },
+    {
+      "id": 51789,
+      "title": "Diverse.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:40:00+00:00"
+    },
+    {
+      "id": 51792,
+      "title": "Spegel, Fassettslipat glas.",
+      "description": "Mäter ca: 37x47cm.Färgbortfall.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "SPEGLAR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:16:00+00:00"
+    },
+    {
+      "id": 51799,
+      "title": "Kikare. Pollux 7x50.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "SPORT & FRITID",
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:14:20+00:00"
+    },
+    {
+      "id": 51806,
+      "title": "Dubbelkort med Kuvert. Ca: 100st. Nya. Konfirmation, till pappa, dop, körkort m.m.",
+      "description": "Blandad kompott.Mäter ca: 17-19x11,5-13cm.",
+      "categories": [],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "reviewReasons": [
+        "missing-categories",
+        "generic-raw-category"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:43:00+00:00"
+    },
+    {
+      "id": 51807,
+      "title": "Kort/sedelkort. Ca: 100 stycken, Nya. Utan kuvert. Ovikta. Grattis till barnbarnet, dop, konfirmation, student m.m.",
+      "description": "Blandad kompott.Mäter ca: 11x17cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:58:00+00:00"
+    },
+    {
+      "id": 51808,
+      "title": "Vykort. Ca: 100 stycken. Grattis. Nya.",
+      "description": "Mäter ca: 24x13cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:18:00+00:00"
+    },
+    {
+      "id": 51810,
+      "title": "Diverse smide/metall, Tidningsställ, lampfötter m.m.",
+      "description": "Högsta mäter ca: 50cm.Ej funktionstestat, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:15:20+00:00"
+    },
+    {
+      "id": 51814,
+      "title": "Diverse Canvas-tavlor.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:31:20+00:00"
+    },
+    {
+      "id": 51816,
+      "title": "Rakspegel med hållare & 2 rakknivar.",
+      "description": "Spegel mäter ca: 36,5cm hög.Spegeln har sprickor runt. Rost &amp; slitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:44:20+00:00"
+    },
+    {
+      "id": 51818,
+      "title": "Skulptur, metall. Ulf Sucksdorff. Söderberg & Haak. 100års jubileum 1966.",
+      "description": "Mäter ca: 20cm hög.Bruksslitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "SKULPTURER & KONSTHANTVERK"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:10:20+00:00"
+    },
+    {
+      "id": 51832,
+      "title": "Diverse krokar & Handtag.",
+      "description": "Nyskick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "BYGG & TRÄDGÅRD",
+        "KOPPAR, MALM, BRONS, MÄSSING & TENN"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:31:18+00:00"
+    },
+    {
+      "id": 51841,
+      "title": "Diverse.",
+      "description": "Trollet saknar stortå.Trollet mäter ca: 29cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:28:20+00:00"
+    },
+    {
+      "id": 51842,
+      "title": "3 Analoga kameror, Zeiss, Agfa & Fujica, samt en teaterkikare.",
+      "description": "Funktion okänd. Ingen funktionsgaranti lämnas. Bruksslitage.Brunt fordral är mycket fläckigt.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "KAMEROR & TILLBEHÖR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:13:20+00:00"
+    },
+    {
+      "id": 51845,
+      "title": "Diverse glasplåtar / fotografiska plåtar. Mestadels porträtt.",
+      "description": "Blandad kompott &amp; skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T20:10:00+00:00"
+    },
+    {
+      "id": 51850,
+      "title": "Trangia Kök.",
+      "description": "Är i gott bruksskick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "SPORT & FRITID",
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:08:00+00:00"
+    },
+    {
+      "id": 51856,
+      "title": "Skrivbordsset & bakformar Lekve, Silikon & Porslin.",
+      "description": "Bruksskick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:01:20+00:00"
+    },
+    {
+      "id": 51870,
+      "title": "864 stjärnor på pinne, Fuxia.",
+      "description": "Mäter ca: 18cm höga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:10:18+00:00"
+    },
+    {
+      "id": 51871,
+      "title": "1152  stjärnor på pinne, Fuxia.",
+      "description": "Mäter ca: 15cm höga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:02:18+00:00"
+    },
+    {
+      "id": 51872,
+      "title": "Diverse CD-Skivor, DVD-Filmer m.m.",
+      "description": "Blandad kompott.Ej kontrollerat.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "MUSIK & FILM"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:19:18+00:00"
+    },
+    {
+      "id": 51876,
+      "title": "384 Stjärnor. Styckförpackade.",
+      "description": "Mäter ca: 14,5cm i diam.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:36:18+00:00"
+    },
+    {
+      "id": 51877,
+      "title": "1152 Stjärnor på pinne, Pink.",
+      "description": "Mäter ca: 15cm höga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:13:18+00:00"
+    },
+    {
+      "id": 51881,
+      "title": "20 Badmintonnät & 20 stolpar. Oanvänt",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "SPORT & FRITID",
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:18:18+00:00"
+    },
+    {
+      "id": 51883,
+      "title": "90 förpackningar självhäftande, halvpärlor.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:06:18+00:00"
+    },
+    {
+      "id": 51884,
+      "title": "200 förpackningar pärlor. Trä, vitmålade.",
+      "description": "Mäter ca: 1,2cm i diam.Förpackningar kan vara trasiga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:04:18+00:00"
+    },
+    {
+      "id": 51887,
+      "title": "Cirka 280st diamant på pinne. Röd nyans, blomster dekoration. Plast & metall.",
+      "description": "Mäter ca: 10,5cm höga.Diamant mäter ca: 3,4cm i diam.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:40:18+00:00"
+    },
+    {
+      "id": 51888,
+      "title": "Bokmärken, 3 Fulla album.",
+      "description": "Blandad kompott.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:27:18+00:00"
+    },
+    {
+      "id": 51889,
+      "title": "200 förpackningar träpärlor. 4 Olika motiv.",
+      "description": "Pärlor mäter ca: 1,2cm breda.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:29:18+00:00"
+    },
+    {
+      "id": 51890,
+      "title": "Ca: 120 förpackningar träpärlor.",
+      "description": "Mäter ca: 9mm.Förpackningar kan vara trasiga.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:21:18+00:00"
+    },
+    {
+      "id": 51893,
+      "title": "Diverse kameror, Kamra, Bl.a Olympus, Solida, Canon afg. samt väska.",
+      "description": "Funktion okänd, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE",
+        "KAMEROR & TILLBEHÖR"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:14:18+00:00"
+    },
+    {
+      "id": 51896,
+      "title": "VÄGGAPPLIQUER. Ett par, Malm, Rokokostil, 1900-talet.",
+      "description": "Mäter ca: 25cm breda &amp; 32cm långa.Bruksslitage.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "KOPPAR, MALM, BRONS, MÄSSING & TENN"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:07:18+00:00"
+    },
+    {
+      "id": 51899,
+      "title": "Diverse, Ljusstakar, ljuslyktor m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-24T18:24:18+00:00"
+    },
+    {
+      "id": 51910,
+      "title": "Mikroskop. Optima A-110.",
+      "description": "Mäter ca: 30cm högt.Funktion okänd, ingen funktionsgaranti lämnas.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:00:20+00:00"
+    },
+    {
+      "id": 51912,
+      "title": "KVALIFICERING för VM-Match i tyngdviktsboxning. Eddy Machen-Ingemar Johansson av (Edwin Ahlqvist). AB Cirkelförlaget 1958.",
+      "description": "Mäter ca: 21x29,5cm.Är i gott skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:58:20+00:00"
+    },
+    {
+      "id": 51913,
+      "title": "Marint.",
+      "description": "Tittskåp mäter ca: 31x36cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T18:24:20+00:00"
+    },
+    {
+      "id": 51923,
+      "title": "Diverse hushåll.",
+      "description": "Brödrost, Husqvarna är ej funktionstestad.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:13:00+00:00"
+    },
+    {
+      "id": 51924,
+      "title": "Diverse. Bl.a glasögon, små väskor, m.m.",
+      "description": "Blandat skick.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "DIVERSE"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:11:00+00:00"
+    },
+    {
+      "id": 51925,
+      "title": "3 Visselpipor.",
+      "description": "Längsta mäter ca: 9,5cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "ÖVRIGT"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "laholms-auktioner",
+      "country": "SE",
+      "city": "Laholm",
+      "end_time": "2026-03-25T19:56:00+00:00"
+    },
+    {
+      "id": 63149,
+      "title": "Kobratelefon och knapptelefon, plast/valnöt.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kobratelefon",
+        "knapptelefon",
+        "telefon",
+        "kuriosa"
+      ],
+      "sourceCategories": [
+        "Kuriosa"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T18:41:16.937+00:00"
+    },
+    {
+      "id": 63171,
+      "title": "Balja, zink.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "balja",
+        "zink"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:11:16.937+00:00"
+    },
+    {
+      "id": 63172,
+      "title": "Balja, zink.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "balja",
+        "zink"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:12:46.937+00:00"
+    },
+    {
+      "id": 63173,
+      "title": "Vagnshjul, ett par, smide.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "vagnshjul",
+        "smide"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:14:16.937+00:00"
+    },
+    {
+      "id": 63181,
+      "title": "Hinkar och baljor, 7+7 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "hink",
+        "balja",
+        "emalj",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:24:46.937+00:00"
+    },
+    {
+      "id": 63182,
+      "title": "Hinkar, 10 st, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "hink",
+        "metall",
+        "hem och hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:26:16.937+00:00"
+    },
+    {
+      "id": 63184,
+      "title": "Hockeybilder, ca 2200 st.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "hockeybilder",
+        "hockey",
+        "bilder",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:29:16.937+00:00"
+    },
+    {
+      "id": 63188,
+      "title": "Leksaksbilar, ett parti, bl.a Matchbox och Corgi.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksbilar",
+        "leksaksbil",
+        "matchbox",
+        "corgi",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:35:16.937+00:00"
+    },
+    {
+      "id": 63189,
+      "title": "Leksaksbilar, ett parti, bl.a Matchbox och Dinky.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksbilar",
+        "leksaksbil",
+        "matchbox",
+        "dinky",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:36:46.937+00:00"
+    },
+    {
+      "id": 63190,
+      "title": "Leksaksbilar, ett parti, bl.a Corgi och Hot Wheels.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksbilar",
+        "leksaksbil",
+        "corgi",
+        "hot wheels",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:38:16.937+00:00"
+    },
+    {
+      "id": 63191,
+      "title": "Leksaksfordon, ett parti, bl.a Corgi och Husky.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksfordon",
+        "leksaksbil",
+        "corgi",
+        "husky",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:39:46.937+00:00"
+    },
+    {
+      "id": 63192,
+      "title": "Leksaksfordon, ett parti, bl.a Dinky och Matchbox.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksfordon",
+        "leksaksbil",
+        "dinky",
+        "matchbox",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:41:16.937+00:00"
+    },
+    {
+      "id": 63193,
+      "title": "Leksaksbilar, ett parti, bl.a Dinky och Corgi.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksbilar",
+        "leksaksbil",
+        "dinky",
+        "corgi",
+        "leksak",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:42:46.937+00:00"
+    },
+    {
+      "id": 63195,
+      "title": "Urnor, 6 st, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "urna",
+        "urnor",
+        "metall",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:45:46.937+00:00"
+    },
+    {
+      "id": 63197,
+      "title": "Balja och hinkar, 3 delar, zink.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "balja",
+        "hink",
+        "zink",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:48:46.937+00:00"
+    },
+    {
+      "id": 63198,
+      "title": "Chanel och Dior, parfymer, skincare och väska, 8 delar, 2 st parfymflaskor inplastade.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "chanel",
+        "dior",
+        "parfym",
+        "skincare",
+        "väska"
+      ],
+      "sourceCategories": [
+        "Kläder & Väskor & Accessoarer",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:50:16.937+00:00"
+    },
+    {
+      "id": 63199,
+      "title": "Grytor, 3 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gryta",
+        "emalj",
+        "metall",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:51:46.937+00:00"
+    },
+    {
+      "id": 63200,
+      "title": "Skäkteträ och klappträ, 4 delar, 1890-1954.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "skäkteträ",
+        "klappträ",
+        "allmoge",
+        "kuriosa"
+      ],
+      "sourceCategories": [
+        "Allmoge",
+        "Kuriosa"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:53:16.937+00:00"
+    },
+    {
+      "id": 63201,
+      "title": "Grytor, 3 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gryta",
+        "emalj",
+        "metall",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:54:46.937+00:00"
+    },
+    {
+      "id": 63202,
+      "title": "Grytor, 4 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gryta",
+        "emalj",
+        "metall",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:56:16.937+00:00"
+    },
+    {
+      "id": 63204,
+      "title": "Barometer, metall/läder, ''Precision Barometer'', System Paulin.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barometer",
+        "metall",
+        "läder",
+        "system paulin"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T19:59:16.937+00:00"
+    },
+    {
+      "id": 63205,
+      "title": "Emaljerat, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "emalj",
+        "hem och hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T20:00:46.937+00:00"
+    },
+    {
+      "id": 63222,
+      "title": "Tv, Panasonic TX-L47DT50Y, med fjärrkontroll.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen. (Fjärrkontroll på MH)",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "panasonic",
+        "fjärrkontroll",
+        "ljud",
+        "bild"
+      ],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-19T20:18:46.937+00:00"
+    },
+    {
+      "id": 63225,
+      "title": "Baljor, 9 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "baljor",
+        "emalj",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:09:55+00:00"
+    },
+    {
+      "id": 63232,
+      "title": "Dammsugare; Electrolux UltraOne Green.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "dammsugare",
+        "electrolux",
+        "ultraone green",
+        "hushållsapparat"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:20:25+00:00"
+    },
+    {
+      "id": 63233,
+      "title": "Rullator, Tomtar.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "rullator",
+        "tomtar",
+        "hjälpmedel"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:21:55+00:00"
+    },
+    {
+      "id": 63235,
+      "title": "Drickabackar, 5 st, plast.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "drickabackar",
+        "backar",
+        "plast"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:24:55+00:00"
+    },
+    {
+      "id": 63237,
+      "title": "Barbie, kläder, accessoarer m.m, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbie",
+        "kläder",
+        "accessoarer",
+        "docka",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:29:25+00:00"
+    },
+    {
+      "id": 63239,
+      "title": "Barbiedocka, ''Midge'' med kläder och accessoarer, Mattel, 1962.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedocka",
+        "midge",
+        "mattel",
+        "1962",
+        "docka",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:30:55+00:00"
+    },
+    {
+      "id": 63240,
+      "title": "Barbiedocka, ''Skipper'', Mattel, 1963.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedocka",
+        "skipper",
+        "mattel",
+        "1963",
+        "docka",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:32:25+00:00"
+    },
+    {
+      "id": 63241,
+      "title": "Barbiedocka, ''Skooter'', Mattel, 1963.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedocka",
+        "skooter",
+        "mattel",
+        "1963",
+        "docka",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:33:55+00:00"
+    },
+    {
+      "id": 63242,
+      "title": "Barbiedocka, ''Ken'', Mattel, 1960.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedocka",
+        "ken",
+        "mattel",
+        "1960",
+        "docka",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:35:25+00:00"
+    },
+    {
+      "id": 63243,
+      "title": "Barbiedockor, 3 st, och Midge-huvud för peruker, ett parti,, Mattel, 1960-tal.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedockor",
+        "midge",
+        "mattel",
+        "1960 tal",
+        "dockor",
+        "leksaker"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:36:55+00:00"
+    },
+    {
+      "id": 63244,
+      "title": "Dockor, kläder och accessoarer, ett parti, 1980/90-tal, bl.a Sindy och Hasbro.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "dockor",
+        "kläder",
+        "accessoarer",
+        "sindy",
+        "hasbro",
+        "leksaker"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:38:25+00:00"
+    },
+    {
+      "id": 63249,
+      "title": "Majblommor, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "majblommor",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T18:45:55+00:00"
+    },
+    {
+      "id": 63261,
+      "title": "Fickknivar, 4 st, bl.a Leatherman.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "fickknivar",
+        "leatherman",
+        "fritid"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:03:55+00:00"
+    },
+    {
+      "id": 63268,
+      "title": "Korgar, 4 st, flätade.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "korgar",
+        "flätade",
+        "fritid",
+        "hem"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:14:25+00:00"
+    },
+    {
+      "id": 63272,
+      "title": "Dörrkläpp, lejon, brons.",
+      "description": "Komplett.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "dörrkläpp",
+        "lejon",
+        "brons",
+        "djurmotiv"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:20:25+00:00"
+    },
+    {
+      "id": 63305,
+      "title": "Brandskåp med slang, 2 st.",
+      "description": "Längd slangar: 30 meter.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "brandskåp",
+        "slang"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:51:55+00:00"
+    },
+    {
+      "id": 63307,
+      "title": "Sadel, The Crown Saddlery, Walsall.",
+      "description": "Komplett.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "sadel",
+        "fritid",
+        "hobby"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:54:55+00:00"
+    },
+    {
+      "id": 63308,
+      "title": "Sadel, G. Passier & Sohn, Hannover.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "sadel",
+        "fritid",
+        "hobby"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T19:56:25+00:00"
+    },
+    {
+      "id": 63321,
+      "title": "GB Glace, reklamskylt, plast.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gb glace",
+        "reklamskylt",
+        "skylt",
+        "plast"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:00:55+00:00"
+    },
+    {
+      "id": 63324,
+      "title": "Baljor, 4 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "baljor",
+        "metall",
+        "emaljerad"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:03:55+00:00"
+    },
+    {
+      "id": 63325,
+      "title": "Baljor, 4 st, emaljerad metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "baljor",
+        "metall",
+        "emaljerad"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:05:25+00:00"
+    },
+    {
+      "id": 63328,
+      "title": "Krukor och piedestal, 3+1 st, keramik.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "krukor",
+        "piedestal",
+        "keramik",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:09:55+00:00"
+    },
+    {
+      "id": 63335,
+      "title": "Soptunna, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "soptunna",
+        "metall",
+        "hem",
+        "hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:17:25+00:00"
+    },
+    {
+      "id": 63338,
+      "title": "Kaffebryggare, 10 koppar, MoccaMaster, Technivorm.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kaffebryggare",
+        "moccamaster",
+        "technivorm",
+        "hem",
+        "hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T18:37:51.613+00:00"
+    },
+    {
+      "id": 63341,
+      "title": "Massagestol, hopfällbar, metall/konstskinn, samt väska på hjul, Ecopostural.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "massagestol",
+        "stol",
+        "möbel",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:23:25+00:00"
+    },
+    {
+      "id": 63345,
+      "title": "Hörselskydd, Peltor SportTac, 3M.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "hörselskydd",
+        "peltor"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T18:42:21.613+00:00"
+    },
+    {
+      "id": 63350,
+      "title": "Jeans, 50 st, olika storlekar.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "jeans",
+        "kläder"
+      ],
+      "sourceCategories": [
+        "Kläder & Väskor & Accessoarer"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-22T20:30:55+00:00"
+    },
+    {
+      "id": 63365,
+      "title": "Skyltar och klistermärken, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "skyltar",
+        "klistermärken"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:06:21.613+00:00"
+    },
+    {
+      "id": 63369,
+      "title": "Kastruller och stekpanna, emaljerat, 1900-talets senare del.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kastruller",
+        "stekpanna",
+        "emaljerat"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:12:21.613+00:00"
+    },
+    {
+      "id": 63370,
+      "title": "Klassiskt mikroljudsystem, Philips OTT2000B/12.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "mikroljudsystem",
+        "philips ott2000b 12"
+      ],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:13:51.613+00:00"
+    },
+    {
+      "id": 63371,
+      "title": "Kikare, 2 st, Tempest 10x50 och Excellent 7x50.",
+      "description": "Medföljer väskor.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kikare",
+        "tempest 10x50",
+        "excellent 7x50"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:15:21.613+00:00"
+    },
+    {
+      "id": 63372,
+      "title": "Kopparföremål, 11 delar.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kopparföremål"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:16:51.613+00:00"
+    },
+    {
+      "id": 63373,
+      "title": "Yxor, 4 st, trä/järn, södra Afrika, 1800/1900-tal.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "yxor",
+        "trä",
+        "järn",
+        "södra afrika"
+      ],
+      "sourceCategories": [
+        "Övrigt",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:18:21.613+00:00"
+    },
+    {
+      "id": 63378,
+      "title": "CD-spelare/radio, Pioneer DEH-1400R, samt komponenthögtalare, Infinity Kappa Series 40.1cs.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "cd spelare",
+        "radio",
+        "pioneer deh 1400r",
+        "högtalare",
+        "infinity kappa series 401cs"
+      ],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:25:51.613+00:00"
+    },
+    {
+      "id": 63380,
+      "title": "Långpipor, m.m, 8 st, trä/metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "långpipor",
+        "trä",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:28:51.613+00:00"
+    },
+    {
+      "id": 63383,
+      "title": "Kikare, 10x50, gummerad, Nikon 60° SPORTING II.",
+      "description": "Medföljer väska.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kikare",
+        "friluftsliv",
+        "sporting ii",
+        "nikon"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:33:21.613+00:00"
+    },
+    {
+      "id": 63384,
+      "title": "Beatles, Yellow Submarine, serietidning, 1969.",
+      "description": "69 sidor i färg.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "beatles",
+        "yellow submarine",
+        "serietidning",
+        "1969",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:34:51.613+00:00"
+    },
+    {
+      "id": 63390,
+      "title": "Ray-Ban Wayfarer, solglasögon, \"40 Years Special Edition\".",
+      "description": "Medföljer fodral.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "ray ban",
+        "wayfarer",
+        "solglasögon",
+        "accessoarer"
+      ],
+      "sourceCategories": [
+        "Kläder & Väskor & Accessoarer"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:43:51.613+00:00"
+    },
+    {
+      "id": 63393,
+      "title": "Plättjärn och stekpanna, 2 st, gjutjärn/trä, bl.a Skeppshult.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "plättjärn",
+        "stekpanna",
+        "gjutjärn",
+        "trä",
+        "skeppshult"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:48:21.613+00:00"
+    },
+    {
+      "id": 63394,
+      "title": "Käpp med silverhandtag.",
+      "description": "Bär gravyr.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "käpp",
+        "silverhandtag",
+        "accessoarer"
+      ],
+      "sourceCategories": [
+        "Kläder & Väskor & Accessoarer"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-24T19:49:51.613+00:00"
+    },
+    {
+      "id": 63396,
+      "title": "Dockor med kläder, ett parti, bl.a Barbie.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "dockor",
+        "barbie",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T18:00:47.927+00:00"
+    },
+    {
+      "id": 63397,
+      "title": "Kläder och tillbehör till Barbiedockor, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kläder",
+        "tillbehör",
+        "barbie",
+        "dockkläder",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T18:02:17.927+00:00"
+    },
+    {
+      "id": 63398,
+      "title": "Barbiedockor, 7 st, ''Barbie'' och ''Skipper'', Mattel, 1960-tal.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "barbiedockor",
+        "barbie",
+        "skipper",
+        "mattel",
+        "1960 tal",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T18:03:47.927+00:00"
+    },
+    {
+      "id": 63400,
+      "title": "Bestickservis, 42 delar, silverpläterade, Auerhahn 90.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bestickservis",
+        "silverpläterade",
+        "auerhahn 90"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T18:06:47.927+00:00"
+    },
+    {
+      "id": 63403,
+      "title": "Bestickservisdelar, 21 delar, rostfritt stål/bakelit, IKEA.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bestickservisdelar",
+        "rostfritt stål",
+        "bakelit",
+        "ikea"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T18:11:17.927+00:00"
+    },
+    {
+      "id": 63436,
+      "title": "Korgar, 9 st, flätade.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "korgar",
+        "flätade",
+        "hem och hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T19:00:47.927+00:00"
+    },
+    {
+      "id": 63438,
+      "title": "Plastbackar, 6 st, Posten.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "plastbackar",
+        "backar",
+        "posten",
+        "hem och hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T19:03:47.927+00:00"
+    },
+    {
+      "id": 63439,
+      "title": "Golvstaffli, trä, Dekorima.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "golvstaffli",
+        "staffli",
+        "trä",
+        "dekorima",
+        "fritid och hobby"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T19:05:17.927+00:00"
+    },
+    {
+      "id": 63440,
+      "title": "Serveringsvagn på hjul, \"Helgevagn\", metall/plywood.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "serveringsvagn",
+        "vagn",
+        "helgevagn",
+        "hem och hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T19:06:47.927+00:00"
+    },
+    {
+      "id": 63446,
+      "title": "Skeppshult, damcykel, 28 tum, 7 växlar.",
+      "description": "Lås med 2 nycklar.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "damcykel",
+        "cykel",
+        "skeppshult",
+        "28 tum"
+      ],
+      "sourceCategories": [
+        "Cyklar & Motorfordon"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T19:15:47.927+00:00"
+    },
+    {
+      "id": 63482,
+      "title": "Leksaksfordon, ett parti, bl.a Matchbox.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "leksaksfordon",
+        "matchbox",
+        "leksak"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T20:09:47.927+00:00"
+    },
+    {
+      "id": 63485,
+      "title": "Burberrys, hatt, \"Bucket Hat\", bomull.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "burberrys",
+        "hatt",
+        "bucket hat",
+        "bomull",
+        "kläder"
+      ],
+      "sourceCategories": [
+        "Kläder & Väskor & Accessoarer"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T20:14:17.927+00:00"
+    },
+    {
+      "id": 63487,
+      "title": "Tändare, tobaksburkar och askfat, 6 delar, bl.a Zippo och Ronson.",
+      "description": "En tändare bär gravyr.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "tändare",
+        "tobaksburk",
+        "askfat",
+        "zippo",
+        "ronson",
+        "samlarföremål"
+      ],
+      "sourceCategories": [
+        "Övrigt",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T20:17:17.927+00:00"
+    },
+    {
+      "id": 63490,
+      "title": "Tallriksställ, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "tallriksställ",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-26T20:21:47.927+00:00"
+    },
+    {
+      "id": 63493,
+      "title": "Träningsutrustning, ett parti, bl.a Vores Fitness.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "träningsutrustning",
+        "fritid"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T17:02:23.863+00:00"
+    },
+    {
+      "id": 63495,
+      "title": "Träningsvibrator, Extreme Fit VIB-200.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "träningsvibrator",
+        "fritid"
+      ],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T17:05:23.863+00:00"
+    },
+    {
+      "id": 63534,
+      "title": "Skolklocka, bricka, skål, mässing/trä.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "skolklocka",
+        "bricka",
+        "skål",
+        "mässing",
+        "trä"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:00:53.863+00:00"
+    },
+    {
+      "id": 63536,
+      "title": "Kakburk med tre våning, samt 3 st burkar med lock, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kakburk",
+        "burk",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:03:53.863+00:00"
+    },
+    {
+      "id": 63538,
+      "title": "Tennföremål, ett parti, bl.a Scandia Tenn och Ljung Uti Lund.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "tennföremål",
+        "tenn",
+        "scandia tenn",
+        "ljung uti lund"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:06:53.863+00:00"
+    },
+    {
+      "id": 63540,
+      "title": "Skålar m.m, ett parti, bok/näver, bl.a Söwe Konst.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "skålar",
+        "bok",
+        "näver",
+        "söwe konst"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:09:53.863+00:00"
+    },
+    {
+      "id": 63554,
+      "title": "Vällingklocka, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "vällingklocka",
+        "metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll",
+        "Övrigt"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:30:53.863+00:00"
+    },
+    {
+      "id": 63571,
+      "title": "Bricka, hamrad mässing, Ystad Metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bricka",
+        "mässing",
+        "ystad metall"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T18:56:23.863+00:00"
+    },
+    {
+      "id": 63576,
+      "title": "Bowers & Wilkins, \"Zeppelin\", trådlös högtalare.",
+      "description": "Medföljer fäste och elkabel.Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bowers & wilkins",
+        "zeppelin",
+        "trådlös högtalare",
+        "högtalare",
+        "ljud"
+      ],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:03:53.863+00:00"
+    },
+    {
+      "id": 63579,
+      "title": "Handgräsklippare, Garden.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "handgräsklippare",
+        "gräsklippare",
+        "garden",
+        "trädgård"
+      ],
+      "sourceCategories": [
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:08:23.863+00:00"
+    },
+    {
+      "id": 63586,
+      "title": "Bordstelefoner, 2 st, 1900-tal, Telegrafverkets Verkstad, Nynäshamn.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "bordstelefon",
+        "telefon",
+        "telegrafverket",
+        "nynäshamn",
+        "kuriosa"
+      ],
+      "sourceCategories": [
+        "Kuriosa",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:18:53.863+00:00"
+    },
+    {
+      "id": 63588,
+      "title": "Mortal med stöt, 2 st, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "mortal",
+        "stöt",
+        "metall",
+        "hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:21:53.863+00:00"
+    },
+    {
+      "id": 63590,
+      "title": "Grytor och burk med lock, emaljerat, bl.a Kockums.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "gryta",
+        "burk",
+        "kockums",
+        "emalj",
+        "hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:24:53.863+00:00"
+    },
+    {
+      "id": 63592,
+      "title": "Hushållsföremål, 7 delar, metall/emaljerat.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "hushållsföremål",
+        "metall",
+        "emalj",
+        "hushåll"
+      ],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-29T19:27:53.863+00:00"
+    },
+    {
+      "id": 63609,
+      "title": "Kerstin Lundberg Stenman, ''Vårdträd'', litografi nr 178/200, signerad.",
+      "description": "",
+      "categories": [
+        "Konst"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "reviewReasons": [
+        "generic-raw-category"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T17:12:39.897+00:00"
+    },
+    {
+      "id": 63614,
+      "title": "Termoskannor, 4 st, bl.a Sigvard Bernadotte.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T17:20:09.897+00:00"
+    },
+    {
+      "id": 63616,
+      "title": "Erik Kold, burkar, 4 st, plast, Danmark.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T17:23:09.897+00:00"
+    },
+    {
+      "id": 63617,
+      "title": "Mortel, sten.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T17:24:39.897+00:00"
+    },
+    {
+      "id": 63629,
+      "title": "Mortel, sten.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T17:42:39.897+00:00"
+    },
+    {
+      "id": 63645,
+      "title": "Modellfordon m.m, militärt, ett parti,.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Fritid & Hobby",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:03:39.897+00:00"
+    },
+    {
+      "id": 63647,
+      "title": "Termoskannor, ett par, Alfi Gusto.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:06:39.897+00:00"
+    },
+    {
+      "id": 63650,
+      "title": "Kikare, 7 x 50, Eco Popular.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:11:09.897+00:00"
+    },
+    {
+      "id": 63653,
+      "title": "Radiomottagare, \"Prelude\", Mark 0A-7689, med väska.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:15:39.897+00:00"
+    },
+    {
+      "id": 63664,
+      "title": "CD-skivor, ett parti.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Ljud & Bild"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:32:09.897+00:00"
+    },
+    {
+      "id": 63665,
+      "title": "Brickor, 3 st, trä, Italien.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:33:39.897+00:00"
+    },
+    {
+      "id": 63667,
+      "title": "Glassmaskin, Wilfa.",
+      "description": "Ystads Auktioner ansvarar ej för funktionen.",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:36:39.897+00:00"
+    },
+    {
+      "id": 63675,
+      "title": "Leksaksfordon, ett parti, bl.a Meccano, Corgi och Tekno.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Fritid & Hobby"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T18:48:39.897+00:00"
+    },
+    {
+      "id": 63683,
+      "title": "Kanna, metall.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T19:00:39.897+00:00"
+    },
+    {
+      "id": 63693,
+      "title": "Sedlar, 35 st, svenska.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Övrigt",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T19:15:39.897+00:00"
+    },
+    {
+      "id": 63695,
+      "title": "Sedlar, 15 st, svenska.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Övrigt",
+        "Samlarföremål"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T19:18:39.897+00:00"
+    },
+    {
+      "id": 63708,
+      "title": "Serveringsbord, trä/flätad.",
+      "description": "",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [],
+      "sourceCategories": [
+        "Hem & Hushåll"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "ystads-auktioner",
+      "country": "SE",
+      "city": "Ystad",
+      "end_time": "2026-03-31T19:38:09.897+00:00"
+    },
+    {
+      "id": 68627,
+      "title": "SPEGEL, empire, 1800-talets första hälft",
+      "description": "Vitmålad, halvmåneformat krön, bronaserad pastellagedekor, ca 86b x 49,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "empire",
+        "vitmålad"
+      ],
+      "sourceCategories": [
+        "Speglar"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T18:14:26.267+00:00"
+    },
+    {
+      "id": 69120,
+      "title": "OIDENTIFIERAD KONSTNÄR, blandteknik, sannolikt Italien, otydligt signerad och daterad 72",
+      "description": "Vy från Torino, med påskrift à tergo, bildstorlek ca 46 x 36 cm, inkl ram ca 64 x 53 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "okänd konstnär",
+        "blandteknik",
+        "italien",
+        "torino",
+        "måleri",
+        "konst"
+      ],
+      "sourceCategories": [
+        "Måleri"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T19:00:26.267+00:00"
+    },
+    {
+      "id": 69545,
+      "title": "KUDDAR, 3 st, allmoge, 1900-tal",
+      "description": "Textil, ca 55 x 42, 60 x 45 samt 55 x 45 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kuddar",
+        "allmoge",
+        "textil"
+      ],
+      "sourceCategories": [
+        "Allmoge",
+        "Diverse",
+        "Textil"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-19T19:18:11.253+00:00"
+    },
+    {
+      "id": 69915,
+      "title": "RAMAR, 1 par, förgyllda och bronserade, gustaviansk stil, 1900-tal",
+      "description": "Oval form, pärlbård, 75 x 63 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "ram",
+        "förgylld",
+        "spegel",
+        "måleri"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Måleri",
+        "Speglar"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-25T18:26:26.267+00:00"
+    },
+    {
+      "id": 69923,
+      "title": "SPEGEL, bronserad, 1900-talets andra hälft",
+      "description": "Fasettslipat glas, dekor av bladverk, ca 99,5 x 49,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "bronserad",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Speglar"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T19:10:26.267+00:00"
+    },
+    {
+      "id": 69924,
+      "title": "SPEGEL, förgylld och bronserad, 1900-tal",
+      "description": "Oval form, krönt av rosett, 76 x 63 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Speglar"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-20T18:30:26.267+00:00"
+    },
+    {
+      "id": 70071,
+      "title": "SPÅNKORG, allmoge, målad, signerad och daterad Pirkko -77",
+      "description": "Dekor av sommarblommor, höjd ca 49 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spånkorg",
+        "korg",
+        "allmoge",
+        "trä",
+        "blommor",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Allmoge",
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-19T18:54:11.253+00:00"
+    },
+    {
+      "id": 70099,
+      "title": "BLÅSLAMPA, mässing, Sievert Original, 0,75 lit",
+      "description": "Höjd ca 22 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "blåslampa",
+        "mässing",
+        "sievert",
+        "verktyg",
+        "teknik"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-19T18:00:11.253+00:00"
+    },
+    {
+      "id": 70135,
+      "title": "BALANSVÅG, mässing, 1900-tal",
+      "description": "Längd 52, höjd inkl. skålar ca 75 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "balansvåg",
+        "våg",
+        "mässing",
+        "teknik",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-19T19:12:11.253+00:00"
+    },
+    {
+      "id": 70147,
+      "title": "SAXAR, 2 st, metall, 1900-talets andra hälft",
+      "description": "Bla orientalisk med svart handtag resp med mässingsfärgat handtag, längd ca 23 - 25 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "saxar",
+        "metall",
+        "verktyg",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-19T19:30:11.253+00:00"
+    },
+    {
+      "id": 70262,
+      "title": "SPEGEL, rokokostil, 1900-talets andra hälft",
+      "description": "Förgylld och bronserad, genombrutet krön, ca 67 x 36 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "spegel",
+        "rokokostil",
+        "förgylld",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Speglar"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T18:00:26.267+00:00"
+    },
+    {
+      "id": 70326,
+      "title": "SKÅL, lergods, sannolikt replika, Japan, 1900-tal",
+      "description": "Grön glasyr, i etui, längd ca 22 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "skål",
+        "lergods",
+        "japan",
+        "keramik",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T18:48:26.267+00:00"
+    },
+    {
+      "id": 70366,
+      "title": "SYMASKIN, Husqvarna 2000, 1900-talets mitt",
+      "description": "Grön, med etui",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "symaskin",
+        "husqvarna",
+        "teknik",
+        "verktyg",
+        "retro"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-22T19:16:26.267+00:00"
+    },
+    {
+      "id": 70402,
+      "title": "VINYLSTÄLL, 4 st, Luxorparts, 2000-tal",
+      "description": "Svartlackerad metall, höjd ca 43, 39 x 29 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "vinylställ",
+        "metall",
+        "förvaring",
+        "ljud",
+        "musik"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T18:46:26.267+00:00"
+    },
+    {
+      "id": 70476,
+      "title": "ARDY STRÜWER, blandteknik, signerad och daterad II-68, Lanzarote",
+      "description": "Komposition, bladstorlek 56 x 79 cm, inkl ram 71,5 x 91,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "blandteknik",
+        "målning",
+        "ardy strüwer",
+        "konst",
+        "tavla"
+      ],
+      "sourceCategories": [
+        "Måleri"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-26T18:48:26.267+00:00"
+    },
+    {
+      "id": 70480,
+      "title": "KIKARE, 2 st, bla IFBA 7 x 50, 1900-talets mitt",
+      "description": "Med fodral, 11 x 12 samt 19 x 21 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "kikare",
+        "teknik",
+        "optik",
+        "samlarobjekt"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-21T19:14:26.267+00:00"
+    },
+    {
+      "id": 70482,
+      "title": "YTTERFODER, mässing, 1900-talets första hälft",
+      "description": "Höjd ca 25, diameter 30 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "ytterfoder",
+        "mässing",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-23T18:34:26.267+00:00"
+    },
+    {
+      "id": 70487,
+      "title": "SLANGVINDA, plast, 1900-/2000-tal",
+      "description": "Grön, höjd ca 47 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "slangvinda",
+        "trädgård",
+        "verktyg"
+      ],
+      "sourceCategories": [
+        "Trädgård"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-23T18:28:26.267+00:00"
+    },
+    {
+      "id": 70501,
+      "title": "BANG & OLUFSEN, 2 st, telefoner, BeoCom 4, Danmark",
+      "description": "Cylindrisk form, etikettmärkta, höjd ca 16 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "telefon",
+        "bang & olufsen",
+        "teknik",
+        "design"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-24T18:22:26.267+00:00"
+    },
+    {
+      "id": 70502,
+      "title": "ISBORR, stål, 2000-tal",
+      "description": "Längd ca 143 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "isborr",
+        "verktyg",
+        "fiske",
+        "teknik"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Technica & Nautica"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-25T19:10:26.267+00:00"
+    },
+    {
+      "id": 70531,
+      "title": "LERGÖKAR, 2 st, keramik, bla Kili Siimes, sannolikt 1900-talets andra hälft",
+      "description": "Fågel och mansfigur, längd ca 10-15 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "lergökar",
+        "keramik",
+        "fågel",
+        "djur",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-22T19:12:26.267+00:00"
+    },
+    {
+      "id": 70537,
+      "title": "TÄNDSTICKSHÅLLARE, gjutjärn, 1900-tal",
+      "description": "Reliefdekor av örn, höjd ca 27 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "tändstickshållare",
+        "gjutjärn",
+        "örn",
+        "fågel",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-21T18:46:26.267+00:00"
+    },
+    {
+      "id": 70540,
+      "title": "GOLVVAS, kromad metall, 2000-tal",
+      "description": "Höjd ca 79 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "golvvas",
+        "vas",
+        "metall",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-26T19:00:26.267+00:00"
+    },
+    {
+      "id": 70542,
+      "title": "FIGURER, 3 st, keramik, sannolikt Sydamerika, 1900-tal",
+      "description": "Kärl, tupp och gris, höjd ca 3, 3,5 och 6 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "figurer",
+        "keramik",
+        "sydamerika",
+        "tupp",
+        "gris",
+        "djur",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-20T18:52:26.267+00:00"
+    },
+    {
+      "id": 70590,
+      "title": "VIKTSATS, mässing, 1800-tal",
+      "description": "Öppningsbart lock med bakomliggande vikter, höjd ca 6 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "viktsats",
+        "mässing",
+        "teknik",
+        "antik",
+        "samlarobjekt"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-21T19:00:26.267+00:00"
+    },
+    {
+      "id": 70602,
+      "title": "VÄGGKLOCKA, malm och trä, \"Smålandsklockan, 1900-tal",
+      "description": "Med plakett \"Bengt 70 år\", höjd ca 20 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "aiCategories": [
+        "väggklocka",
+        "klocka",
+        "malm",
+        "trä",
+        "urverk",
+        "inredning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "reviewReasons": [
+        "contains-diverse"
+      ],
+      "house_id": "olsens-auktioner",
+      "country": "SE",
+      "city": "Norrköping",
+      "end_time": "2026-03-23T19:06:26.267+00:00"
+    }
+  ]
+}
