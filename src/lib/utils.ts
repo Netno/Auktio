@@ -1,3 +1,12 @@
+const HTML_ENTITY_MAP: Record<string, string> = {
+  amp: "&",
+  apos: "'",
+  gt: ">",
+  lt: "<",
+  nbsp: " ",
+  quot: '"',
+};
+
 /**
  * Calculate human-readable time remaining until auction end.
  */
@@ -55,7 +64,9 @@ export function getCountryFlag(country: string | null | undefined): string {
     return "";
   }
 
-  return String.fromCodePoint(...Array.from(code).map((char) => 127397 + char.charCodeAt(0)));
+  return String.fromCodePoint(
+    ...Array.from(code).map((char) => 127397 + char.charCodeAt(0)),
+  );
 }
 
 /**
@@ -102,6 +113,42 @@ export function normalizeAuctionTitle(
   const [firstCharacter, ...rest] = Array.from(lowerCased);
 
   return `${firstCharacter.toLocaleUpperCase("sv-SE")}${rest.join("")}`;
+}
+
+export function stripHtml(value: string | null | undefined): string {
+  if (!value) {
+    return "";
+  }
+
+  const withoutTags = value.replace(/<[^>]*>/g, " ").replace(/[<>]/g, " ");
+
+  return withoutTags
+    .replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (match, entity: string) => {
+      const normalizedEntity = entity.toLowerCase();
+      const namedEntity = HTML_ENTITY_MAP[normalizedEntity];
+
+      if (namedEntity != null) {
+        return namedEntity;
+      }
+
+      if (normalizedEntity.startsWith("#x")) {
+        const codePoint = Number.parseInt(normalizedEntity.slice(2), 16);
+        return Number.isFinite(codePoint)
+          ? String.fromCodePoint(codePoint)
+          : match;
+      }
+
+      if (normalizedEntity.startsWith("#")) {
+        const codePoint = Number.parseInt(normalizedEntity.slice(1), 10);
+        return Number.isFinite(codePoint)
+          ? String.fromCodePoint(codePoint)
+          : match;
+      }
+
+      return " ";
+    })
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /**

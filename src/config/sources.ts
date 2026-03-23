@@ -160,6 +160,14 @@ export const FEED_SOURCES: Omit<AuctionHouse, "active" | "lastSynced">[] = [
     country: "SE",
   },
   {
+    id: "hallands-auktionsverk",
+    name: "Hallands Auktionsverk",
+    feedUrl: "https://www.hallandsauktionsverk.se/api/feed?apiVersion=2.0",
+    websiteUrl: "https://www.hallandsauktionsverk.se",
+    city: "Halmstad",
+    country: "SE",
+  },
+  {
     id: "auktionen-pa-bruket",
     name: "Auktionen på Bruket",
     feedUrl: "https://auktionenpabruket.se/api/feed?apiVersion=2.0",

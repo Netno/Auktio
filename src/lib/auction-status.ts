@@ -1,5 +1,5 @@
 import { createServerClient } from "./supabase";
-import { normalizeAuctionTitle } from "./utils";
+import { normalizeAuctionTitle, stripHtml } from "./utils";
 import type {
   AuctionHouseAvailability,
   AuctionStatus,
@@ -514,7 +514,7 @@ export async function listAuctionSummaries(
       houseName: auction.auc_auction_houses?.name ?? auction.house_id,
       houseLogoUrl: auction.auc_auction_houses?.logo_url ?? undefined,
       title: normalizeAuctionTitle(auction.title),
-      description: auction.description ?? undefined,
+      description: stripHtml(auction.description) || undefined,
       url: auction.url ?? "#",
       imageUrl: auction.image_url ?? undefined,
       isLive: Boolean(auction.is_live),

@@ -466,7 +466,51 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
   }
 }
 
+function extractSoldOfferFromNextData(html: string) {
+  const nextDataMatch = html.match(
+    /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/i,
+  );
+
+  const payload = nextDataMatch?.[1]?.trim();
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(payload);
+    const inventoryItem = parsed?.props?.pageProps?.inventoryItem;
+    const soldFlag =
+      inventoryItem?.sold === true ||
+      inventoryItem?.state?.abbreviation === "Closed" ||
+      inventoryItem?.state?.name === "Closed";
+
+    const candidatePrices = [
+      inventoryItem?.winInfo?.bidAmount,
+      inventoryItem?.highBid,
+      inventoryItem?.winInfo?.totalAmount,
+    ].map((value: unknown) => Number(value));
+
+    const soldPrice = candidatePrices.find((value) => Number.isFinite(value));
+
+    if (!soldFlag || !Number.isFinite(soldPrice)) {
+      return null;
+    }
+
+    return {
+      soldPrice,
+      isSold: true,
+    };
+  } catch {
+    return null;
+  }
+}
+
 function extractSoldOfferFromHtml(html: string) {
+  const nextDataOffer = extractSoldOfferFromNextData(html);
+  if (nextDataOffer) {
+    return nextDataOffer;
+  }
+
   const jsonLdMatches = Array.from(
     html.matchAll(
       /<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi,
@@ -511,79 +555,88 @@ async function refreshEndedLotsFromSite(houseId: string) {
   const readyBefore = new Date(
     now.getTime() - SOLD_PRICE_READY_DELAY_HOURS * 3_600_000,
   ).toISOString();
-
-  const { data, error } = await supabase
-    .from("auc_lots")
-    .select("id, url, end_time, availability, current_bid, sold_price")
-    .eq("house_id", houseId)
-    .gte("end_time", fromDate)
-    .lte("end_time", readyBefore)
-    .order("end_time", { ascending: false })
-    .limit(SOLD_PRICE_SITE_BATCH_LIMIT);
-
-  if (error) {
-    console.warn(
-      `[ingest] Site sold-price lookup failed for ${houseId}:`,
-      error.message,
-    );
-    return 0;
-  }
-
-  const candidates = ((data ?? []) as RecentEndedLotRow[]).filter(
-    (lot) => lot.url && (lot.availability !== "sold" || lot.sold_price == null),
-  );
-
   let updatedCount = 0;
 
-  for (const lot of candidates) {
-    try {
-      const response = await fetchWithRetry(lot.url!, {
-        headers: { Accept: "text/html" },
-        signal: AbortSignal.timeout(8000),
-        cache: "no-store",
-      });
+  for (let offset = 0; ; offset += SOLD_PRICE_SITE_BATCH_LIMIT) {
+    const { data, error } = await supabase
+      .from("auc_lots")
+      .select("id, url, end_time, availability, current_bid, sold_price")
+      .eq("house_id", houseId)
+      .gte("end_time", fromDate)
+      .lte("end_time", readyBefore)
+      .order("end_time", { ascending: false })
+      .range(offset, offset + SOLD_PRICE_SITE_BATCH_LIMIT - 1);
 
-      if (!response.ok) {
-        continue;
-      }
-
-      const html = await response.text();
-      const offer = extractSoldOfferFromHtml(html);
-
-      if (!offer?.isSold || !Number.isFinite(offer.soldPrice)) {
-        continue;
-      }
-
-      if (
-        lot.availability === "sold" &&
-        lot.current_bid === offer.soldPrice &&
-        lot.sold_price === offer.soldPrice
-      ) {
-        continue;
-      }
-
-      const { error: updateError } = await supabase
-        .from("auc_lots")
-        .update({
-          availability: "sold",
-          sold_price: offer.soldPrice,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", lot.id);
-
-      if (updateError) {
-        console.warn(
-          `[ingest] Site sold-price update failed for lot ${lot.id}:`,
-          updateError.message,
-        );
-        continue;
-      }
-
-      updatedCount += 1;
-    } catch (error) {
+    if (error) {
       console.warn(
-        `[ingest] Site sold-price fetch failed for lot ${lot.id}: ${error instanceof Error ? error.message : String(error)}`,
+        `[ingest] Site sold-price lookup failed for ${houseId}:`,
+        error.message,
       );
+      return updatedCount;
+    }
+
+    const candidates = ((data ?? []) as RecentEndedLotRow[]).filter((lot) =>
+      Boolean(lot.url),
+    );
+
+    if (candidates.length === 0) {
+      break;
+    }
+
+    for (const lot of candidates) {
+      try {
+        const response = await fetchWithRetry(lot.url!, {
+          headers: { Accept: "text/html" },
+          signal: AbortSignal.timeout(8000),
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const html = await response.text();
+        const offer = extractSoldOfferFromHtml(html);
+
+        if (!offer?.isSold || !Number.isFinite(offer.soldPrice)) {
+          continue;
+        }
+
+        if (
+          lot.availability === "sold" &&
+          lot.current_bid === offer.soldPrice &&
+          lot.sold_price === offer.soldPrice
+        ) {
+          continue;
+        }
+
+        const { error: updateError } = await supabase
+          .from("auc_lots")
+          .update({
+            availability: "sold",
+            sold_price: offer.soldPrice,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", lot.id);
+
+        if (updateError) {
+          console.warn(
+            `[ingest] Site sold-price update failed for lot ${lot.id}:`,
+            updateError.message,
+          );
+          continue;
+        }
+
+        updatedCount += 1;
+      } catch (error) {
+        console.warn(
+          `[ingest] Site sold-price fetch failed for lot ${lot.id}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+
+    if (candidates.length < SOLD_PRICE_SITE_BATCH_LIMIT) {
+      break;
     }
   }
 
