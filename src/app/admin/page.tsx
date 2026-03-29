@@ -58,6 +58,30 @@ function formatMissingLabel(value: string) {
   }
 }
 
+function getStatusBadge(status: "success" | "error" | "partial") {
+  switch (status) {
+    case "success":
+      return {
+        icon: "✓",
+        label: "OK",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+      };
+    case "error":
+      return {
+        icon: "✕",
+        label: "FAIL",
+        className: "border-rose-200 bg-rose-50 text-rose-700",
+      };
+    case "partial":
+    default:
+      return {
+        icon: "~",
+        label: "DEL",
+        className: "border-amber-200 bg-amber-50 text-amber-700",
+      };
+  }
+}
+
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const session = await getServerSession(authOptions);
 
@@ -245,48 +269,63 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               <table className="min-w-full text-[12px]">
                 <thead className="border-b border-brand-200 bg-brand-50 text-brand-700">
                   <tr>
-                    <th className="px-2 py-1 text-left font-medium">tid</th>
-                    <th className="px-2 py-1 text-left font-medium">hus</th>
-                    <th className="px-2 py-1 text-right font-medium">+</th>
-                    <th className="px-2 py-1 text-right font-medium">~</th>
-                    <th className="px-2 py-1 text-right font-medium">=</th>
-                    <th className="px-2 py-1 text-right font-medium">s</th>
+                    <th className="px-2 py-1.5 text-left font-medium">tid</th>
+                    <th className="px-2 py-1.5 text-left font-medium">hus</th>
+                    <th className="px-2 py-1.5 text-right font-medium">+</th>
+                    <th className="px-2 py-1.5 text-right font-medium">~</th>
+                    <th className="px-2 py-1.5 text-right font-medium">=</th>
+                    <th className="px-2 py-1.5 text-right font-medium">s</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ingestRuns.map((run) => (
-                    <tr
-                      key={run.id}
-                      className="border-b border-brand-100 align-top text-brand-800"
-                    >
-                      <td className="px-2 py-1 whitespace-nowrap">
-                        <div>{formatDateTime(run.startedAt)}</div>
-                        <div className="text-[11px] text-brand-500">
-                          {run.status}
-                        </div>
-                      </td>
-                      <td className="px-2 py-1">
-                        <div>{run.houseName}</div>
-                        {run.errorMessage && (
-                          <div className="max-w-[180px] truncate text-[11px] text-rose-600">
-                            {run.errorMessage}
+                  {ingestRuns.map((run) => {
+                    const statusBadge = getStatusBadge(run.status);
+
+                    return (
+                      <tr
+                        key={run.id}
+                        className="border-b border-brand-100 text-brand-800"
+                      >
+                        <td className="px-2 py-1.5 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`inline-flex min-w-[52px] items-center justify-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusBadge.className}`}
+                              title={run.status}
+                            >
+                              <span>{statusBadge.icon}</span>
+                              <span>{statusBadge.label}</span>
+                            </span>
+                            <span>{formatDateTime(run.startedAt)}</span>
                           </div>
-                        )}
-                      </td>
-                      <td className="px-2 py-1 text-right text-emerald-700">
-                        {formatInteger(run.lotsAdded)}
-                      </td>
-                      <td className="px-2 py-1 text-right">
-                        {formatInteger(run.lotsUpdated)}
-                      </td>
-                      <td className="px-2 py-1 text-right text-brand-500">
-                        {formatInteger(run.lotsSkipped)}
-                      </td>
-                      <td className="px-2 py-1 text-right text-brand-500">
-                        {formatDuration(run.durationMs)}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td
+                          className="px-2 py-1.5"
+                          title={run.errorMessage ?? undefined}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="truncate">{run.houseName}</span>
+                            {run.errorMessage && (
+                              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-rose-600">
+                                fel
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-2 py-1.5 text-right text-emerald-700">
+                          {formatInteger(run.lotsAdded)}
+                        </td>
+                        <td className="px-2 py-1.5 text-right">
+                          {formatInteger(run.lotsUpdated)}
+                        </td>
+                        <td className="px-2 py-1.5 text-right text-brand-500">
+                          {formatInteger(run.lotsSkipped)}
+                        </td>
+                        <td className="px-2 py-1.5 text-right text-brand-500 whitespace-nowrap">
+                          {formatDuration(run.durationMs)}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

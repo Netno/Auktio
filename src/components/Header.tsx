@@ -42,15 +42,15 @@ function HeaderMenu({ items }: { items: HeaderNavItem[] }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] overflow-hidden rounded-2xl border border-white/[0.08] bg-brand-900/95 p-1.5 shadow-2xl backdrop-blur sm:min-w-[240px]">
+        <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] overflow-hidden rounded-2xl border border-white/10 bg-brand-950 p-1.5 shadow-2xl shadow-black/40 sm:min-w-[240px]">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={`flex items-center justify-between rounded-xl px-3 py-2 text-[13px] font-medium transition-all ${
                 item.active
-                  ? "bg-white text-brand-900"
-                  : "text-white/78 hover:bg-white/[0.08] hover:text-white"
+                  ? "bg-accent-500 text-white"
+                  : "text-white hover:bg-white/10"
               }`}
             >
               <span>{item.label}</span>
