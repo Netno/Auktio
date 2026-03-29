@@ -234,6 +234,10 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       const requestParams = new URLSearchParams();
       if (params.query) urlParams.set("q", params.query);
       if (params.query) requestParams.set("q", params.query);
+      if (params.searchMode !== DEFAULT_SEARCH_MODE) {
+        urlParams.set("mode", params.searchMode);
+        requestParams.set("mode", params.searchMode);
+      }
       if (params.status !== DEFAULT_STATUS)
         urlParams.set("status", params.status);
       if (params.status !== DEFAULT_STATUS)
@@ -399,7 +403,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
   };
 
   const setSearchMode = (mode: SearchMode) => {
-    setSearchModeState(DEFAULT_SEARCH_MODE);
+    setSearchModeState(mode);
     setPageState(1);
   };
 

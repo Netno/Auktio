@@ -7,6 +7,8 @@ import { authOptions } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 const REPORT_TIME_ZONE = "Europe/Stockholm";
+const LOCAL_DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const LOCAL_HOUR_KEY_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
 function formatInteger(value: number) {
   return value.toLocaleString("sv-SE");
@@ -25,6 +27,10 @@ function formatCurrencySek(value: number | null) {
 }
 
 function formatHourLabel(value: string) {
+  if (LOCAL_HOUR_KEY_PATTERN.test(value)) {
+    return value.slice(5);
+  }
+
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     return value;
@@ -40,6 +46,10 @@ function formatHourLabel(value: string) {
 }
 
 function formatDateLabel(value: string) {
+  if (LOCAL_DAY_KEY_PATTERN.test(value)) {
+    return value;
+  }
+
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     return value;
@@ -47,6 +57,22 @@ function formatDateLabel(value: string) {
 
   return date.toLocaleDateString("sv-SE", {
     timeZone: REPORT_TIME_ZONE,
+  });
+}
+
+function formatTimestampLabel(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -133,13 +159,13 @@ export default async function AiUsagePage() {
               </div>
               <div className="mt-1 text-sm font-medium text-slate-200">
                 {report.startedAt
-                  ? formatDateLabel(report.startedAt)
+                  ? formatTimestampLabel(report.startedAt)
                   : "Ingen data än"}
               </div>
               <div className="mt-2 text-xs text-slate-500">
                 USD/SEK: {report.pricing.usdToSek?.toFixed(4) ?? "ej satt"}
                 {report.pricing.usdToSekFetchedAt
-                  ? ` • hämtad ${formatDateLabel(report.pricing.usdToSekFetchedAt)}`
+                  ? ` • hämtad ${formatTimestampLabel(report.pricing.usdToSekFetchedAt)}`
                   : ""}
               </div>
             </div>

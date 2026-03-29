@@ -3,31 +3,15 @@ import { createServerClient } from "@/lib/supabase";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { generateQueryEmbedding } from "@/lib/embeddings";
 import {
-  buildSwedishWordRoots as buildWordRoots,
   expandSwedishSemanticQueryTerms as expandSemanticTerms,
   extractSwedishQueryTerms as extractQueryTerms,
   normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
-import {
-  buildQueryScoringTerms,
-  buildQueryTextMatchClauses,
-} from "@/lib/search-text-match";
-import {
-  detectPrimaryObjectIntent,
-  detectQueryModifierTerms,
-  evaluateCollectionMatch,
-  evaluateModifierMatch,
-  evaluateObjectMatch as evaluateLotObjectMatch,
-  getBaseQueryTermWeight as getBaseTermWeight,
-  getCollectionAwareScorePenalty,
-  getModifierAwareScoreBoost,
-  shouldRequirePrimaryObjectMatch,
-  shouldRequireModifierMatch,
-  type DetectedObjectIntent,
-} from "@/lib/search-object-intent";
+import { buildQueryTextMatchClauses } from "@/lib/search-text-match";
 import { detectCategoryIntent } from "@/lib/search-category-intent";
 import { getDidYouMeanQuery } from "@/lib/search-spelling";
+import { rankLotsByRelevance } from "@/lib/search-relevance";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
   SearchParams,
@@ -246,274 +230,6 @@ type DetectedAuctionHouse = {
   aliases: string[];
 };
 
-const STRONG_ANIMAL_EXPANSION_TERMS = new Set([
-  "leopard",
-  "lejon",
-  "tiger",
-  "panter",
-  "jaguar",
-  "lodjur",
-]);
-
-const WEAK_ANIMAL_EXPANSION_TERMS = new Set([
-  "animal",
-  "fauna",
-  "djur",
-  "djurmotiv",
-  "hund",
-  "katt",
-  "häst",
-  "fågel",
-  "fisk",
-]);
-
-const DECORATIVE_OBJECT_TERMS = new Set([
-  "porslin",
-  "keramik",
-  "fat",
-  "fiskfat",
-  "tallrik",
-  "skal",
-  "skål",
-  "vas",
-  "urna",
-  "servis",
-]);
-
-const PAINTING_QUERY_TERMS = new Set([
-  "målning",
-  "måleri",
-  "olja",
-  "oljemålning",
-  "akvarell",
-  "gouache",
-  "pastell",
-  "tempera",
-  "tavla",
-]);
-
-const PAINTING_RESULT_TERMS = new Set([
-  "målning",
-  "måleri",
-  "olja",
-  "oljemålning",
-  "akvarell",
-  "gouache",
-  "pastell",
-  "tempera",
-  "tavla",
-  "konst",
-]);
-
-function getLexicalScore(
-  lot: NormalizedLot,
-  queryTerms: string[],
-  termWeight: (term: string) => number = () => 1,
-) {
-  if (!queryTerms.length) {
-    return 0;
-  }
-  const normalizedTitle = normalizeText(lot.title ?? "");
-  const titleTokens = normalizedTitle
-    .split(" ")
-    .filter(Boolean)
-    .flatMap((token) => buildWordRoots(token));
-  const categoryTokens = normalizeText((lot.categories ?? []).join(" "))
-    .split(" ")
-    .filter(Boolean)
-    .flatMap((token) => buildWordRoots(token));
-  const aiCategoryTokens = normalizeText((lot.aiCategories ?? []).join(" "))
-    .split(" ")
-    .filter(Boolean)
-    .flatMap((token) => buildWordRoots(token));
-  const artistTokens = normalizeText((lot.artists ?? []).join(" "))
-    .split(" ")
-    .filter(Boolean)
-    .flatMap((token) => buildWordRoots(token));
-  const descriptionTokens = normalizeText(lot.description ?? "")
-    .split(" ")
-    .filter(Boolean)
-    .flatMap((token) => buildWordRoots(token));
-
-  const matchesTerm = (tokens: string[], term: string) =>
-    tokens.some((token) => token === term || token.endsWith(term));
-
-  let score = 0;
-  for (const term of queryTerms) {
-    const weight = termWeight(term);
-
-    if (matchesTerm(titleTokens, term)) {
-      score += 6 * weight;
-      if (normalizedTitle.includes(term)) {
-        score += 2 * weight;
-      }
-    } else if (matchesTerm(artistTokens, term)) {
-      score += 4 * weight;
-    } else if (matchesTerm(categoryTokens, term)) {
-      score += 3 * weight;
-    } else if (matchesTerm(aiCategoryTokens, term)) {
-      score += 4 * weight;
-    } else if (matchesTerm(descriptionTokens, term)) {
-      score += 1 * weight;
-    }
-  }
-
-  return score;
-}
-
-function hasAnyNormalizedTerm(value: string, terms: Set<string>) {
-  const normalizedValue = normalizeText(value);
-  if (!normalizedValue) return false;
-
-  return Array.from(terms).some((term) => normalizedValue.includes(term));
-}
-
-function getExpandedTermWeight(term: string) {
-  if (STRONG_ANIMAL_EXPANSION_TERMS.has(term)) return 1.35;
-  if (WEAK_ANIMAL_EXPANSION_TERMS.has(term)) return 0.6;
-  return 0.9;
-}
-
-function isConcreteObjectQuery(query: string) {
-  const normalized = normalizeSearchQuery(query);
-  const words = normalized.split(" ").filter(Boolean);
-  return words.length > 0 && words.length <= 3;
-}
-
-function getVectorRankScore(vectorOrder: Map<number, number>, lotId: number) {
-  const position = vectorOrder.get(lotId);
-  if (position == null) return 0;
-  return 1 / (position + 1);
-}
-
-function getBlendedSearchScore(
-  lot: NormalizedLot,
-  queryTerms: string[],
-  expandedQueryTerms: string[],
-  normalizedQuery: string,
-  vectorOrder: Map<number, number>,
-  concreteQuery: boolean,
-  primaryObjectIntent: DetectedObjectIntent | null,
-  queryModifierTerms: string[],
-) {
-  const lexicalScore = getLexicalScore(lot, queryTerms, getBaseTermWeight);
-  const expandedLexicalScore = getLexicalScore(
-    lot,
-    expandedQueryTerms,
-    getExpandedTermWeight,
-  );
-  const vectorScore = getVectorRankScore(vectorOrder, lot.id);
-  const normalizedTitle = normalizeText(lot.title ?? "");
-  const normalizedCategories = normalizeText((lot.categories ?? []).join(" "));
-  const normalizedAiCategories = normalizeText(
-    (lot.aiCategories ?? []).join(" "),
-  );
-  const normalizedDescription = normalizeText(lot.description ?? "");
-  const combinedSearchText = [
-    normalizedTitle,
-    normalizedCategories,
-    normalizedAiCategories,
-    normalizedDescription,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const hasExactPhrase =
-    normalizedQuery.length >= 3 &&
-    (normalizedTitle.includes(normalizedQuery) ||
-      normalizedCategories.includes(normalizedQuery) ||
-      normalizedAiCategories.includes(normalizedQuery));
-  const strongAnimalMatch = hasAnyNormalizedTerm(
-    combinedSearchText,
-    STRONG_ANIMAL_EXPANSION_TERMS,
-  );
-  const weakAnimalMatch = hasAnyNormalizedTerm(
-    combinedSearchText,
-    WEAK_ANIMAL_EXPANSION_TERMS,
-  );
-  const decorativeObjectMatch = hasAnyNormalizedTerm(
-    combinedSearchText,
-    DECORATIVE_OBJECT_TERMS,
-  );
-  const queryHasPaintingIntent = queryTerms.some((term) =>
-    PAINTING_QUERY_TERMS.has(term),
-  );
-  const lotHasPaintingSignal = hasAnyNormalizedTerm(
-    combinedSearchText,
-    PAINTING_RESULT_TERMS,
-  );
-  const objectMatch = evaluateLotObjectMatch(lot, primaryObjectIntent);
-  const modifierMatch = evaluateModifierMatch(lot, queryModifierTerms);
-  const collectionMatch = evaluateCollectionMatch(lot);
-
-  let score =
-    lexicalScore * (concreteQuery ? 1.8 : 1.2) +
-    expandedLexicalScore * (concreteQuery ? 1.15 : 0.75) +
-    vectorScore * 3;
-
-  if (primaryObjectIntent) {
-    if (objectMatch.hasStrongMatch) {
-      score += 18 + objectMatch.score * 0.5;
-    } else if (objectMatch.hasMatch) {
-      score += 9 + objectMatch.score * 0.35;
-    } else {
-      score -= concreteQuery ? 24 : 10;
-    }
-  }
-
-  score += getModifierAwareScoreBoost(
-    modifierMatch,
-    queryModifierTerms,
-    concreteQuery,
-  );
-  score += getCollectionAwareScorePenalty(
-    collectionMatch,
-    concreteQuery,
-    Boolean(primaryObjectIntent) || queryModifierTerms.length > 0,
-  );
-
-  if (lexicalScore === 0 && expandedLexicalScore > 0) {
-    if (strongAnimalMatch) {
-      score += 3;
-    } else if (weakAnimalMatch) {
-      score += 0.5;
-    }
-
-    if (decorativeObjectMatch && !strongAnimalMatch) {
-      score -= 2.25;
-    }
-  }
-
-  if (hasExactPhrase) {
-    score += concreteQuery ? 14 : 8;
-  }
-
-  if (queryHasPaintingIntent) {
-    if (lotHasPaintingSignal) {
-      score += 4;
-    } else if (decorativeObjectMatch) {
-      score -= 3.5;
-    }
-  }
-
-  if (
-    queryTerms.includes("djurmotiv") &&
-    normalizedAiCategories.includes("djurmotiv")
-  ) {
-    score += 6;
-  }
-
-  return {
-    score,
-    lexicalScore,
-    expandedLexicalScore,
-    hasExactPhrase,
-    hasObjectMatch: objectMatch.hasMatch,
-    hasStrongObjectMatch: objectMatch.hasStrongMatch,
-    hasModifierMatch: modifierMatch.hasMatch,
-    hasCollectionMatch: collectionMatch.hasMatch,
-  };
-}
-
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   const aliases = new Set<string>();
   const normalizedName = normalizeText(source.name);
@@ -567,78 +283,6 @@ function stripAuctionHouseFromQuery(query: string, alias: string) {
   return stripped;
 }
 
-function compareNumbers(
-  a: number | null | undefined,
-  b: number | null | undefined,
-  direction: "asc" | "desc",
-) {
-  if (a == null && b == null) return 0;
-  if (a == null) return 1;
-  if (b == null) return -1;
-  return direction === "asc" ? a - b : b - a;
-}
-
-function compareDates(
-  a: string | null | undefined,
-  b: string | null | undefined,
-  direction: "asc" | "desc",
-) {
-  if (!a && !b) return 0;
-  if (!a) return 1;
-  if (!b) return -1;
-  const aTime = new Date(a).getTime();
-  const bTime = new Date(b).getTime();
-  return direction === "asc" ? aTime - bTime : bTime - aTime;
-}
-
-function sortLots(
-  lots: NormalizedLot[],
-  sortBy: SortOption,
-  relevanceOrder?: Map<number, number>,
-) {
-  lots.sort((a, b) => {
-    switch (sortBy) {
-      case "recently-ended":
-        return compareDates(a.endTime, b.endTime, "desc");
-      case "recently-sold": {
-        const aIsSold = a.availability === "sold";
-        const bIsSold = b.availability === "sold";
-
-        if (aIsSold !== bIsSold) {
-          return aIsSold ? -1 : 1;
-        }
-
-        return compareDates(a.endTime, b.endTime, "desc");
-      }
-      case "newly-listed":
-        return compareDates(a.createdAt, b.createdAt, "desc");
-      case "price-asc":
-        return compareNumbers(a.currentBid, b.currentBid, "asc");
-      case "price-desc":
-        return compareNumbers(a.currentBid, b.currentBid, "desc");
-      case "sold-price-desc":
-        return compareNumbers(
-          a.currentBid ?? a.soldPrice,
-          b.currentBid ?? b.soldPrice,
-          "desc",
-        );
-      case "estimate-desc":
-        return compareNumbers(a.estimate, b.estimate, "desc");
-      case "relevance":
-        if (relevanceOrder) {
-          return (
-            (relevanceOrder.get(a.id) ?? Infinity) -
-            (relevanceOrder.get(b.id) ?? Infinity)
-          );
-        }
-        return 0;
-      case "ending-soon":
-      default:
-        return compareDates(a.endTime, b.endTime, "asc");
-    }
-  });
-}
-
 function applyStatusFilter(query: any, status: SearchStatus, nowIso: string) {
   switch (status) {
     case "ended":
@@ -683,13 +327,6 @@ function getSemanticMatchThreshold(query: string) {
   if (termCount === 2) return 0.72;
   if (termCount === 3) return 0.66;
   return 0.58;
-}
-
-function shouldRequireStrictLexicalMatch(
-  query: string,
-  lexicalQualifiedCount: number,
-) {
-  return isConcreteObjectQuery(query) && lexicalQualifiedCount >= 8;
 }
 
 function mergeUniqueIds(...groups: number[][]) {
@@ -1251,7 +888,10 @@ export async function GET(request: NextRequest) {
     query = applySearchCriteria(query, effectiveParams, vectorLotIds, nowIso);
 
     // For vector/semantic mode: sort by relevance (client-side) — fetch all matches
-    const useRelevanceSort = needsVector && vectorLotIds?.length;
+    const useRelevanceSort =
+      Boolean(effectiveParams.query?.trim()) &&
+      ((effectiveParams.sortBy ?? "relevance") === "relevance" ||
+        (needsVector && Boolean(vectorLotIds?.length)));
 
     if (!useRelevanceSort) {
       // DB-level sorting
@@ -1348,105 +988,15 @@ export async function GET(request: NextRequest) {
     // For vector mode: sort by semantic relevance, paginate client-side
     let lots, resultTotal;
     if (useRelevanceSort) {
-      const { queryTerms, expandedQueryTerms } = buildQueryScoringTerms(
-        effectiveParams.query ?? "",
+      const vectorOrder = new Map(
+        (vectorLotIds ?? []).map((id, idx) => [id, idx]),
       );
-      const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
-      const normalizedQuery = normalizeSearchQuery(effectiveParams.query ?? "");
-      const concreteQuery = isConcreteObjectQuery(effectiveParams.query ?? "");
-      const primaryObjectIntent = detectPrimaryObjectIntent(
+      const finalRankedRows = rankLotsByRelevance(
+        allRows,
         effectiveParams.query ?? "",
+        params.sortBy ?? "relevance",
+        { vectorOrder },
       );
-      const queryModifierTerms = detectQueryModifierTerms(
-        effectiveParams.query ?? "",
-        primaryObjectIntent,
-      );
-
-      const rankedEntries = allRows
-        .map((lot) => {
-          const blended = getBlendedSearchScore(
-            lot,
-            queryTerms,
-            expandedQueryTerms,
-            normalizedQuery,
-            vectorOrder,
-            concreteQuery,
-            primaryObjectIntent,
-            queryModifierTerms,
-          );
-          return { lot, ...blended };
-        })
-        .filter(
-          (entry) =>
-            !concreteQuery ||
-            entry.lexicalScore > 0 ||
-            entry.expandedLexicalScore > 0 ||
-            entry.hasExactPhrase ||
-            entry.hasObjectMatch,
-        )
-        .sort((a, b) => {
-          if (b.score !== a.score) {
-            return b.score - a.score;
-          }
-          return (
-            (vectorOrder.get(a.lot.id) ?? Number.MAX_SAFE_INTEGER) -
-            (vectorOrder.get(b.lot.id) ?? Number.MAX_SAFE_INTEGER)
-          );
-        });
-
-      const objectQualifiedRows = primaryObjectIntent
-        ? rankedEntries.filter((entry) => entry.hasObjectMatch)
-        : rankedEntries;
-
-      const rowsAfterObjectFilter = shouldRequirePrimaryObjectMatch(
-        effectiveParams.query ?? "",
-        primaryObjectIntent,
-        objectQualifiedRows.length,
-      )
-        ? objectQualifiedRows
-        : rankedEntries;
-
-      const lexicalQualifiedRows = rowsAfterObjectFilter.filter(
-        (entry) =>
-          entry.lexicalScore > 0 ||
-          entry.expandedLexicalScore > 0 ||
-          entry.hasExactPhrase ||
-          entry.hasObjectMatch,
-      );
-
-      const modifierQualifiedRows = queryModifierTerms.length
-        ? lexicalQualifiedRows.filter((entry) => entry.hasModifierMatch)
-        : lexicalQualifiedRows;
-
-      const rowsAfterModifierFilter = shouldRequireModifierMatch(
-        effectiveParams.query ?? "",
-        queryModifierTerms,
-        modifierQualifiedRows.length,
-      )
-        ? modifierQualifiedRows
-        : lexicalQualifiedRows;
-
-      const nonCollectionRows = rowsAfterModifierFilter.filter(
-        (entry) => !entry.hasCollectionMatch,
-      );
-      const rowsAfterCollectionFilter =
-        concreteQuery &&
-        (primaryObjectIntent || queryModifierTerms.length > 0) &&
-        nonCollectionRows.length >= 4
-          ? nonCollectionRows
-          : rowsAfterModifierFilter;
-
-      const finalRankedRows = shouldRequireStrictLexicalMatch(
-        effectiveParams.query ?? "",
-        rowsAfterCollectionFilter.length,
-      )
-        ? rowsAfterCollectionFilter.map((entry) => entry.lot)
-        : rowsAfterCollectionFilter.map((entry) => entry.lot);
-
-      const relevanceOrder = new Map(
-        finalRankedRows.map((lot, idx) => [lot.id, idx]),
-      );
-      sortLots(finalRankedRows, params.sortBy ?? "relevance", relevanceOrder);
       resultTotal = finalRankedRows.length;
       lots = finalRankedRows.slice(offset, offset + params.pageSize!);
     } else {

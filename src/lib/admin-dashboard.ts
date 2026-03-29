@@ -68,12 +68,40 @@ export type AdminLotRecord = {
 export type AdminLotFilters = {
   houseId?: string;
   onlyActive?: boolean;
-  missingCategories?: boolean;
-  missingAiTags?: boolean;
-  missingImageDescription?: boolean;
-  missingEmbedding?: boolean;
+  missingCategories?: "any" | "missing" | "present";
+  missingAiTags?: "any" | "missing" | "present";
+  missingImageDescription?: "any" | "missing" | "present";
+  missingEmbedding?: "any" | "missing" | "present";
+  missingMatch?: "any" | "all";
   limit?: number;
 };
+
+async function fetchAllLotAuditRows(buildQuery: () => any, batchSize = 500) {
+  const rows: LotAuditRow[] = [];
+  let offset = 0;
+
+  while (true) {
+    const { data, error } = await buildQuery().range(
+      offset,
+      offset + batchSize - 1,
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    const batch = (data ?? []) as LotAuditRow[];
+    rows.push(...batch);
+
+    if (batch.length < batchSize) {
+      break;
+    }
+
+    offset += batchSize;
+  }
+
+  return rows;
+}
 
 export async function getAdminIngestRuns(filters?: {
   houseId?: string;
@@ -153,63 +181,64 @@ export async function getAdminLotAudit(filters: AdminLotFilters = {}) {
   const supabase = createServerClient();
   const onlyActive = filters.onlyActive ?? true;
   const limit = Math.min(filters.limit ?? 100, 250);
+  const missingMatch = filters.missingMatch ?? "any";
   const nowIso = new Date().toISOString();
+  const selectedMissingFlags: AdminLotRecord["missing"] = [
+    ...(filters.missingCategories === "missing"
+      ? (["categories"] as const)
+      : []),
+    ...(filters.missingAiTags === "missing" ? (["ai-tags"] as const) : []),
+    ...(filters.missingImageDescription === "missing"
+      ? (["image-description"] as const)
+      : []),
+    ...(filters.missingEmbedding === "missing" ? (["embedding"] as const) : []),
+  ];
+  const selectedPresentFlags: AdminLotRecord["missing"] = [
+    ...(filters.missingCategories === "present"
+      ? (["categories"] as const)
+      : []),
+    ...(filters.missingAiTags === "present" ? (["ai-tags"] as const) : []),
+    ...(filters.missingImageDescription === "present"
+      ? (["image-description"] as const)
+      : []),
+    ...(filters.missingEmbedding === "present" ? (["embedding"] as const) : []),
+  ];
 
-  let query = supabase
-    .from("auc_lots")
-    .select(
-      "id, title, house_id, end_time, availability, categories, ai_categories, image_description, embedding, auc_auction_houses(name)",
-    )
-    .order("end_time", { ascending: true, nullsFirst: false })
-    .limit(limit);
+  const rows = await fetchAllLotAuditRows(() => {
+    let query = supabase
+      .from("auc_lots")
+      .select(
+        "id, title, house_id, end_time, availability, categories, ai_categories, image_description, embedding, auc_auction_houses(name)",
+      )
+      .order("end_time", { ascending: true, nullsFirst: false });
 
-  if (filters.houseId) {
-    query = query.eq("house_id", filters.houseId);
-  }
+    if (filters.houseId) {
+      query = query.eq("house_id", filters.houseId);
+    }
 
-  if (onlyActive) {
-    query = query.gt("end_time", nowIso).is("availability", null);
-  }
+    if (onlyActive) {
+      query = query.gt("end_time", nowIso).is("availability", null);
+    }
 
-  const { data, error } = await query;
+    return query;
+  });
 
-  if (error) {
-    throw new Error(`[admin] Failed to load lot audit: ${error.message}`);
-  }
-
-  const rows = (data ?? []) as LotAuditRow[];
   const filteredRows = rows.filter((row) => {
     const missing = getMissingFlags(row);
 
-    if (filters.missingCategories && !missing.includes("categories")) {
+    if (selectedPresentFlags.some((flag) => missing.includes(flag))) {
       return false;
     }
 
-    if (filters.missingAiTags && !missing.includes("ai-tags")) {
-      return false;
-    }
-
-    if (
-      filters.missingImageDescription &&
-      !missing.includes("image-description")
-    ) {
-      return false;
-    }
-
-    if (filters.missingEmbedding && !missing.includes("embedding")) {
-      return false;
-    }
-
-    if (
-      !filters.missingCategories &&
-      !filters.missingAiTags &&
-      !filters.missingImageDescription &&
-      !filters.missingEmbedding
-    ) {
+    if (selectedMissingFlags.length === 0) {
       return missing.length > 0;
     }
 
-    return true;
+    if (missingMatch === "all") {
+      return selectedMissingFlags.every((flag) => missing.includes(flag));
+    }
+
+    return selectedMissingFlags.some((flag) => missing.includes(flag));
   });
 
   const summary = filteredRows.reduce<MissingLotSummary>(
@@ -235,7 +264,7 @@ export async function getAdminLotAudit(filters: AdminLotFilters = {}) {
     },
   );
 
-  const lots: AdminLotRecord[] = filteredRows.map((row) => ({
+  const lots: AdminLotRecord[] = filteredRows.slice(0, limit).map((row) => ({
     id: row.id,
     title: row.title,
     houseId: row.house_id,

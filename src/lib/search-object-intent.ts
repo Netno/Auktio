@@ -127,6 +127,7 @@ const COLLECTION_TERMS = new Set([
 ]);
 
 const OBJECT_FAMILY_ALIASES: Record<string, string[]> = {
+  möbel: ["möbel", "möbler", "mobel", "mobler", "utemöbel", "utemöbler"],
   skåp: [
     "skåp",
     "skap",
@@ -253,6 +254,21 @@ function normalizeCompoundPrefix(prefix: string) {
   return prefix.replace(/s$/u, "").trim();
 }
 
+function addNormalizedTermVariants(terms: Set<string>, term: string) {
+  const normalizedTerm = normalizeText(term);
+  if (normalizedTerm.length < 3) {
+    return;
+  }
+
+  terms.add(normalizedTerm);
+
+  for (const root of buildWordRoots(normalizedTerm)) {
+    if (root.length >= 3) {
+      terms.add(root);
+    }
+  }
+}
+
 export function extractCompoundDescriptorTerms(query: string) {
   const terms = new Set<string>();
   const normalizedWords = normalizeSearchQuery(query)
@@ -277,6 +293,32 @@ export function extractCompoundDescriptorTerms(query: string) {
           terms.add(root);
         }
       }
+    }
+  }
+
+  return Array.from(terms);
+}
+
+export function extractCompoundObjectTerms(query: string) {
+  const terms = new Set<string>();
+  const normalizedWords = normalizeSearchQuery(query)
+    .split(" ")
+    .filter(Boolean);
+
+  for (const word of normalizedWords) {
+    for (const matcher of OBJECT_FAMILY_MATCHERS) {
+      const matchedAlias = matcher.aliases.find(
+        (alias) =>
+          !alias.includes(" ") && word !== alias && word.endsWith(alias),
+      );
+
+      if (!matchedAlias) {
+        continue;
+      }
+
+      addNormalizedTermVariants(terms, matchedAlias);
+      addNormalizedTermVariants(terms, matcher.family);
+      break;
     }
   }
 

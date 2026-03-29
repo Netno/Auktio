@@ -8,135 +8,11 @@ import { StatsBar } from "@/components/StatsBar";
 import { FilterBar } from "@/components/FilterBar";
 import { LotGrid } from "@/components/LotGrid";
 import { Pagination } from "@/components/Pagination";
-import { AISearch } from "@/components/AISearch";
 import { useSearch } from "@/hooks/use-search";
 import { useSearchSuggestions } from "@/hooks/use-search-suggestions";
 import { useFavorites } from "@/hooks/use-favorites";
 import { normalizeSearchText } from "@/lib/search-language";
 import type { Lot, SearchStatus, SearchSuggestion } from "@/lib/types";
-
-const DEFAULT_AI_QUERIES = [
-  "Finns det några skandinaviska designmöbler från 50-talet?",
-  "Vad kan du hitta inom silver under 1000 kr?",
-  "Jämför priserna på mattor just nu",
-  "Vilka föremål slutar snart som är bra fynd?",
-];
-
-function buildAiSuggestedQueries(params: {
-  query: string;
-  selectedCategories: string[];
-  selectedCity: string;
-  selectedHouseLabel?: string;
-  status: SearchStatus;
-  minPrice?: number;
-  maxPrice?: number;
-  visibleLots: Lot[];
-}) {
-  const {
-    query,
-    selectedCategories,
-    selectedCity,
-    selectedHouseLabel,
-    status,
-    minPrice,
-    maxPrice,
-    visibleLots,
-  } = params;
-
-  const countTopValue = (values: Array<string | undefined>) => {
-    const counts = new Map<string, number>();
-
-    for (const value of values) {
-      if (!value) continue;
-      counts.set(value, (counts.get(value) ?? 0) + 1);
-    }
-
-    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0];
-  };
-
-  const inferredCategory = countTopValue(
-    visibleLots.flatMap((lot) => lot.categories?.slice(0, 1) ?? []),
-  );
-  const inferredCity = countTopValue(visibleLots.map((lot) => lot.city));
-  const inferredHouse = countTopValue(visibleLots.map((lot) => lot.houseName));
-
-  const category = (selectedCategories[0] ?? inferredCategory)?.toLowerCase();
-  const activeCity = selectedCity || inferredCity || "";
-  const activeHouse = selectedHouseLabel || inferredHouse;
-  const locationText = activeCity ? ` i ${activeCity}` : "";
-  const houseText = activeHouse ? ` hos ${activeHouse}` : "";
-  const statusQualifier =
-    status === "ended"
-      ? " bland avslutade objekt"
-      : status === "all"
-        ? " bland alla objekt"
-        : " just nu";
-  const priceText =
-    minPrice != null || maxPrice != null
-      ? ` mellan ${minPrice != null ? `${minPrice.toLocaleString("sv-SE")} kr` : "låga priser"} och ${maxPrice != null ? `${maxPrice.toLocaleString("sv-SE")} kr` : "övre spannet"}`
-      : "";
-
-  const suggestions: string[] = [];
-
-  if (query) {
-    suggestions.push(
-      status === "ended"
-        ? `Finns det fler avslutade föremål som liknar \"${query}\"?`
-        : `Finns det fler föremål som liknar \"${query}\"?`,
-    );
-    suggestions.push(
-      `Vilka är de mest intressanta träffarna för \"${query}\"${locationText}${houseText}${statusQualifier}?`,
-    );
-  }
-
-  if (category) {
-    if (status === "ended") {
-      suggestions.push(
-        `Jämför de senaste buden på ${category}${locationText}${houseText}`,
-      );
-      suggestions.push(
-        `Vilka avslutade ${category} stack ut mest${locationText}${houseText}?`,
-      );
-    } else {
-      suggestions.push(
-        `Jämför priserna på ${category}${locationText}${houseText}`,
-      );
-      suggestions.push(
-        `Vilka ${category} är mest intressanta just nu${locationText}${houseText}?`,
-      );
-    }
-  }
-
-  if (activeHouse) {
-    suggestions.push(
-      status === "ended"
-        ? `Vilka avslutade objekt hos ${activeHouse} drog högst bud${priceText}?`
-        : `Vad finns det för fynd hos ${activeHouse}${priceText}?`,
-    );
-  }
-
-  if (activeCity) {
-    suggestions.push(
-      status === "ended"
-        ? `Vad stack ut bland avslutade auktioner i ${activeCity}?`
-        : `Vad sticker ut på auktionerna i ${activeCity} just nu?`,
-    );
-  }
-
-  if (minPrice != null || maxPrice != null) {
-    suggestions.push(
-      status === "ended"
-        ? `Vilka avslutade föremål fick mest intressanta bud${priceText}${locationText}${houseText}?`
-        : `Vilka föremål är mest prisvärda${priceText}${locationText}${houseText}?`,
-    );
-  }
-
-  const mergedSuggestions = Array.from(
-    new Set([...suggestions, ...DEFAULT_AI_QUERIES]),
-  );
-
-  return mergedSuggestions.slice(0, 4);
-}
 
 function getSuggestionStatusSubtitle(status: SearchStatus) {
   switch (status) {
@@ -254,16 +130,6 @@ export function HomePageClient() {
   const selectedHouseLabel = facets.houses.find(
     (house) => house.value === selectedHouseId,
   )?.label;
-  const aiSuggestedQueries = buildAiSuggestedQueries({
-    query,
-    selectedCategories,
-    selectedCity,
-    selectedHouseLabel,
-    status,
-    minPrice,
-    maxPrice,
-    visibleLots: displayLots,
-  });
   const resultDrivenSuggestions = useMemo(
     () => buildResultDrivenSuggestions(displayLots),
     [displayLots],
@@ -621,8 +487,6 @@ export function HomePageClient() {
           <span>Sök & filter</span>
         </button>
       </div>
-
-      <AISearch suggestedQueries={aiSuggestedQueries} />
     </div>
   );
 }

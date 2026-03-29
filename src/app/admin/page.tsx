@@ -17,6 +17,9 @@ type AdminPageProps = {
   searchParams?: Record<string, string | string[] | undefined>;
 };
 
+type MissingFilterValue = "any" | "missing" | "present";
+type MissingPresetKey = "image-missing" | "image-present" | "embedding-missing";
+
 function getSingleValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -24,6 +27,65 @@ function getSingleValue(value: string | string[] | undefined) {
 function isTruthy(value: string | string[] | undefined) {
   const normalized = getSingleValue(value);
   return normalized === "1" || normalized === "true" || normalized === "on";
+}
+
+function getMissingFilterValue(
+  value: string | string[] | undefined,
+): MissingFilterValue {
+  const normalized = getSingleValue(value);
+
+  if (normalized === "present") {
+    return "present";
+  }
+
+  if (
+    normalized === "missing" ||
+    normalized === "1" ||
+    normalized === "true" ||
+    normalized === "on"
+  ) {
+    return "missing";
+  }
+
+  return "any";
+}
+
+function buildAdminPresetHref(
+  preset: MissingPresetKey,
+  current: {
+    houseId?: string;
+    status?: "success" | "error" | "partial";
+    allLots: boolean;
+  },
+) {
+  const params = new URLSearchParams();
+
+  if (current.houseId) {
+    params.set("houseId", current.houseId);
+  }
+
+  if (current.status) {
+    params.set("status", current.status);
+  }
+
+  if (current.allLots) {
+    params.set("allLots", "on");
+  }
+
+  switch (preset) {
+    case "image-missing":
+      params.set("missingImageDescription", "missing");
+      break;
+    case "image-present":
+      params.set("missingImageDescription", "present");
+      break;
+    case "embedding-missing":
+      params.set("missingEmbedding", "missing");
+      break;
+  }
+
+  const query = params.toString();
+  return query.length > 0 ? `/admin?${query}` : "/admin";
 }
 
 function formatInteger(value: number) {
@@ -135,12 +197,34 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     | "partial"
     | undefined;
   const onlyActive = !isTruthy(searchParams?.allLots);
-  const missingCategories = isTruthy(searchParams?.missingCategories);
-  const missingAiTags = isTruthy(searchParams?.missingAiTags);
-  const missingImageDescription = isTruthy(
+  const missingCategories = getMissingFilterValue(
+    searchParams?.missingCategories,
+  );
+  const missingAiTags = getMissingFilterValue(searchParams?.missingAiTags);
+  const missingImageDescription = getMissingFilterValue(
     searchParams?.missingImageDescription,
   );
-  const missingEmbedding = isTruthy(searchParams?.missingEmbedding);
+  const missingEmbedding = getMissingFilterValue(
+    searchParams?.missingEmbedding,
+  );
+  const missingMatchParam = getSingleValue(searchParams?.missingMatch);
+  const missingMatch = missingMatchParam === "all" ? "all" : "any";
+  const allLots = !onlyActive;
+  const imageMissingHref = buildAdminPresetHref("image-missing", {
+    houseId,
+    status: syncStatus,
+    allLots,
+  });
+  const imagePresentHref = buildAdminPresetHref("image-present", {
+    houseId,
+    status: syncStatus,
+    allLots,
+  });
+  const embeddingMissingHref = buildAdminPresetHref("embedding-missing", {
+    houseId,
+    status: syncStatus,
+    allLots,
+  });
 
   const [houses, ingestRuns, lotAudit, users] = await Promise.all([
     getAdminHouseOptions(),
@@ -152,6 +236,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       missingAiTags,
       missingImageDescription,
       missingEmbedding,
+      missingMatch,
       limit: 150,
     }),
     listAppUsers(200),
@@ -196,43 +281,63 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </select>
 
             <label className="inline-flex items-center gap-1 text-brand-700">
-              <input
-                type="checkbox"
+              <span>kategorier</span>
+              <select
                 name="missingCategories"
-                defaultChecked={missingCategories}
-              />
-              kategorier
+                defaultValue={missingCategories}
+                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
+              >
+                <option value="any">visa alla</option>
+                <option value="missing">saknas</option>
+                <option value="present">finns</option>
+              </select>
             </label>
             <label className="inline-flex items-center gap-1 text-brand-700">
-              <input
-                type="checkbox"
+              <span>ai-taggar</span>
+              <select
                 name="missingAiTags"
-                defaultChecked={missingAiTags}
-              />
-              ai-taggar
+                defaultValue={missingAiTags}
+                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
+              >
+                <option value="any">visa alla</option>
+                <option value="missing">saknas</option>
+                <option value="present">finns</option>
+              </select>
             </label>
             <label className="inline-flex items-center gap-1 text-brand-700">
-              <input
-                type="checkbox"
+              <span>bild</span>
+              <select
                 name="missingImageDescription"
-                defaultChecked={missingImageDescription}
-              />
-              bild
+                defaultValue={missingImageDescription}
+                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
+              >
+                <option value="any">visa alla</option>
+                <option value="missing">saknas</option>
+                <option value="present">finns</option>
+              </select>
             </label>
             <label className="inline-flex items-center gap-1 text-brand-700">
-              <input
-                type="checkbox"
+              <span>embedding</span>
+              <select
                 name="missingEmbedding"
-                defaultChecked={missingEmbedding}
-              />
-              embedding
+                defaultValue={missingEmbedding}
+                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
+              >
+                <option value="any">visa alla</option>
+                <option value="missing">saknas</option>
+                <option value="present">finns</option>
+              </select>
             </label>
+            <select
+              name="missingMatch"
+              defaultValue={missingMatch}
+              className="h-8 min-w-[132px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
+            >
+              <option value="any">minst en vald saknas</option>
+              <option value="all">alla valda saknas</option>
+            </select>
             <label className="inline-flex items-center gap-1 text-brand-700">
-              <input
-                type="checkbox"
-                name="allLots"
-                defaultChecked={!onlyActive}
-              />
+              <input type="checkbox" name="allLots" defaultChecked={allLots} />
               alla lotter
             </label>
 
@@ -243,11 +348,36 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               filtrera
             </button>
           </form>
+
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[12px] text-brand-700">
+            <span className="font-medium text-brand-900">Snabbval:</span>
+            <Link
+              href={imageMissingHref}
+              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+            >
+              bara bildluckor
+            </Link>
+            <Link
+              href={imagePresentHref}
+              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+            >
+              utan bildluckor
+            </Link>
+            <Link
+              href={embeddingMissingHref}
+              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+            >
+              bara embeddingsaknade
+            </Link>
+          </div>
         </section>
 
         <section className="border border-brand-200 bg-white px-3 py-2 font-mono text-[12px] text-brand-800">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <span>lista: {formatInteger(lotAudit.summary.total)}</span>
+            <span>
+              lista: {formatInteger(lotAudit.lots.length)}/
+              {formatInteger(lotAudit.summary.total)}
+            </span>
             <span>
               kat: {formatInteger(lotAudit.summary.missingCategories)}
             </span>
@@ -258,6 +388,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <span>emb: {formatInteger(lotAudit.summary.missingEmbedding)}</span>
             <span>ingests: {formatInteger(ingestRuns.length)}</span>
           </div>
+          {lotAudit.summary.total > lotAudit.lots.length && (
+            <div className="mt-1 text-brand-500">
+              visar forsta {formatInteger(lotAudit.lots.length)} av{" "}
+              {formatInteger(lotAudit.summary.total)} matchande lotter
+            </div>
+          )}
         </section>
 
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.55fr]">
