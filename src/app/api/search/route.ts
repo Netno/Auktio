@@ -10,6 +10,10 @@ import {
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
 import {
+  buildQueryScoringTerms,
+  buildQueryTextMatchClauses,
+} from "@/lib/search-text-match";
+import {
   detectPrimaryObjectIntent,
   detectQueryModifierTerms,
   evaluateCollectionMatch,
@@ -510,18 +514,6 @@ function getBlendedSearchScore(
   };
 }
 
-function buildExpandedTextMatchClauses(query: string) {
-  const baseTerms = new Set(extractQueryTerms(query));
-  const expandedTerms = expandSemanticTerms(query).filter(
-    (term) => !baseTerms.has(term) && term.length >= 3,
-  );
-
-  return expandedTerms.flatMap((term) => [
-    `title.ilike.%${term}%`,
-    `description.ilike.%${term}%`,
-  ]);
-}
-
 const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
   const aliases = new Set<string>();
   const normalizedName = normalizeText(source.name);
@@ -753,7 +745,7 @@ function applySearchCriteria(
     } else if (params.searchMode === "hybrid") {
       const hybridClauses = [
         `search_text.wfts(swedish).${encodeURIComponent(params.query)}`,
-        ...buildExpandedTextMatchClauses(params.query),
+        ...buildQueryTextMatchClauses(params.query),
       ];
 
       if (vectorLotIds?.length) {
@@ -763,10 +755,12 @@ function applySearchCriteria(
         query = query.or(hybridClauses.join(","));
       }
     } else {
-      query = query.textSearch("search_text", params.query, {
-        type: "websearch",
-        config: "swedish",
-      });
+      query = query.or(
+        [
+          `search_text.wfts(swedish).${encodeURIComponent(params.query)}`,
+          ...buildQueryTextMatchClauses(params.query),
+        ].join(","),
+      );
     }
   }
 
@@ -858,11 +852,14 @@ async function getLexicalCandidateIds(
 
   let query = supabase.from("auc_lots").select("id");
   query = applyNonQueryCriteria(query, params, nowIso);
-  query = query.textSearch("search_text", lexicalQuery, {
-    type: "websearch",
-    config: "swedish",
-  });
-  query = query.limit(120);
+  query = query
+    .or(
+      [
+        `search_text.wfts(swedish).${encodeURIComponent(lexicalQuery)}`,
+        ...buildQueryTextMatchClauses(params.query),
+      ].join(","),
+    )
+    .limit(120);
 
   const { data, error } = await query;
 
@@ -872,43 +869,6 @@ async function getLexicalCandidateIds(
   }
 
   const lexicalIds = (data ?? [])
-    .map((row: { id: number | null }) => row.id)
-    .filter((id: number | null): id is number => Number.isFinite(id));
-
-  const semanticTerms = expandSemanticTerms(params.query);
-  const baseTerms = extractQueryTerms(params.query);
-  const expansionTerms = semanticTerms.filter(
-    (term) => !baseTerms.includes(term) && term.length >= 3,
-  );
-
-  if (!expansionTerms.length) {
-    return lexicalIds;
-  }
-
-  const orClauses = expansionTerms.flatMap((term) => [
-    `title.ilike.%${term}%`,
-    `description.ilike.%${term}%`,
-  ]);
-
-  if (!orClauses.length) {
-    return lexicalIds;
-  }
-
-  let fallbackQuery = supabase.from("auc_lots").select("id");
-  fallbackQuery = applyNonQueryCriteria(fallbackQuery, params, nowIso);
-  fallbackQuery = fallbackQuery.or(orClauses.join(",")).limit(120);
-
-  const { data: fallbackData, error: fallbackError } = await fallbackQuery;
-
-  if (fallbackError) {
-    console.warn(
-      "[api/search] Expansion candidate lookup failed:",
-      fallbackError,
-    );
-    return lexicalIds;
-  }
-
-  const fallbackIds = (fallbackData ?? [])
     .map((row: { id: number | null }) => row.id)
     .filter((id: number | null): id is number => Number.isFinite(id));
 
@@ -922,7 +882,7 @@ async function getLexicalCandidateIds(
   );
 
   if (!aiCategoryTerms.length) {
-    return mergeUniqueIds(lexicalIds, fallbackIds);
+    return lexicalIds;
   }
 
   let aiCategoryQuery = supabase.from("auc_lots").select("id");
@@ -939,14 +899,14 @@ async function getLexicalCandidateIds(
       "[api/search] AI-category candidate lookup failed:",
       aiCategoryError,
     );
-    return mergeUniqueIds(lexicalIds, fallbackIds);
+    return lexicalIds;
   }
 
   const aiCategoryIds = (aiCategoryData ?? [])
     .map((row: { id: number | null }) => row.id)
     .filter((id: number | null): id is number => Number.isFinite(id));
 
-  return mergeUniqueIds(lexicalIds, fallbackIds, aiCategoryIds);
+  return mergeUniqueIds(lexicalIds, aiCategoryIds);
 }
 
 async function fetchAllRows<T>(
@@ -1388,10 +1348,9 @@ export async function GET(request: NextRequest) {
     // For vector mode: sort by semantic relevance, paginate client-side
     let lots, resultTotal;
     if (useRelevanceSort) {
-      const queryTerms = extractQueryTerms(effectiveParams.query ?? "");
-      const expandedQueryTerms = expandSemanticTerms(
+      const { queryTerms, expandedQueryTerms } = buildQueryScoringTerms(
         effectiveParams.query ?? "",
-      ).filter((term) => !queryTerms.includes(term));
+      );
       const vectorOrder = new Map(vectorLotIds!.map((id, idx) => [id, idx]));
       const normalizedQuery = normalizeSearchQuery(effectiveParams.query ?? "");
       const concreteQuery = isConcreteObjectQuery(effectiveParams.query ?? "");

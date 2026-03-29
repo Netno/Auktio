@@ -24,6 +24,10 @@ import {
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
 import {
+  buildQueryScoringTerms,
+  buildQueryTextMatchClauses,
+} from "@/lib/search-text-match";
+import {
   detectPrimaryObjectIntent,
   detectQueryModifierTerms,
   evaluateCollectionMatch,
@@ -683,10 +687,12 @@ async function retrieveByFulltext(
          currency, city, url, thumbnail_url, end_time,
          auc_auction_houses!inner(name)`,
       )
-      .textSearch("search_text", searchQuery, {
-        type: "websearch",
-        config: "swedish",
-      })
+      .or(
+        [
+          `search_text.wfts(swedish).${encodeURIComponent(searchQuery)}`,
+          ...buildQueryTextMatchClauses(searchQuery),
+        ].join(","),
+      )
       .limit(TOP_K_FULLTEXT);
 
     if (!derivedIntent.includeEnded) {
@@ -802,7 +808,7 @@ async function retrieveHouseBrowseFallbackLots(
       return [];
     }
 
-    const queryTerms = extractQueryTerms(rankingQuery);
+    const { queryTerms } = buildQueryScoringTerms(rankingQuery);
     const normalizedQuery = normalizeSearchQuery(rankingQuery);
     const primaryObjectIntent = detectPrimaryObjectIntent(rankingQuery);
     const queryModifierTerms = detectQueryModifierTerms(
@@ -1002,7 +1008,7 @@ async function retrieveBrowseFallbackLots(
       return [];
     }
 
-    const queryTerms = extractQueryTerms(rankingQuery);
+    const { queryTerms } = buildQueryScoringTerms(rankingQuery);
     const normalizedQuery = normalizeSearchQuery(rankingQuery);
     const primaryObjectIntent = detectPrimaryObjectIntent(rankingQuery);
     const queryModifierTerms = detectQueryModifierTerms(
@@ -1137,7 +1143,7 @@ function mergeAndRank(
   fulltextLots: RAGSourceLot[],
   userQuery: string,
 ): RAGSourceLot[] {
-  const queryTerms = extractQueryTerms(userQuery);
+  const { queryTerms } = buildQueryScoringTerms(userQuery);
   const normalizedQuery = normalizeSearchQuery(userQuery);
   const concreteQuery = isConcreteObjectQuery(userQuery);
   const primaryObjectIntent = detectPrimaryObjectIntent(userQuery);

@@ -215,6 +215,23 @@ const OBJECT_FAMILY_MATCHERS = Object.entries(OBJECT_FAMILY_ALIASES).map(
   }),
 );
 
+const COMPOUND_DESCRIPTOR_SUFFIXES = Array.from(
+  new Set(
+    [
+      ...Object.values(OBJECT_FAMILY_ALIASES).flat(),
+      "möbel",
+      "möbler",
+      "mobel",
+      "mobler",
+      "grupp",
+      "grupper",
+      "set",
+    ]
+      .map((value) => normalizeText(value))
+      .filter((value) => value.length >= 3),
+  ),
+).sort((a, b) => b.length - a.length);
+
 export function getBaseQueryTermWeight(term: string) {
   return LOW_SIGNAL_QUERY_TERMS.has(term) ? 0.35 : 1;
 }
@@ -234,6 +251,36 @@ function splitNormalizedTokens(value: string) {
 
 function normalizeCompoundPrefix(prefix: string) {
   return prefix.replace(/s$/u, "").trim();
+}
+
+export function extractCompoundDescriptorTerms(query: string) {
+  const terms = new Set<string>();
+  const normalizedWords = normalizeSearchQuery(query)
+    .split(" ")
+    .filter(Boolean);
+
+  for (const word of normalizedWords) {
+    for (const suffix of COMPOUND_DESCRIPTOR_SUFFIXES) {
+      if (word === suffix || !word.endsWith(suffix)) {
+        continue;
+      }
+
+      const prefix = normalizeCompoundPrefix(word.slice(0, -suffix.length));
+      if (prefix.length < 4) {
+        continue;
+      }
+
+      terms.add(prefix);
+
+      for (const root of buildWordRoots(prefix)) {
+        if (root.length >= 4) {
+          terms.add(root);
+        }
+      }
+    }
+  }
+
+  return Array.from(terms);
 }
 
 function hasAliasMatch(
