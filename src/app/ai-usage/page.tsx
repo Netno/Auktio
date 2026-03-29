@@ -1,4 +1,9 @@
+import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { Header } from "@/components/Header";
 import { getAiUsageDashboardData } from "@/lib/ai-usage-log";
+import { canAccessAdmin } from "@/lib/app-users";
+import { authOptions } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +38,50 @@ function formatHourLabel(value: string) {
 }
 
 export default async function AiUsagePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return (
+      <main className="min-h-screen bg-brand-50">
+        <Header />
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-12 sm:px-6">
+          <div className="rounded-3xl border border-brand-200 bg-white p-8 shadow-card">
+            <h1 className="font-serif text-3xl text-brand-900">
+              AI-statistik
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-brand-700">
+              Du måste vara inloggad för att se AI-användning och kostnadsdata.
+            </p>
+            <Link
+              href="/"
+              className="mt-6 inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-950"
+            >
+              Till startsidan
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!canAccessAdmin(session.user.role)) {
+    return (
+      <main className="min-h-screen bg-brand-50">
+        <Header />
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-12 sm:px-6">
+          <div className="rounded-3xl border border-brand-200 bg-white p-8 shadow-card">
+            <h1 className="font-serif text-3xl text-brand-900">
+              AI-statistik
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-brand-700">
+              Ditt konto saknar rättighet att se AI-användning och kostnadsdata.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const report = await getAiUsageDashboardData(30);
   const chartDays =
     report.daily.filter((row) => (row.estimatedCostSek ?? 0) > 0).length > 0
@@ -56,6 +105,7 @@ export default async function AiUsagePage() {
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
+        <Header activeView="ai-usage" />
         <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-slate-950/30">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>

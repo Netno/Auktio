@@ -1,15 +1,69 @@
 "use client";
 
-import { Suspense } from "react";
-import { Heart } from "lucide-react";
+import { Suspense, useEffect, useState } from "react";
+import { Heart, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { AuthControls } from "@/components/AuthControls";
 
 interface HeaderProps {
   favoritesCount?: number;
   showFavsOnly?: boolean;
   onToggleFavs?: () => void;
-  activeView?: "lots" | "auctions" | "admin";
+  activeView?: "lots" | "auctions" | "admin" | "ai-usage";
+}
+
+type HeaderNavItem = {
+  href: string;
+  label: string;
+  active: boolean;
+};
+
+function HeaderMenu({
+  items,
+}: {
+  items: HeaderNavItem[];
+}) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  return (
+    <div className="relative col-span-2 sm:col-span-1 lg:col-span-auto">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-label="Öppna meny"
+        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.06] px-3 py-2 text-[13px] font-medium text-white/80 transition-all hover:bg-white/[0.12] hover:text-white sm:min-h-9 sm:w-auto sm:rounded-lg sm:px-4 sm:py-1.5"
+      >
+        {open ? <X size={16} /> : <Menu size={16} />}
+        <span>Meny</span>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] overflow-hidden rounded-2xl border border-white/[0.08] bg-brand-900/95 p-1.5 shadow-2xl backdrop-blur sm:min-w-[240px]">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center justify-between rounded-xl px-3 py-2 text-[13px] font-medium transition-all ${
+                item.active
+                  ? "bg-white text-brand-900"
+                  : "text-white/78 hover:bg-white/[0.08] hover:text-white"
+              }`}
+            >
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function Header({
@@ -18,6 +72,27 @@ export function Header({
   onToggleFavs,
   activeView = "lots",
 }: HeaderProps) {
+  const { data: session } = useSession();
+  const navItems: HeaderNavItem[] = [
+    { href: "/", label: "Föremål", active: activeView === "lots" },
+    {
+      href: "/auctions",
+      label: "Auktioner",
+      active: activeView === "auctions",
+    },
+  ];
+
+  if (session?.user?.role === "admin" || session?.user?.role === "owner") {
+    navItems.push(
+      { href: "/admin", label: "Admin", active: activeView === "admin" },
+      {
+        href: "/ai-usage",
+        label: "AI-statistik",
+        active: activeView === "ai-usage",
+      },
+    );
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-brand-900 border-b border-white/5">
       <div className="mx-auto max-w-[1360px] px-4 py-2 sm:flex sm:h-14 sm:items-center sm:justify-between sm:px-6 sm:py-0">
@@ -77,38 +152,7 @@ export function Header({
             </button>
           )}
 
-          <Link
-            href="/"
-            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium transition-all sm:min-h-9 sm:rounded-lg sm:px-4 sm:py-1.5 ${
-              activeView === "lots"
-                ? "bg-white text-brand-900"
-                : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
-            }`}
-          >
-            Föremål
-          </Link>
-
-          <Link
-            href="/auctions"
-            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium transition-all sm:min-h-9 sm:rounded-lg sm:px-4 sm:py-1.5 ${
-              activeView === "auctions"
-                ? "bg-white text-brand-900"
-                : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
-            }`}
-          >
-            Auktioner
-          </Link>
-
-          <Link
-            href="/admin"
-            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium transition-all sm:min-h-9 sm:rounded-lg sm:px-4 sm:py-1.5 ${
-              activeView === "admin"
-                ? "bg-white text-brand-900"
-                : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
-            }`}
-          >
-            Admin
-          </Link>
+          <HeaderMenu items={navItems} />
         </div>
       </div>
     </header>
