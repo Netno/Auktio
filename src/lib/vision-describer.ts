@@ -7,6 +7,7 @@
  */
 
 import { createServerClient } from "./supabase";
+import { extractGeminiUsageMetadata, logAiUsage } from "./ai-usage-log";
 
 const GEMINI_VISION_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -23,6 +24,12 @@ export interface DescribeResult {
   errors: number;
   durationMs: number;
 }
+
+type VisionLotRow = {
+  id: number;
+  images?: string[] | null;
+  thumbnail_url?: string | null;
+};
 
 /**
  * Download an image and return as base64 + mime type.
@@ -61,6 +68,7 @@ async function describeImage(imageUrl: string): Promise<string | null> {
   const smallUrl = toSmallImage(imageUrl);
   const imageData = await fetchImageAsBase64(smallUrl);
   if (!imageData) return null;
+  const startedAt = Date.now();
 
   const response = await fetch(`${GEMINI_VISION_URL}?key=${apiKey}`, {
     method: "POST",
@@ -88,13 +96,98 @@ async function describeImage(imageUrl: string): Promise<string | null> {
 
   if (!response.ok) {
     const err = await response.text();
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-2.0-flash",
+      operation: "vision-describe",
+      status: "error",
+      latencyMs: Date.now() - startedAt,
+      errorMessage: `Gemini vision error ${response.status}: ${err}`,
+      itemCount: 1,
+    });
     console.error(`[vision] Gemini error ${response.status}: ${err}`);
     return null;
   }
 
   const data = await response.json();
+  const usage = extractGeminiUsageMetadata(data);
+  await logAiUsage({
+    provider: "google",
+    model: "gemini-2.0-flash",
+    operation: "vision-describe",
+    status: "success",
+    latencyMs: Date.now() - startedAt,
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+    itemCount: 1,
+  });
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
   return text?.trim() ?? null;
+}
+
+export async function generateDescriptionsForLotIds(
+  lotIds: number[],
+): Promise<DescribeResult> {
+  const startTime = Date.now();
+  const supabase = createServerClient();
+  let processed = 0;
+  let errors = 0;
+
+  const { data: lots, error } = await supabase
+    .from("auc_lots")
+    .select("id, images, thumbnail_url")
+    .in("id", lotIds)
+    .order("id", { ascending: true });
+
+  if (error) {
+    throw new Error(`[vision] Fetch error: ${error.message}`);
+  }
+
+  for (const lot of (lots ?? []) as VisionLotRow[]) {
+    const imageUrl = lot.thumbnail_url ?? lot.images?.[0] ?? null;
+
+    if (!imageUrl) {
+      await supabase
+        .from("auc_lots")
+        .update({ image_description: "" })
+        .eq("id", lot.id);
+      continue;
+    }
+
+    try {
+      const description = await describeImage(imageUrl);
+
+      if (description) {
+        const { error: updateError } = await supabase
+          .from("auc_lots")
+          .update({ image_description: description, embedding: null })
+          .eq("id", lot.id);
+
+        if (updateError) {
+          errors++;
+        } else {
+          processed++;
+        }
+      } else {
+        await supabase
+          .from("auc_lots")
+          .update({ image_description: "" })
+          .eq("id", lot.id);
+        errors++;
+      }
+    } catch {
+      errors++;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_ITEMS_MS));
+  }
+
+  return {
+    processed,
+    errors,
+    durationMs: Date.now() - startTime,
+  };
 }
 
 /**

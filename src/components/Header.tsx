@@ -1,13 +1,15 @@
 "use client";
 
+import { Suspense } from "react";
 import { Heart } from "lucide-react";
 import Link from "next/link";
+import { AuthControls } from "@/components/AuthControls";
 
 interface HeaderProps {
   favoritesCount?: number;
   showFavsOnly?: boolean;
   onToggleFavs?: () => void;
-  activeView?: "lots" | "auctions";
+  activeView?: "lots" | "auctions" | "admin";
 }
 
 export function Header({
@@ -48,6 +50,14 @@ export function Header({
         </div>
 
         <div className="mt-2 grid grid-cols-2 gap-2 sm:mt-0 sm:flex sm:items-center sm:gap-2">
+          <Suspense
+            fallback={
+              <div className="hidden h-9 w-28 animate-pulse rounded-lg bg-white/[0.08] lg:block" />
+            }
+          >
+            <AuthControls />
+          </Suspense>
+
           {onToggleFavs && (
             <button
               onClick={onToggleFavs}
@@ -87,6 +97,17 @@ export function Header({
             }`}
           >
             Auktioner
+          </Link>
+
+          <Link
+            href="/admin"
+            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium transition-all sm:min-h-9 sm:rounded-lg sm:px-4 sm:py-1.5 ${
+              activeView === "admin"
+                ? "bg-white text-brand-900"
+                : "border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white"
+            }`}
+          >
+            Admin
           </Link>
         </div>
       </div>

@@ -1,0 +1,4426 @@
+{
+  "generatedAt": "2026-03-23T10:11:31.815Z",
+  "houseId": "hallands-auktionsverk",
+  "houseName": "Hallands Auktionsverk",
+  "totalLots": 218,
+  "lots": [
+    {
+      "id": 2959,
+      "title": "TAVLA, Helmtrud Nyström",
+      "description": "FärgetsningNumrerad: 250/250Mått: 46 x 39 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2959",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2959-itemimages/2959a_8de739ea455f452_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2959-itemimages/2959b_8de739ea4e293e6_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2960,
+      "title": "TAVLA, olja, Alvar Jonsson",
+      "description": "Abstrakt landskapMått. 38 x 44 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2960",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2960-itemimages/2960a_8de739e6c83f469_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2960-itemimages/2960b_8de739e6d2a59e3_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2961,
+      "title": "TAVLA, Örjan Wikström",
+      "description": "Litografi, \"samling runt bordet\"Numrerad: 58/220, signeradMått: 54 x 63 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2961",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2961-itemimages/2961a_8de739e40418c0a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2961-itemimages/2961b_8de739e40b64553_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2961-itemimages/2961c_8de739e41995e53_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2962,
+      "title": "TAVLA, Lars Norrman",
+      "description": "FärglitografiNumrerad 90/180, signeradMått: 60 x 75 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2962",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2962-itemimages/2962a_8de739dc023d6e7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2962-itemimages/2962b_8de739dc0ad2130_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2963,
+      "title": "SKULPTUR, okänd designer",
+      "description": "Snidad orientalisk kejsarinnaTroligen konstmassaHöjd: 59 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Orientalica, Africana"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2963",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2963-itemimages/2963a_8de739a088e41a9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2963-itemimages/2963b_8de739a08d00a6c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2963-itemimages/2963c_8de739a09165018_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2964,
+      "title": "HUSHÅLLSVÅG",
+      "description": "Lindells Patent, emaljerad metall.Höjd, 27 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2964",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2964-itemimages/2964a_8de739a1e1af64d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2964-itemimages/2964b_8de739a1e6a1dcc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2964-itemimages/2964c_8de739a202200be_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2965,
+      "title": "VAS",
+      "description": "West-Germany-potteryContura 675-40Glaserad keramik, 1960-70 talHöjd: 40 cm.",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2965",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2965-itemimages/2965a_8de739a31b0b979_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2965-itemimages/2965b_8de739a31fc206c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2965-itemimages/2965c_8de739a32421e90_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2966,
+      "title": "VÄGGPLAKETT, John Käll för Elme",
+      "description": "Höjd: 35,5 cm, bredd 12,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2966",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2966-itemimages/2966a_8de739a413dcb75_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2966-itemimages/2966b_8de739a41adca30_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2967,
+      "title": "SILVERMYNT",
+      "description": "Silvermynt, 80% silverhaltVikt:167 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken",
+        "Vapen & blankvapen"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2967",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2967-itemimages/2967a_8de739a55b5c038_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2967-itemimages/2967b_8de739a55fe428a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2968,
+      "title": "SILVERMYNT",
+      "description": "Silvermynt 40% silverhaltVikt:501 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken",
+        "Vapen & blankvapen"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2968",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2968-itemimages/2968a_8de739a7dd9bf3e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2968-itemimages/2968b_8de739a7e35103f_lg.jpeg"
+      ],
+      "currentBid": 1500,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2969,
+      "title": "PARTI, mynt, sedlar & frimärken",
+      "description": "Ej genomgånget, kontrollera på plats hos oss",
+      "categories": [
+        "Mynt"
+      ],
+      "sourceCategories": [
+        "Diverse",
+        "Mynt & medaljer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2969",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2969-itemimages/2969a_8de739a9bd879d6_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2969-itemimages/2969b_8de739a9c97ebb9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2969-itemimages/2969c_8de739a9ce6b0d0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2969-itemimages/2969d_8de739a9e18f8c0_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2970,
+      "title": "MATTA Hamadan",
+      "description": "Mått: 210 x 135 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2970",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2970-itemimages/2970a_8de73898e3db0bd_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2970-itemimages/2970b_8de73898ec57b24_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2971,
+      "title": "MATTA SEMIANTIK",
+      "description": "Troligtvis: KaukasusMått: 175 x 130 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2971",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2971-itemimages/2971a_8de7382a77de019_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2971-itemimages/2971b_8de7383eddfd618_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2972,
+      "title": "MATTA, Persisk",
+      "description": "Old persiskMått: 140 x 110 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2972",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2972-itemimages/2972a_8de738433ac462a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2972-itemimages/2972b_8de738434ff4ff7_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2973,
+      "title": "MATTA SEMIANTIK",
+      "description": "Troligtvis TurkmenMått: 170 x 120 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2973",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2973-itemimages/2973a_8de738542b74bb0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2973-itemimages/2973b_8de73855749a712_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2974,
+      "title": "MATTA, Pakistan",
+      "description": "Old PakistanMått: 230 x 170 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2974",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2974-itemimages/2974a_8de738625e13939_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2974-itemimages/2974b_8de73862f4f344f_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2975,
+      "title": "MATTA, Pakistan",
+      "description": "Old PakistanMått: 185 x 125 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2975",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2975-itemimages/2975a_8de738aea6fdd48_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2975-itemimages/2975b_8de738aeaf89589_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2976,
+      "title": "MATTA, Röllakan",
+      "description": "Okänd designer, 1900-talets mittMått: 250 x 190 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2976",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2976-itemimages/2976a_8de738743424812_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2976-itemimages/2976b_8de73875856c7a1_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2977,
+      "title": "MATTA, Bidjar",
+      "description": "Semiantik/antikMått: 165 x 110 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2977",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2977-itemimages/2977a_8de738b82e63178_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2977-itemimages/2977b_8de738b838e9567_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2978,
+      "title": "MATTA AFGHAN",
+      "description": "Old afghanMått: 390 x 285 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2978",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2978-itemimages/2978a_8de738d6ea11b31_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2978-itemimages/2978b_8de738d6f5bfeb7_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2979,
+      "title": "MATTA, Persisk",
+      "description": "Semiantik/antikMått: 140 x 100 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2979",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2979-itemimages/2979a_8de738c804d2e20_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2979-itemimages/2979b_8de738c80fda72b_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2980,
+      "title": "MATTA SAROUGH",
+      "description": "Semiantik/antikMått: 200 x 130 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Alla",
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2980",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2980-itemimages/2980a_8de738fb3e725fc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2980-itemimages/2980b_8de738fc5bb6ac3_lg.jpeg"
+      ],
+      "currentBid": 300,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2981,
+      "title": "MATTA TÄBRIZ",
+      "description": "SemiantikMått: 415 x 300 cmSlitage på några ställen",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2981",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2981-itemimages/2981a_8de73901338631f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2981-itemimages/2981b_8de73902c65c5d0_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2982,
+      "title": "MATTA, Persisk",
+      "description": "NainMått: 205 x 135 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2982",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2982-itemimages/2982a_8de739083d6ac93_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2982-itemimages/2982b_8de739084467c45_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2983,
+      "title": "MATTA PAKISTAN",
+      "description": "Old PakistanMått: 210 x 145 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2983",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2983-itemimages/2983a_8de7396c60286c4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2983-itemimages/2983b_8de7396c6a62b7f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2984,
+      "title": "GOLVFIGURIN ",
+      "description": "Okänd designer, Grand DanoisGlaserad KeramikHöjd: 78 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2984",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2984-itemimages/2984a_8de73aa335e5933_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2984-itemimages/2984b_8de73aa33afdf4c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2984-itemimages/2984c_8de73aa33fd5c44_lg.jpeg"
+      ],
+      "currentBid": 300,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2985,
+      "title": "ART DECO ASKFAT",
+      "description": "Ditmar Urbach, Teplitz-SchönauHöjd: 17 cm, diameter ca 21 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2985",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2985-itemimages/2985a_8de73aa463866d1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2985-itemimages/2985b_8de73aa468ddd9d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2986,
+      "title": "JIE, burk med lock i trä",
+      "description": "Design, Anita Nylund för JIE, \"VÅR LILLA STAD\"Flintgods,1950 talHöjd:14,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2986",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2986-itemimages/2986a_8de73aa708edefd_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2986-itemimages/2986b_8de73aa70e2fda2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2986-itemimages/2986c_8de73aa7137e834_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2987,
+      "title": "SKULPTUR, Okänd designer",
+      "description": "Skulptur i konstmassaHöjd: 33 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Skulpturer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2987",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2987-itemimages/2987a_8de73aa8136150b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2987-itemimages/2987b_8de73aa81669ee2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2987-itemimages/2987c_8de73aa81a60a2f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2988,
+      "title": "SYMASKIN, SINGER",
+      "description": "I transportväska1900-talets senare hälft",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2988",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2988-itemimages/2988a_8de73aa9eda0c6c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2988-itemimages/2988b_8de73aa9f314645_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2988-itemimages/2988c_8de73aa9f84a356_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2988-itemimages/2988d_8de73aa9fe645f5_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2989,
+      "title": "TAVLA, Örjan Wikström",
+      "description": "Färglitografi, \"Samling runt bordet\"Mått: 53 x 42 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2989",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2989-itemimages/2989a_8de73aab8f34ab7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2989-itemimages/2989b_8de73aaba03bb71_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2990,
+      "title": "TAVLA,  Michael Qvarsebo",
+      "description": "FärglitografiMått: 70 x 53 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2990",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2990-itemimages/2990a_8de73aac8e3626c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2990-itemimages/2990b_8de73aac95f2a35_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2991,
+      "title": "RULLBANDSSPELARE",
+      "description": "Sony, 1960-70 tal",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2991",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2991-itemimages/2991a_8de73ac5e27917c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2991-itemimages/2991b_8de73ac5eaee2c8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2991-itemimages/2991c_8de73accd6582af_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2991-itemimages/2991d_8de73accd8678d9_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2992,
+      "title": "NOSKON ",
+      "description": "Noskon för luftvärnsrobot SS-10",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2992",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2992-itemimages/2992a_8de73adb87e6123_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2992-itemimages/2992b_8de73adb8e32b64_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2993,
+      "title": "BORD Carl Malmsten, \" talavid \"",
+      "description": "Design Carl Malmsten för Waggeryds möbelfabrikSmåskador, lagningar, brännstämplat.Diameter: 115 cm, medföljer 2 st iläggsskivor 55 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2993",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2993-itemimages/2993b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2993-itemimages/2993a_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2994,
+      "title": "TAVLA Michael Qvarsebo",
+      "description": "FärglitografiMått: 84 x 67 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2994",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2994-itemimages/2994a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2995,
+      "title": "STOL Design Carl Malmsten",
+      "description": "Tillverkad av BodaforsHöjd: 83 cm, sitthöjd: 45 cmBra bruksskick",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2995",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2995-itemimages/2995a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2995-itemimages/2995b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2995-itemimages/2995c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2996,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "8 koppar samt 8 underfat, halvblond.Diameter: kopp 7 cm, underfat 13 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2996",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2996-itemimages/2996a_8de74609b6f5132_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2996-itemimages/2996b_8de74609ba7565b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2996-itemimages/2996c_8de74609bdd3346_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2996-itemimages/2996d_8de74609c06459e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2996-itemimages/2996e_8de74609c3be1ac_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2997,
+      "title": "SKULPTUR, stående tupp Casu Antonio",
+      "description": "Järn på alabastersockelEtikettsigneradHöjd inklusive sockel: 16 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Skulpturer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2997",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2997-itemimages/2997a_8de745cff5ed6f0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2997-itemimages/2997b_8de745d007c3c9f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2997-itemimages/2997c_8de745d01a117fd_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2998,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "8 st moccakoppar samt 8 st underfat halvblondDiameter: koppar 6 cm, fat 11 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2998",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2998-itemimages/2998a_8de7464a75892d8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2998-itemimages/2998b_8de7464a79c829c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2998-itemimages/2998c_8de7464a7de23aa_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2998-itemimages/2998d_8de7464a820a769_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 2999,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "8 st assietter helblondDiameter: 17 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/2999",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/2999-itemimages/2999a_8de74611d2d533d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2999-itemimages/2999b_8de74611d5e8e03_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2999-itemimages/2999c_8de74611d880c1d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/2999-itemimages/2999d_8de74611db2767b_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3000,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "2 st vaser helblondHöjd: 11 respektive 7 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3000",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3000-itemimages/3000b_8de74628a5471fb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3000-itemimages/3000c_8de74628a7b6813_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3000-itemimages/3000d_8de74628a9df124_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3000-itemimages/3000a_8de74638b959ecb_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3001,
+      "title": "ÄGGHÖNA, Rörstrand",
+      "description": "Flintgods, Rörstrand, 1800-talets mitt eller andra hälftLängd: 28 cmBruksslitage, smärre nagg&nbsp;",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3001",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3001-itemimages/3001a_8de745d97adaa39_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3001-itemimages/3001b_8de745d989a441c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3001-itemimages/3001c_8de745d99118710_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3002,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "Kaffekanna, gräddkanna samt sockerskålHelblondHöjd: 29, 10 respektive  8,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3002",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3002-itemimages/3002a_8de74620acca28e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3002-itemimages/3002b_8de74620afecdd0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3002-itemimages/3002c_8de74620b263858_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3002-itemimages/3002d_8de74620b4b9663_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3002-itemimages/3002e_8de74620b710464_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3003,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "Moccakanna, gräddkanna samt sockerskål helblondHöjd: 21, 8 samt 7 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3003",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003a_8de74660c7a9666_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003b_8de74660caddbb7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003c_8de74660cdd75bb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003d_8de74660d10258a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003e_8de74660d4194ca_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3003-itemimages/3003f_8de74660d6d2489_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3004,
+      "title": "PORSLIN, ROYAL COPENHAGEN MUSSELMALET",
+      "description": "2 st uppläggningsfat, helblond,Diameter: 17,5 cm, längd: 23 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3004",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004a_8de7460162d31ff_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004b_8de7460166bbc12_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004c_8de746016a8d1be_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004d_8de746016cf9320_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004e_8de746016f2dcbf_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3004-itemimages/3004f_8de7460172d6248_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3005,
+      "title": "ÄGGSKÅL, Rörstrand",
+      "description": "Så kallad ägghöna i form av ruvande hönaBemålat flintgods, sekelskiftet 1900, polykrom dekorLängd: 21 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3005",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3005-itemimages/3005a_8de745e8305b5c4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3005-itemimages/3005b_8de745e83b7bdba_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3005-itemimages/3005c_8de745e8472a759_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3006,
+      "title": "TUPP & HÖNA, Okänd designer för SYCO",
+      "description": "Sparbössor, 2 st, glaserat lergodsHöjd: 18 respektive 30 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin",
+        "Skulpturer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3006",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3006-itemimages/3006a_8de745f336e299b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3006-itemimages/3006b_8de745f34406c40_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3006-itemimages/3006c_8de745f352893c1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3006-itemimages/3006d_8de745f35e58761_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3007,
+      "title": "ÄGGHÖNA, porslin",
+      "description": "1900-talets andra hälftLängd ca: 25 cmHelhetsintryck gott",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3007",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3007-itemimages/3007a_8de74640c3564ff_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3007-itemimages/3007b_8de74640c818290_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3007-itemimages/3007c_8de74640cb910b3_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3008,
+      "title": "VINKYLARE/SKÅL, \"Mine\" Hydman-Vallien, Ulrica för Kosta Boda",
+      "description": "Gjuten, grön glasmassa, gjuten signaturDiameter: 19 cmSmärre nagg under botten&nbsp;",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3008",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3008-itemimages/3008a_8de74794c9e9937_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3008-itemimages/3008b_8de74794dd5ec66_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3008-itemimages/3008c_8de74794eb6e0bc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3008-itemimages/3008d_8de74794fd591de_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3009,
+      "title": "GRANATBROSCH, Böhmiska granater",
+      "description": "Diameter ca: 35 mm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3009",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3009-itemimages/3009a_8de747ad5c3da8e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3009-itemimages/3009b_8de747ad62c911a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3009-itemimages/3009c_8de747ad68cf8b6_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3010,
+      "title": "ÖRHÄNGEN, Böhmiska granater",
+      "description": "ClipsDiameter ca: 16 mm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3010",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3010-itemimages/3010a_8de747b28eef962_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3010-itemimages/3010b_8de747b295a163c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3010-itemimages/3010c_8de747b29d1728a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3011,
+      "title": "HALSBAND, Böhmiska granater",
+      "description": "Längd ca: 41 cm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3011",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3011-itemimages/3011a_8de747bb61aeb29_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3011-itemimages/3011b_8de747bb695a2df_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3011-itemimages/3011c_8de747bb6ea130f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3011-itemimages/3011d_8de747bb771335a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3012,
+      "title": "PILLERBURK med lock i marmor",
+      "description": "Längd ca: 39, bredd ca: 28 samt höjd ca: 25 mm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3012",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3012-itemimages/3012a_8de747c701ddf90_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3012-itemimages/3012b_8de747c70dec3e3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3012-itemimages/3012c_8de747c71931633_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3012-itemimages/3012d_8de747c7268ba52_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3013,
+      "title": "TAVLA Olja på duk",
+      "description": "Okänd konstnär, troligt 1800-talets senare hälftHamnmotivHöjd: 86 cm, bredd: 62 cmRestaurerad, duken har stabiliserats",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3013",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3013-itemimages/3013a_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3014,
+      "title": "PORSLIN, RÖRSTRAND SWEDISH GRACE",
+      "description": "Kaffeservis, 27 delarDesign: Louise Adelborg för Rörstrand",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3014",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3014-itemimages/3014a_8de750eeb487ad8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3014-itemimages/3014b_8de750eeb829089_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3014-itemimages/3014c_8de750eebdc331d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3015,
+      "title": "GOLVLAMPA, okänd designer",
+      "description": "Bonad björk, 1900-talets 1 hälftHöjd inklusive skärm: 160 cmEj funktionstestad",
+      "categories": [
+        "Belysning"
+      ],
+      "sourceCategories": [
+        "Belysning"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3015",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3015-itemimages/3015a_8de751cecef0f05_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3015-itemimages/3015b_8de751cedae559d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3015-itemimages/3015c_8de751e9805b211_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3016,
+      "title": "GOLVLAMPA, Art Deco",
+      "description": "Patinerad bronsHöjd ca: 139 cm, diameter ca 25 cmIngen garanti för funktionalitet, ej testad",
+      "categories": [
+        "Belysning"
+      ],
+      "sourceCategories": [
+        "Belysning"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3016",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3016-itemimages/3016a_8de751e89058ee6_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3016-itemimages/3016b_8de751e894f1f2c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3016-itemimages/3016c_8de751e898381f0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3016-itemimages/3016d_8de751e89d1676f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3016-itemimages/3016e_8de751e8a208045_lg.jpeg"
+      ],
+      "currentBid": 1500,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3017,
+      "title": "SERIETIDNING, BAMSE nr 1 1973",
+      "description": "Nytryck-Finland 2003Oläst skick, köpt och sedan förvarad i plastficka",
+      "categories": [
+        "Böcker"
+      ],
+      "sourceCategories": [
+        "Böcker"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3017",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3017-itemimages/3017a_8de753f9167c926_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3017-itemimages/3017b_8de753f91eedd5d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3018,
+      "title": "TAVLA, Litografi Lars S Johansson",
+      "description": "Med motiv från Uppsala, 1988Signerad och numrerad 111/350Mått: 53 x 65 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3018",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3018-itemimages/3018a_8de75e34102686d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3018-itemimages/3018b_8de864f9300a23a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3019,
+      "title": "SILVERMYNT",
+      "description": "576 g svenska silvermyntDelvis 80% silverhalt",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3019",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3019-itemimages/3019a_8de790949706d00_lg.jpeg"
+      ],
+      "currentBid": 1600,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3020,
+      "title": "STOLAR & ARMSTOLAR, 4 + 2 st, Windsor-typ",
+      "description": "Svarvad och bonad ek, skålad sitsStolar - höjd: 98 cm, sitthöjd: 47 cmArmstolar; höjd:101 &amp; 107 cm. sitthöjd:44 &amp; 47 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3020",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3020-itemimages/3020a_8de78f7e78805f5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3020-itemimages/3020b_8de78f7e82d7fe9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3020-itemimages/3020c_8de78f7e8d57a38_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3020-itemimages/3020d_8de78f7e922175f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3020-itemimages/3020e_8de78f7e9a30fbe_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3021,
+      "title": "RODERHJUL/SKEPPSRATT, fartygsdetalj",
+      "description": "Tillverkat i trä med åtta handtag och sammanfogade segmentFörstärkt med spårskruvar, massivt nav i metallDiameter (yttermått): ca 90 cmÅldersrelaterat slitage och patina",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3021",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3021-itemimages/3021a_8de78f937287956_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3021-itemimages/3021b_8de78f938081df1_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3022,
+      "title": "SALONGSKAMIN, gjutjärn/emalj",
+      "description": "Tysk omkring sekelskiftet 1900, hög modell med reliefdekorMärkt i gjutgodset med krona över bokstaven F samt \"K&amp;ER\"Höjd: ca 140, bredd: ca 40 samt djup: ca 36 cmÅldersrelaterat slitage, funktion ej testad",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3022",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3022-itemimages/3022a_8de78fbe6cb29d8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3022-itemimages/3022b_8de78fbe74a746c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3022-itemimages/3022c_8de78fbe7afe4b8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3022-itemimages/3022d_8de78fbe847ef4f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3022-itemimages/3022e_8de78fbeabe7e6d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3023,
+      "title": "KRUS, formgivare Jackie Lynd för Höganäs keramik",
+      "description": "Handmålat mönster med blå körsbär och bladVolym: 1 literHöjd: 10 cm,  diameter: ca 13,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3023",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3023-itemimages/3023a_8de78fcc36ccd18_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3023-itemimages/3023b_8de78fcc3cbf28a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3023-itemimages/3023c_8de78fcc412e40e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3024,
+      "title": "Teak Bokhylla med mellandel Bodafors",
+      "description": "Bertil Fridhagen 3-delarSaknar hylldel har använts som kontorLängd: 200, höjd 70 cmDjup: 40cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3024",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3024-itemimages/3024g_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3025,
+      "title": "BORDSLAMPA, Empirestil",
+      "description": "1900-talets andra hälftBronserad metallTotal höjd inkl skärm: ca 52 cmBra skick",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3025",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3025-itemimages/3025a_8de7e92536ce9e2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3025-itemimages/3025b_8de7e9253d51021_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3025-itemimages/3025c_8de7e92546ef96b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3025-itemimages/3025d_8de7e92554d8af1_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3026,
+      "title": "GOLVLAMPA, Empirestil",
+      "description": "1900-talets andra hälftBronserad metallTotal höjd inkl skärm: ca 156 cmBra skick",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3026",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3026-itemimages/3026a_8de7e9286b18e94_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3026-itemimages/3026b_8de7e9286fbfa82_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3026-itemimages/3026c_8de7e9287443b75_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3026-itemimages/3026d_8de7e928796197d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3026-itemimages/3026e_8de7e92882e4afa_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3027,
+      "title": "KONSTGLAS EPOQUE",
+      "description": "Design, Anna Ehrner, konstglas 3 delar, Epoque.Höjd: 22, 19 samt 11 cm.",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3027",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3027-itemimages/3027a_8de7f607289c7d8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3027-itemimages/3027b_8de7f6072c8e701_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3027-itemimages/3027c_8de7f607306e4c5_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3028,
+      "title": "VAS RÖRSTRAND",
+      "description": "Design: Carl-Harry Stålhane för ateljé RörstrandStengods med harpälslasyr, signeradHöjd: 20 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3028",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3028-itemimages/3028a_8de7f6048f13c03_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3028-itemimages/3028b_8de7f60493005ac_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3028-itemimages/3028c_8de7f604966eef4_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3029,
+      "title": "FIGURIN, faun",
+      "description": "Okänd designer för Royal CopenhagenHöjd: 21 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3029",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3029-itemimages/3029a_8de7f609d1924f9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3029-itemimages/3029b_8de7f609d545a3e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3029-itemimages/3029c_8de7f609d953563_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3029-itemimages/3029d_8de7f609dc90e8f_lg.jpeg"
+      ],
+      "currentBid": 400,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3030,
+      "title": "FIGURIN, faun",
+      "description": "Okänd designer för Royal CopenhagenHöjd: 12 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3030",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3030-itemimages/3030a_8de7f618327ddcc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3030-itemimages/3030b_8de7f618359d8b5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3030-itemimages/3030c_8de7f61838ba713_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3030-itemimages/3030d_8de7f6183b762c5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3030-itemimages/3030e_8de7f6183eaae66_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3031,
+      "title": "SKÄRBRÄDA, Rörstrand",
+      "description": "Design: Sigrid RichterSerien: EdenLängd: 29 cm, bredd 27 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3031",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3031-itemimages/3031a_8de7f6250f7640a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3031-itemimages/3031b_8de7f625128cd09_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3032,
+      "title": "SKÅLAR KOSTA BODA",
+      "description": "1 par, Tulatta, signeradeDesign: Bertil WallienDiameter: 10,5 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3032",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3032-itemimages/3032a_8de7f61a4ca9c38_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3032-itemimages/3032b_8de7f61a5018991_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3032-itemimages/3032c_8de7f61a52e6016_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3033,
+      "title": "BREVPRESS KOSTA BODA",
+      "description": "Design, Göran Wärff för Kosta Boda.Brevpress i glas, dekor av luftbubblor.Signerad samt etikettmärkt, höjd, 9 cm.",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3033",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3033-itemimages/3033a_8de7f61be86faac_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3033-itemimages/3033b_8de7f61bec3dc36_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3033-itemimages/3033c_8de7f61bf32de72_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3034,
+      "title": "GLASVASER, IKEA",
+      "description": "Design, Maria Vinka3 st munblåst glasOriginalförpackningHöjd: 7 - 13 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3034",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3034-itemimages/3034a_8de7f61d7a1dbb2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3034-itemimages/3034b_8de7f61d7dd1701_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3034-itemimages/3034c_8de7f61d8273e12_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3035,
+      "title": "FIGURIN, BING & GRÖNDAL",
+      "description": "Design: Axel LocherHöjd: 18 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3035",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3035-itemimages/3035a_8de7f61b901526b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3035-itemimages/3035b_8de7f61b93ac48d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3035-itemimages/3035c_8de7f61b965d64a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3035-itemimages/3035d_8de7f61b9c2df02_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3035-itemimages/3035e_8de7f61b9f7b7af_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3036,
+      "title": "KRÄFTTALLRIKAR RÖRSTRAND",
+      "description": "6 st i flintgods, 1900 talets andra hälftDesign: Alf WallanderDiameter: 24 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3036",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3036-itemimages/3036a_8de7f618ba95633_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3036-itemimages/3036b_8de7f618bdbdbf0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3036-itemimages/3036c_8de7f618c0535e7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3036-itemimages/3036d_8de7f618c37543e_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3037,
+      "title": "FIGURIN LLADRO",
+      "description": "Okänd designer för Lladro\"Carnival Couple\"Höjd: 27 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3037",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3037-itemimages/3037a_8de7f616bd69b9a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3037-itemimages/3037b_8de7f616c0375a5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3037-itemimages/3037c_8de7f616c2e86c1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3037-itemimages/3037d_8de7f616c5681fe_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3037-itemimages/3037e_8de7f616c8410ea_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3038,
+      "title": "VAS RÖRSTRAND",
+      "description": "Design: Carl-Harry Stålhane för atlejé RörstrandStengods med harpälslasyr, singneradHöjd: 18 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3038",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3038-itemimages/3038a_8de7f61fc1215cb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3038-itemimages/3038b_8de7f61fc4a8e6d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3038-itemimages/3038c_8de7f61fc854257_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3039,
+      "title": "SKULPTURALT FAT",
+      "description": "Tillverkning: P.Ipsens Enke, DanmarkSkulpturalt fat, bemålat lergods, 1930-talDiameter: ca 12 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3039",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039a_8de7f612a67c4e4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039b_8de7f612ab5d8de_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039c_8de7f612ba62c91_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039d_8de7f612bd6c4d6_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039e_8de7f612c00b7ee_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3039-itemimages/3039f_8de7f612c5ae45d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3040,
+      "title": "SKÅL & VAS, Gustavsberg",
+      "description": "Ur serien \"Argenta\", design: Wilhelm Kåge2 delarHöjd: 6 respektive 8,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3040",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3040-itemimages/3040a_8de7f621bd4b140_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3040-itemimages/3040b_8de7f621c148a53_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3040-itemimages/3040c_8de7f6235085e22_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3040-itemimages/3040d_8de7f6235393eb2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3041,
+      "title": "SKÅLAR, 2 st Gustavsberg",
+      "description": "Ur serien \"Argenta\", design: Wilhelm KågeHöjd för båda: 5,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3041",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3041-itemimages/3041a_8de7f62663a59db_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3041-itemimages/3041b_8de7f62666b96f2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3041-itemimages/3041c_8de7f6266a99bde_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3041-itemimages/3041d_8de7f6266e5a4c4_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3042,
+      "title": "FAT, Gustavsberg",
+      "description": "Ur serien \"Argenta\", design: Wilhelm KågeDiameter: 13,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3042",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3042-itemimages/3042a_8de7f628580b47f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3042-itemimages/3042b_8de7f6285c606f7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3042-itemimages/3042c_8de7f6285fbb5bb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3042-itemimages/3042d_8de7f62863097d2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3043,
+      "title": "FAT/SKÅL, Gustavsberg",
+      "description": "Ur serien \"Argenta\", design: Wilhelm KågeDiameter: 15,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3043",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3043-itemimages/3043a_8de7f628ddce5d3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3043-itemimages/3043b_8de7f628e13cdfb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3043-itemimages/3043c_8de7f628e3f3a5f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3044,
+      "title": "VAS, Johansfors",
+      "description": "Glas med ristad dekor, 1950-60 talDesign: Bengt Orup, signeradHöjd: 16 cmLitet nagg i toppen",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3044",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3044-itemimages/3044a_8de7f62d6e435f8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3044-itemimages/3044b_8de7f62d7271064_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3044-itemimages/3044c_8de7f62d7910d55_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3045,
+      "title": "ROSENTHAL, porslin",
+      "description": "3 delar ur serien PompadourDiameter: kopp 9,5 cm, fat 16 respektive 20 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3045",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3045-itemimages/3045a_8de7f608e342c0a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3045-itemimages/3045b_8de7f608e906a00_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3045-itemimages/3045c_8de7f608eebce6d_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3046,
+      "title": "FIGURINER, 2 st",
+      "description": "Royal Copenhagen respektive Bing &amp; GröndalHöjd: 4,5 respektive 5 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3046",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3046-itemimages/3046a_8de7f606a2d4c6f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3046-itemimages/3046b_8de7f606a7263c5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3046-itemimages/3046c_8de7f606ac4b3ab_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3046-itemimages/3046d_8de7f606afd05ad_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3046-itemimages/3046e_8de7f606b49a3f5_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3047,
+      "title": "SKÅL, SKRUF",
+      "description": "Design: Hans FranzenBlåtonat glas mot gul fotHöjd: 8,5 cm, diameter: 13 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3047",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3047-itemimages/3047a_8de7f600cc592bf_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3047-itemimages/3047b_8de7f600d6d2750_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3047-itemimages/3047c_8de7f600da0b9fb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3047-itemimages/3047d_8de7f600e1017b3_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3048,
+      "title": "TREBENSPALL/ BORD, vändbar",
+      "description": "Sekelskiftet 1900Målad träkonstruktion med oval sits/skiva och tre benFällbar där ryggstödet kan användas som fjärde benHandsmidda gångjärn",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3048",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3048-itemimages/3048a_8de7e92b6f57c63_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3048-itemimages/3048b_8de7e92b73d6159_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3048-itemimages/3048d_8de7e92b882be29_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3048-itemimages/3048e_8de7e92b9522b4c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3048-itemimages/3048d_8de8832a2ff1572_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3049,
+      "title": "SERVISDELAR, porslin, 38 delar",
+      "description": "Serien \"Chloé\", design Carl Lagerfeld för HutschenreutherTyskland",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3049",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3049-itemimages/3049a_8de7e9317262110_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3049-itemimages/3049b_8de7e931781675e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3049-itemimages/3049c_8de7e9317e1645e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3050,
+      "title": "Servisdelar, porslin 29 delar Royal Copenhagen",
+      "description": "Ur serien Vifte, räfflat porslin med handmålad blå bård1:a sorteringMattallrikar 12 st, diameter: 26 cm, assietter 12 st, diameter: ca 19,5Uppläggningsfat, längd: ca 38 cm, tillbehörsskålar 4 st diameter: ca 9 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3050",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3050-itemimages/3050a_8de7e934175547e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3050-itemimages/3050b_8de7e9342264a7b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3050-itemimages/3050c_8de7e9342bb4a14_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3050-itemimages/3050d_8de7e9343afc0a7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3050-itemimages/3050e_8de7f5d4acbbc9a_lg.jpeg"
+      ],
+      "currentBid": 700,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3051,
+      "title": "VINGLAS",
+      "description": "12 st ur serien \"Chateau\", design Bertil Vallien för Kosta BodaMunblåstaHöjd: 19 cmMycket fint skick",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3051",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3051-itemimages/3051a_8de7e90f58c4e5b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3051-itemimages/3051b_8de7e90f6e88374_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3052,
+      "title": "SILVER, moccaskedar",
+      "description": "12 st skedar i modell \"Rosen\"Silverhalt: 925/1000Vikt: 141 g1 sked är bruten",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3052",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3052-itemimages/3052b_8de7e915b2028a2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3052-itemimages/3052a_8de8650d5404598_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3053,
+      "title": "SNAPSGLAS",
+      "description": "12 st ur serien \"Chateau\", design Bertil Vallien för Kosta BodaMunblåstaHöjd: 9 cmMycket fint skick",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3053",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3053-itemimages/3053a_8de7e90e623d3bf_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3053-itemimages/3053b_8de7e90e6ccdaeb_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3054,
+      "title": "LJUSPLÅTAR",
+      "description": "2 st i mässing1900-talets första hälftHöjd: ca 43, Bredd: ca 24 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3054",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3054-itemimages/3054a_8de7e916efe3329_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3054-itemimages/3054b_8de7e916fda5532_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3054-itemimages/3054c_8de7e9171794b91_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3054-itemimages/3054d_8de7e9172991196_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3055,
+      "title": "VINKARAFF",
+      "description": "Ur serien \"Chateau\", design Bertil Vallien för Kosta BodaMunblåstHöjd: 27 cmMycket fint skick",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3055",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3055-itemimages/3055a_8de7e90d4b7414c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3055-itemimages/3055b_8de7e90d56ebc10_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3056,
+      "title": "STOLAR, \"MYRAN\"",
+      "description": "2 st trebenta stolar från 1956Design: Arne JacobsenHöjd: 76 cm, sitthöjd: 43 cmDessa stolar behöver viss översyn",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3056",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3056-itemimages/3056a_8de7e907b36c662_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3056-itemimages/3056b_8de7e907bb9ddda_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3056-itemimages/3056c_8de7e907bfb60e8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3056-itemimages/3056d_8de7e907c3b5fcf_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3057,
+      "title": "GOLVLAMPA",
+      "description": "Markslöjd, 1900-talets andra hälftHöjd: ca 156 cm",
+      "categories": [
+        "Belysning"
+      ],
+      "sourceCategories": [
+        "Belysning"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3057",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3057-itemimages/3057a_8de7e90652777d4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3057-itemimages/3057b_8de7e90656fd549_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3057-itemimages/3057c_8de7e90662d7e45_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3057-itemimages/3057d_8de7e906688cf68_lg.jpeg"
+      ],
+      "currentBid": 800,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3058,
+      "title": "SILVER, kaffeskedar",
+      "description": "12 st skedar tillverkade av GAB, schatull ingårSilverhalt: 830/1000, vikt: 283 gLängd: 12 cm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3058",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3058-itemimages/3058a_8de7e8ff925408b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3058-itemimages/3058b_8de7e8ff9fb6801_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3058-itemimages/3058c_8de7e8ffa3396fa_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3058-itemimages/3058d_8de7e8ffaa6d59b_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3059,
+      "title": "TÅGSET, modelljärnväg",
+      "description": "Märklin H0, 1 byggsats - bostadshus, några skenor med räls1 lok, 1 set preussiska vagnar, 3 st lösa vagnarOriginalförpackningarMycket fint skick",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3059",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3059-itemimages/3059a_8de7e8fa5e40ebb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3059-itemimages/3059b_8de7e8fabbe7c9e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3060,
+      "title": "SILKESMATTA/VÄGGBONAD, handknuten",
+      "description": "Turkisk/HerekeMått: 35 x 61 cm",
+      "categories": [
+        "Mattor"
+      ],
+      "sourceCategories": [
+        "Mattor och textil"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3060",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3060-itemimages/3060a_8de7e953004c052_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3060-itemimages/3060b_8de7e9530d9566c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3060-itemimages/3060c_8de7e953219d3d4_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3061,
+      "title": "SNURRSTOLAR, vita med fyrdelad metallfot",
+      "description": "2st Edsbyverken, trä-metall, 1900-talets senare hälftHöjd: 73 cm, sitthöjd: 44 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3061",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3061-itemimages/3061a_8de7f3fa11b5308_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3061-itemimages/3061b_8de7f3fa16ddb72_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3061-itemimages/3061c_8de7f3fa1e1a74b_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3062,
+      "title": "FÅTÖLJER, ett par",
+      "description": "1950/60-tal, troligtvis svensk serieproduktionStomme i teak med svängda armstödStoppad sits och rygg med senare klädselHöjd: 82 cm, sitthöjd 42 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3062",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062a_8de7f3f5ac1ba19_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062b_8de7f3f5b2d5290_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062c_8de7f3f5b904adc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062d_8de7f3f5bf1e504_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062e_8de7f3f5c48c492_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062f_8de7f3f5cac8d58_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3062-itemimages/3062a_8de864fb3ed25ca_lg.jpeg"
+      ],
+      "currentBid": 8000,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3063,
+      "title": "FÅTÖLJ, \"Lamino\" i bok",
+      "description": "Design: Yngve Ekström 1956 för Svedese-SverigeMärkt undertillHöjd: 101 cm, bredd: 70 cm, djup: 78 cmSitthöjd: 42 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3063",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3063-itemimages/3063a_8de7f3fbdd6a5c3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3063-itemimages/3063b_8de7f3fbe4fc710_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3063-itemimages/3063c_8de7f3fbeb02a72_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3064,
+      "title": "SILVER, svenska mynt samt några sedlar",
+      "description": "40 st mynt varav 1 st 5kr är ett jubileumsmynt från -66Mestadels 40% silverhalt i övrigtTotalvikt: 563 g",
+      "categories": [
+        "Mynt"
+      ],
+      "sourceCategories": [
+        "Mynt & medaljer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3064",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3064-itemimages/3064a_8de7f4add7f9453_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3064-itemimages/3064b_8de864fc7db015f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3064-itemimages/3064c_8de864fc82d9455_lg.jpeg"
+      ],
+      "currentBid": 400,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3065,
+      "title": "SILVER, teskedar & fingerborgar",
+      "description": "4 st teskedar samt 3 st fingerborgarTotalvikt 38 gNågon fingerborg delvis spräckt",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3065",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3065-itemimages/3065a_8de7f4ad2d08d73_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3065-itemimages/3065b_8de7f4ad3204fa3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3065-itemimages/3065c_8de7f4ad3882a87_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3066,
+      "title": "YTTERFODER, Rörstrand",
+      "description": "StengodsDrejargruppen 1973Höjd: 13,5 cmDiameter: 14 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3066",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3066-itemimages/3066a_8de7f6770b4b534_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3066-itemimages/3066b_8de7f6770daf4f1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3066-itemimages/3066c_8de7f677101e209_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3066-itemimages/3066d_8de7f67712f7139_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3067,
+      "title": "FAT/SKÅL, Rörstrand",
+      "description": "Design: Gertrud LönegrenMärkning: GLDiameter: 12 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3067",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3067-itemimages/3067a_8de7f674c89ce1d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3067-itemimages/3067b_8de7f674cbec5d4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3067-itemimages/3067c_8de7f674ce64c10_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3068,
+      "title": "FAT, Ekeby",
+      "description": "Ur serien \"Ranka\"Design: Anna-Lisa ThomsonDiameter: 30 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3068",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3068-itemimages/3068a_8de7f679ebc0b25_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3068-itemimages/3068b_8de7f679ef33484_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3068-itemimages/3068c_8de7f679f46a663_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3069,
+      "title": "LJUSSTAKAR BODA ÅFORS",
+      "description": "Design, Bertil Wallien för Boda Åfors.Ljusstakar 1 par, 1960 tal, signerade.Höjd, 12 cm.",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3069",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3069-itemimages/3069a_8de7f672c5a8d7f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3069-itemimages/3069b_8de7f672c89e622_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3069-itemimages/3069c_8de7f672cb26a60_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3069-itemimages/3069d_8de7f672ce79b6f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3070,
+      "title": "HÄNKELKANNA, Rörstrand",
+      "description": "Märkt 1964Märkt \"LB\"Höjd: 21 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3070",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3070-itemimages/3070a_8de7f681c81f21f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3070-itemimages/3070b_8de7f681cb16c75_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3070-itemimages/3070c_8de7f681cd7bbd7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3070-itemimages/3070d_8de7f681d019e63_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3071,
+      "title": "SILVER DIVERSE,  8 st föremål",
+      "description": "Pokaler, fat servettring, koppTotalvikt: 282 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3071",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071a_8de801d11d6434a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071b_8de801d1267692c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071c_8de801d12bf7c8d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071d_8de801d133e55f9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071e_8de801d13c56e84_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071f_8de801d141dfbc7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071g_8de801d149b344c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071h_8de801d15142b99_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071i_8de801d156a2999_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3071-itemimages/3071j_8de801d15e8990d_lg.jpeg"
+      ],
+      "currentBid": 2000,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3072,
+      "title": "SILVERMEDALJER,  7 st",
+      "description": "För hästavel, 1900-taletTotalvikt: 220 g",
+      "categories": [
+        "Mynt"
+      ],
+      "sourceCategories": [
+        "Mynt & medaljer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3072",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3072-itemimages/3072a_8de801f446e1dc2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3072-itemimages/3072b_8de801f46947a0f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3072-itemimages/3072c_8de801f478df34c_lg.jpeg"
+      ],
+      "currentBid": 2000,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3073,
+      "title": "POLISKASK, miniatyr",
+      "description": "Drejad keramikHöjd: 12 cm, diameter: 12,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3073",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3073-itemimages/3073a_8de7f69ff353100_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3073-itemimages/3073b_8de7f69ff645d74_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3073-itemimages/3073c_8de7f69ff8dbdaf_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3073-itemimages/3073d_8de7f69ffbe6f24_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3074,
+      "title": "SILVERPOKAL  ej graverad",
+      "description": "Kontrollmärkt, 1900-talHöjd: 12 cm, Diameter: 8 cmVikt: 168 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3074",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3074-itemimages/3074a_8de801ff2a6a898_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3074-itemimages/3074b_8de801ff375d4e9_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3075,
+      "title": "FÄLLKNIVAR, 3 st",
+      "description": "Franklin Mint, collector knivesTotallängd: 17,5 cm Bladlängd: 7 cmFörvaringsväskor ingår",
+      "categories": [
+        "Vapen"
+      ],
+      "sourceCategories": [
+        "Vapen & blankvapen"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3075",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3075-itemimages/3075a_8de7f6a3b1e8c24_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3075-itemimages/3075b_8de7f6a3b6b3147_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3075-itemimages/3075c_8de7f6a3ba41e42_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3075-itemimages/3075d_8de7f6a3bd86059_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3075-itemimages/3075e_8de7f6a3c11651b_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3076,
+      "title": "SILVER, diverse, 3 st föremål",
+      "description": "Vas, pokal samt servettring, ej graveradeKontrollmärkt, 1900-talHöjd: 12 cmTotalvikt: 77 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3076",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3076-itemimages/3076a_8de8021ed212c70_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3076-itemimages/3076b_8de8021ed6f8904_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3076-itemimages/3076c_8de8021eddc2f21_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3076-itemimages/3076d_8de8021ee5ebfc3_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3077,
+      "title": "SILVERFAT",
+      "description": "Kontrollmärkt,  1900-talDiameter: 25 cmVikt: 384 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3077",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3077-itemimages/3077a_8de8022f84e0788_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3077-itemimages/3077b_8de8022f8de1c40_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3077-itemimages/3077c_8de8022f9b9ce33_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3078,
+      "title": "SILVER DIVERSE, 4 st föremål",
+      "description": "2 st medaljer finsilver2 st figurer kontrollstämplat silverVikt: 114 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3078",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078a_8de8025da23cc95_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078b_8de8025da8a295f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078c_8de8025dad91365_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078d_8de8025db34d76d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078e_8de8025db92a3a2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078f_8de8025dc11ad0b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3078-itemimages/3078g_8de8025dc933bc0_lg.jpeg"
+      ],
+      "currentBid": 1000,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3079,
+      "title": "SILVERFAT, ej graverat",
+      "description": "GABMått: 31 cm x 27 cmVikt: 337 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3079",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3079-itemimages/3079a_8de80293c9ae6b3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3079-itemimages/3079b_8de80293d077714_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3079-itemimages/3079c_8de80293d705da9_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3080,
+      "title": "SILVERFAT",
+      "description": "GAB, 1900-talDiameter: 31 cmVikt: 406 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3080",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3080-itemimages/3080a_8de802a442e270e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3080-itemimages/3080b_8de802a44a13ec5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3080-itemimages/3080c_8de802a452c95e0_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3081,
+      "title": "SERVERINGSVAGN NK",
+      "description": "Design, Kerstin Hörlin-Holmqvist för NKTriva 1960 tal, etikettmärktBredd: 80 cmHöjd 65 cmDjup: 43 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3081",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3081-itemimages/3081a_8de80196ec24411_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3081-itemimages/3081b_8de80196f416e8b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3081-itemimages/3081c_8de80196faf20ad_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3081-itemimages/3081d_8de801970410ff4_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3082,
+      "title": "HERRBETJÄNT",
+      "description": "Herrbetjänt, modern tillverkningTrä och stål,Höjd: 107 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3082",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3082-itemimages/3082a_8de801998fc44d6_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3082-itemimages/3082b_8de8019996529e2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3083,
+      "title": "HERRBETJÄNT",
+      "description": "Herrbetjänt, modern tillverkningTrä och stål,Höjd: 105 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3083",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3083-itemimages/3083a_8de8019af77355c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3083-itemimages/3083b_8de8019afc1c6d9_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3084,
+      "title": "ALLMOGESTOLAR",
+      "description": "1 par, sekelskiftet 1900Höjd: 79-75 cmSitthöjd: 44-43 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3084",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3084-itemimages/3084a_8de8019d5aaf53b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3084-itemimages/3084b_8de8019d643b45c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3084-itemimages/3084c_8de8019d69748b5_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3085,
+      "title": "SKRIVBORDSSTOL",
+      "description": "Sekelskiftet, betsad björkSpjälad genombruten rygg, höj och sänkbarSitthöjd: ca 50 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3085",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3085-itemimages/3085a_8de8019e21d7bd8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3085-itemimages/3085b_8de8019e2734920_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3085-itemimages/3085c_8de8019e2dc00c5_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3086,
+      "title": "KARMSTOL",
+      "description": "Betsad björk, 1900 talets första hälftHöjd: 86 cmSitthöjd: 45 cmFäste för höger armstöd, reparationsbehov",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3086",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3086-itemimages/3086a_8de801a458bb1fc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3086-itemimages/3086b_8de801a45f35cba_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3086-itemimages/3086c_8de801a46abeb3f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3087,
+      "title": "KONSOLHYLLA",
+      "description": "Förgyllt trä, rokokostil 1900 talBredd: 86 cmHöjd: 45 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3087",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3087-itemimages/3087a_8de801a5033a137_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3087-itemimages/3087b_8de801a50823f8d_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3088,
+      "title": "SPEGEL",
+      "description": "Förgyllt trä, barockstil omkring sekelskiftet 1900Höjd: 44 cmBredd: 38 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3088",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3088-itemimages/3088a_8de801a590815a7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3088-itemimages/3088b_8de801a597b262e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3089,
+      "title": "KONSOLHYLLA",
+      "description": "Mässing och trä, omkring sekelskiftet 1900Bredd: 27 cm,Höjd: 24 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3089",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3089-itemimages/3089a_8de801a666b976a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3089-itemimages/3089b_8de801a66b65945_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3090,
+      "title": "TABURETT",
+      "description": "Carl Johan stil, 1800-talFanerat trä och broderad sitsHöjd: 45 cmBredd: 46 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3090",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3090-itemimages/3090a_8de801a6de29696_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3090-itemimages/3090b_8de801a6e4ba98e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3091,
+      "title": "SILVERFAT",
+      "description": "Kontrollmärkt, 1900-talDiameter: 32 cmVikt: 512 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3091",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3091-itemimages/3091a_8de802c04611cb5_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3091-itemimages/3091b_8de802c05400ed1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3091-itemimages/3091c_8de802c061bfa33_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3092,
+      "title": "SERVERINGSVAGN",
+      "description": "Betsat trä, 1900 talHöjd: 72 cmBredd: 65 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3092",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3092-itemimages/3092a_8de801abf37a85f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3092-itemimages/3092b_8de801abfbb213c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3093,
+      "title": "KARMFÅTÖLJ",
+      "description": "Okänd designer, betsad ek och häftadRandig klädselHöjd: 90 cm Sitthöjd: 40 cm",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3093",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3093-itemimages/3093a_8de801ac93c6e85_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3093-itemimages/3093b_8de801ac9e91797_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3093-itemimages/3093c_8de801aca53c763_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3094,
+      "title": "FÅTÖLJ",
+      "description": "Nyrokoko, mahogny med skuren dekorHöjd: 98 cmSitthöjd: 39 cmÖvre del av rygg delvis reparerad",
+      "categories": [
+        "Möbler"
+      ],
+      "sourceCategories": [
+        "Möbler"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3094",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3094-itemimages/3094a_8de801ad4e3b20a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3094-itemimages/3094b_8de801ad6166428_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3094-itemimages/3094c_8de801ad6885022_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3095,
+      "title": "RAKKNIVAR, 3 st",
+      "description": "#1 Tillverkare: Erik Anton Berg - Eskilstuna, (vitt handtag)#2 Tillverkare: C V Heljestrand - Eskilstuna#3 Tillverkare Joseph Rodgers &amp; sons Sheffield",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3095",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3095-itemimages/3095a_8de7f71d03d5711_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3095-itemimages/3095b_8de7f71d08a89e3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3095-itemimages/3095c_8de7f71d0a90555_lg.jpeg"
+      ],
+      "currentBid": 300,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3096,
+      "title": "RAKKNIVAR, 3 st",
+      "description": "#1 Tillverkare: Clauss - Freemont, Ohio - USA#2 Tillverkare: C W Dahl - Eskilstuna#3 Tillverkare Wostenholm - Sheffield - UK",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3096",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3096-itemimages/3096a_8de7f71ea14f408_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3096-itemimages/3096b_8de7f71ea408a13_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3096-itemimages/3096c_8de7f71ea69cb25_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3097,
+      "title": "VAS, Upsala-Ekeby",
+      "description": "Ur serien \"Glory\" designad av Ingrid Atterberg1950 / 1960-talHöjd: 12,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3097",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3097-itemimages/3097a_8de7f74c245dc02_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3097-itemimages/3097b_8de7f74c27accd1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3097-itemimages/3097c_8de7f74c2a30c92_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3098,
+      "title": "VAS, Ekeby",
+      "description": "Smal solitärvas i matt svart glasyrMärkt undertill Ekeby 814Höjd: 17,5 cmBruksspår",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3098",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3098-itemimages/3098a_8de7f74e1067793_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3098-itemimages/3098b_8de7f74e1372121_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3099,
+      "title": "KÖKSVÅG, EKS, Sverige",
+      "description": "Mekanisk våg i lackerad metall - retroLöstagbar bricka i rostfritt stålLängd:30 cmDjup: 19 cmBruksspår",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3099",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3099-itemimages/3099a_8de7f77012a6d54_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3099-itemimages/3099b_8de7f770157790f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3099-itemimages/3099c_8de7f770189e19f_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3101,
+      "title": "TAVLA, \"Revolution\"",
+      "description": "Konstnär: Thomas Muller, f 1960BlandteknikMått: 116 x 86 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3101",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3101-itemimages/3101a_8de7f7c842acd91_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3101-itemimages/3101b_8de7f7c846d43ef_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3101-itemimages/3101c_8de7f7c84b6027e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3102,
+      "title": "TAVLA, Ulf Schlyter",
+      "description": "Tavla i form av fönsterbåge med bemålade glasrutorMått: 77 x 77 cmSignerad: Både med Ulf Schlyter-96  och \"ULV-96\"",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3102",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3102-itemimages/3102a_8de7f80cfff18af_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3102-itemimages/3102b_8de7f80d03dfeaa_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3102-itemimages/3102c_8de7f80d08dab77_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3102-itemimages/3102d_8de7f80d0d12d12_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3103,
+      "title": "TAVLA, Ulf Schlyter",
+      "description": "Tavla med motiv med flygplan och kaktusarBlandteknik med bemålade brädor och kakelplattorMått: 105 x 76 cm",
+      "categories": [
+        "Konst"
+      ],
+      "sourceCategories": [
+        "Måleri och grafik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3103",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3103-itemimages/3103a_8de7f80ede76956_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3103-itemimages/3103b_8de7f80ee6e9c43_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3104,
+      "title": "SKULPTUR/BORDSLAMPA, Kosta Boda",
+      "description": "Skulpturalt formgivet glas i blågrön ton med innesluteningarDesign: Kjell Engman, signeradElektrifierad på ljussockelHöjd:28 cm",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3104",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3104-itemimages/3104a_8de800e61feb3b9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3104-itemimages/3104b_8de800e62efc021_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3104-itemimages/3104c_8de800e63d06264_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3104-itemimages/3104d_8de800e649ee2ea_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3105,
+      "title": "GULD, Fickur 14K",
+      "description": "Record watch, GeneveVikt: 90 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3105",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3105-itemimages/3105a_8de802ff9416435_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3105-itemimages/3105b_8de802ff99f6c44_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3105-itemimages/3105c_8de802ffa1a772c_lg.jpeg"
+      ],
+      "currentBid": 3000,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3106,
+      "title": "ARMBANDSUR Raymond Weil Tango",
+      "description": "Tango rektangulär 22 x 28 mmSerienr 5981 K003346",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3106",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3106-itemimages/3106a_8de8030feeb7b8f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3106-itemimages/3106b_8de8030ff92570a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3106-itemimages/3106c_8de8031003291d0_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3107,
+      "title": "SILVER, smyckes-set med Turkoser",
+      "description": "Silver filigranarbeteKontrollstämpladVikt: 61 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3107",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3107-itemimages/3107a_8de80322b9e599d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3107-itemimages/3107b_8de80322c37e41f_lg.jpeg"
+      ],
+      "currentBid": 500,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3108,
+      "title": "SILVER, mynt",
+      "description": "Blandade svenska mynt40% silverhaltVikt: 163 g",
+      "categories": [
+        "Mynt"
+      ],
+      "sourceCategories": [
+        "Mynt & medaljer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3108",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3108-itemimages/3108a_8de803596e784d2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3109,
+      "title": "SILVERMYNT, finsilver",
+      "description": "3 st 10 kr 19721 st 50 kr 1976Vikt: 80 g",
+      "categories": [
+        "Mynt"
+      ],
+      "sourceCategories": [
+        "Mynt & medaljer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3109",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3109-itemimages/3109a_8de80364c08cbfc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3109-itemimages/3109b_8de80364c889251_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3110,
+      "title": "SILVERUR, fickur, Revue",
+      "description": "\"Revue Ancre de Precision\"Med skyddshölje och kedja från J.Dahlqvist;Ur &amp; Optisk Affär i LaholmTotalvikt: 105 g",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3110",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3110-itemimages/3110a_8de8038367d885f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3110-itemimages/3110b_8de803836e3d83a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3110-itemimages/3110c_8de8038373bd931_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3110-itemimages/3110d_8de803837ba2c06_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3110-itemimages/3110e_8de8038382d0cd4_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3111,
+      "title": "SILVERSKÅL, kontrollmärkt",
+      "description": "C.G.Hallberg K8Diameter: 22 cmVikt: 318 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3111",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3111-itemimages/3111a_8de803944bb057c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3111-itemimages/3111b_8de8039451d0aa1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3111-itemimages/3111c_8de8039466677a2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3112,
+      "title": "VAS ORREFORS",
+      "description": "Design: Nils Landberg för OrreforsVas röktonat glas, signerad samt numreradHöjd: 28,5 cm",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3112",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3112-itemimages/3112a_8de8042c8b25875_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3112-itemimages/3112b_8de8042d1da3bad_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3113,
+      "title": "SILVER, tvåarmade ljusstakar 2 st",
+      "description": "CG Hallberg ,Stockholm,H8Rokokostil, fylld bottenHöjd: 20 cmBredd: 34 cmVikt: 1400 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3113",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3113-itemimages/3113a_8de804653c0b9ec_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3113-itemimages/3113b_8de804654dd26bf_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3114,
+      "title": "SKÄRBRÄDA, TRULL",
+      "description": "Design: Lisa Larson för Opto DesignSkärbräda bemålat trä, bruksslitageLängd: 30 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3114",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3114-itemimages/3114a_8de8042e6ed346b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3114-itemimages/3114b_8de8042e856e891_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3115,
+      "title": "SKÅLFAT, RÖRSTRAND",
+      "description": "Design: Bertil Lundgren för RörstrandGlaserat stengods, 1960-70 talSignerat nr 160/300Mått: 19 x 18 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3115",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3115-itemimages/3115a_8de8042fcb4f338_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3115-itemimages/3115b_8de8042fd2331f7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3115-itemimages/3115c_8de8042fdeaa575_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3116,
+      "title": "HÄNKELVAS, GABRIEL",
+      "description": "Design: Gabriel Burmeister för GabrielBemålad keramik, Broque 1930-40 talSignerad Höjd: 16,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3116",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3116-itemimages/3116a_8de80431366e5b4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3116-itemimages/3116b_8de804313c3154b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3116-itemimages/3116c_8de804314245e2e_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3117,
+      "title": "KARAFF, BODA",
+      "description": "Design: Erik Höglund för Boda3 kantig karaff, sk kluckflaskaHöjd: 26 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3117",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3117-itemimages/3117a_8de864ffad44f14_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3117-itemimages/3117b_8de864ffb2a9388_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3118,
+      "title": "KANNA, KÄHLER",
+      "description": "Design: Herman Kähler DanmarkBemålat lergods, 1900 talets första hälftSigneradHöjd: 14 cm",
+      "categories": [
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3118",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3118-itemimages/3118a_8de80450a5e2713_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3118-itemimages/3118b_8de80450ad35dba_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3118-itemimages/3118c_8de80450bbfdc6a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3119,
+      "title": "BOJAN",
+      "description": "Kina, 1800 tal, underglasyr dekor av fiskareHöjd: 18 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Orientalica, Africana"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3119",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3119-itemimages/3119a_8de8044816fdd6a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3119-itemimages/3119b_8de804481ddd705_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3119-itemimages/3119c_8de8044824ce2ee_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3120,
+      "title": "VAS ARABIA",
+      "description": "Design: Markku Salo för Finn Crystal/ArabiaRibbat klarglasHöjd: 15 cmSpår från tillverkning",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3120",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3120-itemimages/3120a_8de80449335316e_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3120-itemimages/3120b_8de8044938e9882_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3121,
+      "title": "HALSSMYCKE",
+      "description": "Design:  Arje Griest för Royal CopenhagenSmyckets höjd: 8 cm, totallängd:ca 35 cm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3121",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3121-itemimages/3121a_8de8042b431ba09_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3121-itemimages/3121b_8de8042b4b61f34_lg.jpeg"
+      ],
+      "currentBid": 800,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3122,
+      "title": "FIGURINER, RÖRSTRAND",
+      "description": "Design: Edit Bjurström för Rörstrand1 par figuriner ur serien Lasse litenHöjd: 9-10 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3122",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3122-itemimages/3122a_8de8044a01b4b6f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3122-itemimages/3122b_8de8044a0687366_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3122-itemimages/3122c_8de8044a0d54880_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3123,
+      "title": "GRÄDDKANNA, RÖRSTRAND",
+      "description": "Design: Gunnar Nylund för RörstrandStengods med harpälslasyr, 1950-60 talSigneradHöjd: 6,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3123",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3123-itemimages/3123a_8de8044aa7a7108_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3123-itemimages/3123b_8de8044aae2808d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3123-itemimages/3123c_8de8044ab50d171_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3124,
+      "title": "RÖRSTRAND, 3 DELAR",
+      "description": "Design: Marianne Westman för RörstrandSkeppa samt 2 burkar; sylt och sillSenare lock med lagning till skeppanHöjd skeppa: 20 cm,Diameter burkar: 12 cm, höjd  10 cm med lock",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3124",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3124-itemimages/3124a_8de8044e1a2d9f4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3124-itemimages/3124b_8de8044e1f5e184_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3125,
+      "title": "COCKTAILSET",
+      "description": "8 delar, 3 större pluntor &amp; 4 små pluntor, samt 1 glasLäderetui, 1900 talHöjd: 19-12 cm",
+      "categories": [],
+      "sourceCategories": [
+        "Alla"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3125",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3125-itemimages/3125a_8de8044ec010d55_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3125-itemimages/3125b_8de86507f0fe955_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3125-itemimages/3125c_8de86507f4d2d41_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3126,
+      "title": "SILVER, Kaffeservis 3-delar ",
+      "description": "Märkt 800Vikt: 1570 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3126",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126a_8de804a4aba1bc3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126b_8de804a4b1d1235_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126c_8de804a4b84f413_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126d_8de804a4c2c238c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126e_8de804a4c835aab_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126f_8de804a4ce4b567_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3126-itemimages/3126g_8de804a4d5264dc_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3127,
+      "title": "SILVER, kaffekanna",
+      "description": "Märkt 800Vikt: 890 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3127",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3127-itemimages/3127a_8de80fc8b81e5d0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3127-itemimages/3127b_8de80fc8c0ddd05_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3127-itemimages/3127c_8de80fc8cbaa253_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3128,
+      "title": "SILVER, kaffeservis 3 delar",
+      "description": "Stämplar från Ryssland / ÖsteuropaTotal vikt: 1080 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3128",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128a_8de80fce09c13ee_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128b_8de80fce10ff385_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128c_8de80fce1efa200_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128d_8de80fce23265b2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128e_8de80fce2992f17_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128f_8de80fce318385b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3128-itemimages/3128g_8de80fce3761994_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3129,
+      "title": "SILVER BROSCH Georg Jensen Silverduva 165",
+      "description": "Signerad och stämpladGeorg Jensen / Sterling",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3129",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3129-itemimages/3129a_8de810ec32261c9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3129-itemimages/3129b_8de810ec3693bfd_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3129-itemimages/3129c_8de810ec3d2a612_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3130,
+      "title": "SILVERBROSCH, Georg Jensen Silverduva 204",
+      "description": "Stämplad och signeradGeorg Jensen / sterling",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3130",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3130-itemimages/3130a_8de810f50705afc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3130-itemimages/3130b_8de810f50e41372_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3130-itemimages/3130c_8de810f5139233c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3131,
+      "title": "SILVERBROSCH Arvo Saarela Bladmotiv",
+      "description": "Enköping ,svenska stämplar5.x 3cmVikt 12 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3131",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3131-itemimages/3131a_8de810ff5a23601_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3131-itemimages/3131b_8de810ff5f8f3e0_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3131-itemimages/3131c_8de810ff671d2d8_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3132,
+      "title": "SILVER, hängsmycke, Finland",
+      "description": "Sterling med fasettslipad bergskristallDesign: Kultasepät SalovaaraLängd: 4 cm med öglaVikt: 7g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3132",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3132-itemimages/3132a_8de811000de9b2a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3132-itemimages/3132b_8de81100116d585_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3132-itemimages/3132c_8de81100158e375_lg.jpeg"
+      ],
+      "currentBid": 400,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3133,
+      "title": "KANNA AUTUMN",
+      "description": "Ridgways, Night&amp;Morn, bemåald keramik,Tennlock, 1800 tal. Höjd 22 cm.",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3133",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3133-itemimages/3133a_8de8334b7cec374_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3133-itemimages/3133b_8de8334b84eb9f4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3133-itemimages/3133c_8de8334b913e735_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3134,
+      "title": "KARAFF BODA",
+      "description": "Design, Erik Höglund för Boda.Klarglas, reliefdekor av hästkork i vitmetall.Höjd: 26 cm.",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3134",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3134-itemimages/3134a_8de8335165564a7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3134-itemimages/3134b_8de8335176f9942_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3135,
+      "title": "SKÅL, \"Satelitte\"",
+      "description": "Design: Bertil Vallien för Kosta BodaPolykromt glas, etikettmärktHöjd: 11 cmDiameter:16 cm.",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3135",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3135-itemimages/3135a_8de833525537589_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3135-itemimages/3135b_8de833525eaa6c5_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3136,
+      "title": "VAS, Kosta Boda",
+      "description": "Ur serien \"Volcano\"Design: Bertil Vallien för Kosta BodaSandgjutet glas, Artist Collection, etikettmärktHöjd: 11 cm",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3136",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3136-itemimages/3136a_8de833535aed8cc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3136-itemimages/3136b_8de833536509740_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3137,
+      "title": "VAS BODA",
+      "description": "Design, Erik Höglund för Boda,turkos glasmassa, 1960 tal signerad.Höjd: 15,5 cm.",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3137",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3137-itemimages/3137a_8de833543211909_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3137-itemimages/3137b_8de833543f32743_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3137-itemimages/3137c_8de8335446abd60_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3138,
+      "title": "PRYDNADSTUPPAR",
+      "description": "Bemålad och glaserad keramik,1900 - talHöjd: 35 resp. 25 cmSpricka förekommer i den mindres bröst",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3138",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3138-itemimages/3138a_8de833bee043160_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3138-itemimages/3138b_8de833bee6bf435_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3138-itemimages/3138c_8de833beeca95bd_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3139,
+      "title": "KONSTGLAS, 3 delar",
+      "description": "Bl a Bertil Vallien, delvis signeradeHöjd: 5,5 - 10 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3139",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3139-itemimages/3139a_8de833be3e3fb4f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3139-itemimages/3139b_8de833be46554bf_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3139-itemimages/3139c_8de833be4bff648_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3140,
+      "title": "KONSTGLAS, 3 delar",
+      "description": "Bla Bertil Vallien, 1 st signeradHöjd: 8 - 16,5 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3140",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3140-itemimages/3140a_8de833bd977edf3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3140-itemimages/3140b_8de833bd9c83894_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3141,
+      "title": "KONSTGLAS, 3 delar",
+      "description": "Okänd designer, turkos glasmassaHöjd:11 - 20 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3141",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3141-itemimages/3141a_8de833bae30f247_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3141-itemimages/3141b_8de833bae8ee9bc_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3142,
+      "title": "SILVERBROSCH; Georg Jensen, Danmark",
+      "description": "Georg Jensen / SterlingDiameter: 3 cmVikt: 7g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3142",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3142-itemimages/3142a_8de811013515212_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3142-itemimages/3142b_8de811013ad5e43_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3142-itemimages/3142c_8de811013f28723_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3143,
+      "title": "SILVERBROSCH  Carl M ",
+      "description": "stämplad 8305,5 x 4 cmVikt: 13gr",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3143",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3143-itemimages/3143a_8de81101e0539c3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3143-itemimages/3143b_8de81101e59de4a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3143-itemimages/3143c_8de81101eefbd53_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3144,
+      "title": "SILVER RING, design Jane Wiberg",
+      "description": "Handmade, Denmark, no 510SterlingsilverVikt: 14 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3144",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3144-itemimages/3144a_8de81107af2844c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3144-itemimages/3144b_8de81107b33db82_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3145,
+      "title": "SILVER,  4 delar ",
+      "description": "Broscher, ring och hängeTotalvikt: 30 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3145",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145a_8de81109bb38e9a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145b_8de81109c0b0295_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145c_8de81109c5d4c00_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145d_8de81109c9c0f35_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145e_8de81109cfbd723_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145f_8de81109d56ed62_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3145-itemimages/3145g_8de81109da28482_lg.jpeg"
+      ],
+      "currentBid": 300,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3146,
+      "title": "SILVER, Brosch fjäril",
+      "description": "Design Hroar PrydzSterling 925 NorwayMått: 2 x 3cmVikt: 4 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3146",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3146-itemimages/3146a_8de8110a96242c7_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3146-itemimages/3146b_8de8110a9bd3029_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3146-itemimages/3146c_8de8110aa060b47_lg.jpeg"
+      ],
+      "currentBid": 300,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3147,
+      "title": "SILVER, diverse örhängen och halsband, 8 delar",
+      "description": "6 st örhängen med silver",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3147",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3147-itemimages/3147a_8de8110b2daf42f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3147-itemimages/3147b_8de8110b32f8bd6_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3148,
+      "title": "FLAKONG, Levi & Salaman",
+      "description": "Birmingham, England 1912Skuret kristallglas, kork med engelskt silverStämplarHöjd: 10 cm",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3148",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3148-itemimages/3148a_8de833b95c7b028_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3148-itemimages/3148b_8de833b9625a9bc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3148-itemimages/3148c_8de833b9693cd64_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3148-itemimages/3148d_8de833b972466e1_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3149,
+      "title": "YTTERFODER",
+      "description": "Okänd designer/tillverkare lergodsBlårutigt mönsterBredd: 27 cmHöjd: 13,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3149",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3149-itemimages/3149a_8de833b8a27a275_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3149-itemimages/3149b_8de833b8a8674b3_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3150,
+      "title": "YTTERFODER, \"Waldemarsudde\"",
+      "description": "Design, Prins Eugen för GustavsbergHöjd: 13 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3150",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3150-itemimages/3150a_8de8350c7a59f9f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3150-itemimages/3150b_8de8350c80e6d26_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3150-itemimages/3150c_8de8350c852a7c7_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3151,
+      "title": "BRICKA",
+      "description": "Rikligt bemålat trä med inslag av pärlemorHänkel i mässing, 1800-1900 tal, möjligen RysslandDiameter: 26 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3151",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3151-itemimages/3151a_8de8350bd1657c1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3151-itemimages/3151b_8de8350bda36006_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3151-itemimages/3151c_8de8350be10dd16_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3152,
+      "title": "SERVERINGSBRICKA",
+      "description": "Träram, glas och infällt tryckPanorama-motiv över Stockholm 1600Längd: 54,5 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3152",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3152-itemimages/3152a_8de8350afe0fd42_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3152-itemimages/3152b_8de8350b05d4c57_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3153,
+      "title": "FAT KINA",
+      "description": "Familie Rose motiv1800-1900 talLängd: 27 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Orientalica, Africana"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3153",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3153-itemimages/3153a_8de8350a7c0d50f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3153-itemimages/3153b_8de8350a80bb565_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3153-itemimages/3153c_8de8350a8845484_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3154,
+      "title": "MUGGAR, julpoesi för RÖRSTRAND",
+      "description": "Design: Jackie Lynd för Rörstrand4 st muggar i årgångarna 79, 80,81 &amp; 84Höjd: 9 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3154",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154a_8de83509b2e9ab6_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154b_8de83509b8b7c13_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154c_8de83509be17466_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154d_8de83509c28c41d_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154e_8de83509c7193ae_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154f_8de83509cef62e3_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154g_8de83509d49f17b_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154h_8de83509db54b2c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3154-itemimages/3154i_8de83509e075352_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3155,
+      "title": "SMÖRHUNDAR /SMÖRTAXAR 8 st",
+      "description": "Äldre variant, RävarLängd: 9 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3155",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3155-itemimages/3155a_8de832cdc70f0c9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3155-itemimages/3155b_8de832cdcc90b3a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3156,
+      "title": "SILVER, Tårtspadar 2 st",
+      "description": "Svenska kontrollstämplarTotalvikt: 104 g",
+      "categories": [
+        "Smycken"
+      ],
+      "sourceCategories": [
+        "Silver, guld och smycken"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3156",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3156-itemimages/3156a_8de832d09082eab_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3156-itemimages/3156b_8de832d09ccc3a9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3156-itemimages/3156c_8de832d0a70a2c8_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3157,
+      "title": "VINGLAS, 8 st Skrufs",
+      "description": "Design, Hugo Ghelin för Skrufs glasbruk1950-60 talHöjd: 16,5 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3157",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3157-itemimages/3157b_8de834ec7a62908_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3157-itemimages/3157a_8de863d019bef19_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3158,
+      "title": "UNDERLÄGG till tallrik",
+      "description": "12 st rostfria underläggDiameter: 32 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3158",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3158-itemimages/3158a_8de834ebea1ee40_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3158-itemimages/3158b_8de834ebefda6da_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3159,
+      "title": "MUGGAR, 2 st Iittala",
+      "description": "Design, Heikki OrvolaModell TaikaHöjd: 11,5 cm",
+      "categories": [
+        "Porslin",
+        "Keramik"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3159",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3159-itemimages/3159a_8de834eb8204a2a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3159-itemimages/3159b_8de834eb86e2284_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3160,
+      "title": "SELTERGLAS, 12 st antika",
+      "description": "Okänd designer för ReijmyreGraverad dekor(Finns ytterligare 3 glas men med annan höjd som ingår)Höjd: 7 cm",
+      "categories": [
+        "Glas"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3160",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3160-itemimages/3160b_8de8403f4bd38cb_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3160-itemimages/3160a_8de863d24c1393c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3161,
+      "title": "THERMOS, Georg Jensen ",
+      "description": "Design: Maria Berntsen / QuackHöjd:15 cmBredd: 21 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3161",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3161-itemimages/3161a_8de834e0713b4bc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3161-itemimages/3161b_8de834e077fa7bd_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3162,
+      "title": "GEFLE POLKETT",
+      "description": "Design: Arthur Percy för GefleGrötskål samt mjölkkanna 1950 talFlintgodsDiameter skål: 24 cm, Höjd kanna: 14 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3162",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3162-itemimages/3162a_8de834df603aaef_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3162-itemimages/3162b_8de834df6675a7a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3163,
+      "title": "LJUSSTAKAR, 1 par Georg Jensen Glow ",
+      "description": "Diameter: 10 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3163",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3163-itemimages/3163a_8de834de7e12100_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3163-itemimages/3163b_8de834de81a6890_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3164,
+      "title": "VINGLAS, 8 st, REMMARE",
+      "description": "Dekor av ranka, grönaHöjd: 18 cmMindre fotnagg på 2 st, litet nagg vid övre glasdelen på 1st",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3164",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3164-itemimages/3164b_8de834da2abb920_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3164-itemimages/3164c_8de834da3728dcc_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3164-itemimages/3164d_8de834da481588a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3164-itemimages/3164a_8de834ddca2125c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3165,
+      "title": "KAKBURK",
+      "description": "Emaljerad plåt, 3 delar samt lock1900 talets andra hälftHöjd: 25 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3165",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3165-itemimages/3165a_8de834c876ba5d1_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3165-itemimages/3165b_8de834c87f27398_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3166,
+      "title": "LJUSSTAKE Georg Jensen \"Season\"",
+      "description": "Design: Maria BerntsenRostfritt stålDiameter: 25 cm",
+      "categories": [
+        "Belysning"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3166",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3166-itemimages/3166a_8de834c7fdf378c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3166-itemimages/3166b_8de834c8025997c_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3167,
+      "title": "KAFFESERVIS, Karneval för Gefle",
+      "description": "Design: Helmer Ringström21 delar, 1900 talets första hälftDiameter: kopp 10 cm, fat 15,5 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3167",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3167-itemimages/3167a_8de834c74750b23_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3167-itemimages/3167b_8de834c74fe808a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3167-itemimages/3167c_8de834c75499860_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3168,
+      "title": "SKÅL, Georg Jensen \"BLOOM\"",
+      "description": "Design: Helle DamkjaerHöjd: 13 cmDiameter: 21 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3168",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3168-itemimages/3168a_8de834c550a5a15_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3168-itemimages/3168b_8de834c56229d84_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3169,
+      "title": "KAFFEKOPPAR, B&G",
+      "description": "Ur serien Golden SunDesign: Sigvard Bernadotte3 st koppar samt 3 st underfatDiameter: kopp 9,5 cm, fat 17 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Keramik"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3169",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3169-itemimages/3169c_8de834c4cae3672_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3169-itemimages/3169a_8de834c6b6010dd_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3170,
+      "title": "LJUSSTAKAR, 2 st  Georg Jensen, \"Cobra bricka\"",
+      "description": "Design: Constantin WortmannDiameter: 10 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3170",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3170-itemimages/3170a_8de834c34093120_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3170-itemimages/3170b_8de834c348966f0_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3171,
+      "title": "LJUSSTAKAR, 3 st Georg Jensen COBRA",
+      "description": "Designer: Constantin WortmannRostfritt stålHöjd: 16, 20, respektive 24 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3171",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3171-itemimages/3171a_8de83f34ea6c684_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3171-itemimages/3171b_8de83f34ef9a872_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3172,
+      "title": "BESTICK, TEAK  30 delar",
+      "description": "Design: Tias EckhoffLundtofte Danmark8 skedar+9 knivar+10 gafflar2 smörknivar+1 serveringsspade",
+      "categories": [
+        "Silver"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3172",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3172-itemimages/3172b_8de83f35b20c4ad_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3172-itemimages/3172a_8de863df50295c2_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3172-itemimages/3172b_8de863df5ab808a_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3173,
+      "title": "FIGURIN, Ballerina, porslin",
+      "description": "WallendorfMärkt 1318Höjd: ca 19 cm",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Skulpturer"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3173",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3173-itemimages/3173a_8de83f3646e355f_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3173-itemimages/3173b_8de83f364e4eb6a_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3173-itemimages/3173c_8de83f36546c4c6_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3174,
+      "title": "PORSLINSÄGG, par",
+      "description": "Kina, 1900-taletHöjd med sockel:  22 cm",
+      "categories": [
+        "Glas",
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3174",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3174-itemimages/3174a_8de83f3701d0aa4_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3174-itemimages/3174b_8de83f3707678a8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3174-itemimages/3174c_8de83f370c6e3f4_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3175,
+      "title": "LOCKURNA, Porslin Kina",
+      "description": "1900-talets senare delHöjd: 55 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3175",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3175-itemimages/3175a_8de83f37c606060_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3175-itemimages/3175b_8de83f37cbe8924_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3175-itemimages/3175c_8de83f37d14075c_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3175-itemimages/3175d_8de83f37d6919f7_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3176,
+      "title": "SYMASKIN, Husqvarna",
+      "description": "Huskystar E10",
+      "categories": [
+        "Diverse"
+      ],
+      "sourceCategories": [
+        "Diverse"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3176",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3176-itemimages/3176a_8de83f38624c7f9_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3176-itemimages/3176b_8de83f386839aa0_lg.jpeg"
+      ],
+      "currentBid": 200,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    },
+    {
+      "id": 3177,
+      "title": "KRUKA, Uppsala-Ekeby",
+      "description": "Ytterfoder modell: TunaHöjd: 20 cm",
+      "categories": [
+        "Porslin"
+      ],
+      "sourceCategories": [
+        "Glas och porslin"
+      ],
+      "url": "https://www.hallandsauktionsverk.se/inventories/3177",
+      "imageUrls": [
+        "https://nyahallands.media.skeleton.bbys.io/3177-itemimages/3177a_8de83f38d8530f8_lg.jpeg",
+        "https://nyahallands.media.skeleton.bbys.io/3177-itemimages/3177b_8de83f38df25be2_lg.jpeg"
+      ],
+      "currentBid": null,
+      "estimate": 0,
+      "endTime": "2026-03-29T14:00:05+00:00"
+    }
+  ]
+}

@@ -38,7 +38,7 @@ export async function generateMissingEmbeddings(): Promise<EmbeddingResult> {
     const { data: lots, error } = await supabase
       .from("auc_lots")
       .select(
-        "id, title, description, categories, ai_categories, artists, city, estimate, currency",
+        "id, title, description, categories, ai_categories, artists, city, estimate, currency, image_description",
       )
       .is("embedding", null)
       .gt("id", lastId)
@@ -66,6 +66,7 @@ export async function generateMissingEmbeddings(): Promise<EmbeddingResult> {
         city: lot.city,
         estimate: lot.estimate,
         currency: lot.currency,
+        imageDescription: lot.image_description,
       }),
     );
 
@@ -154,7 +155,7 @@ export async function regenerateEmbeddings(
     const { data: lots } = await supabase
       .from("auc_lots")
       .select(
-        "id, title, description, categories, ai_categories, artists, city, estimate, currency",
+        "id, title, description, categories, ai_categories, artists, city, estimate, currency, image_description",
       )
       .in("id", batchIds);
 
@@ -170,6 +171,7 @@ export async function regenerateEmbeddings(
         city: lot.city,
         estimate: lot.estimate,
         currency: lot.currency,
+        imageDescription: lot.image_description,
       }),
     );
 

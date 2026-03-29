@@ -144,6 +144,35 @@ create table if not exists auc_favorites (
 );
 
 -- ============================================
+-- USERS (application users linked to Google login)
+-- ============================================
+create table if not exists auc_users (
+  id            text primary key,
+  email         text not null unique,
+  name          text,
+  auth_provider text not null default 'google',
+  google_subject text unique,
+  image_url     text,
+  role          text not null default 'user' check (role in ('user', 'admin', 'owner')),
+  is_active     boolean not null default true,
+  last_login_at timestamptz,
+  created_at    timestamptz default now(),
+  updated_at    timestamptz default now()
+);
+
+-- ============================================
+-- USER FAVORITES (saved favorites per logged-in user)
+-- ============================================
+create table if not exists auc_user_favorites (
+  id            bigserial primary key,
+  user_id       text not null references auc_users(id) on delete cascade,
+  lot_id        bigint not null references auc_lots(id) on delete cascade,
+  created_at    timestamptz default now(),
+
+  unique(user_id, lot_id)
+);
+
+-- ============================================
 -- FEED SYNC LOG
 -- ============================================
 create table if not exists auc_sync_log (
@@ -157,6 +186,17 @@ create table if not exists auc_sync_log (
   error_message text,
   duration_ms   int,
   started_at    timestamptz default now()
+);
+
+-- ============================================
+-- SETTINGS (application configuration)
+-- ============================================
+create table if not exists auc_settings (
+  key           text primary key,
+  value_json    jsonb not null default '{}'::jsonb,
+  description   text,
+  created_at    timestamptz default now(),
+  updated_at    timestamptz default now()
 );
 
 -- ============================================
@@ -180,6 +220,8 @@ create index if not exists idx_auc_lots_end_time on auc_lots(end_time desc) wher
 
 create index if not exists idx_auc_price_history_lot on auc_price_history(lot_id, recorded_at desc);
 create index if not exists idx_auc_favorites_device on auc_favorites(device_id);
+create index if not exists idx_auc_users_role on auc_users(role);
+create index if not exists idx_auc_user_favorites_user on auc_user_favorites(user_id);
 
 -- ============================================
 -- FUNCTIONS
@@ -315,7 +357,10 @@ alter table auc_auctions enable row level security;
 alter table auc_lots enable row level security;
 alter table auc_price_history enable row level security;
 alter table auc_favorites enable row level security;
+alter table auc_users enable row level security;
+alter table auc_user_favorites enable row level security;
 alter table auc_sync_log enable row level security;
+alter table auc_settings enable row level security;
 
 -- No policies = anon/authenticated roles are blocked.
 -- Service role bypasses RLS automatically.
@@ -332,3 +377,22 @@ values (
   'Norrköping',
   'SE'
 ) on conflict (id) do nothing;
+
+insert into auc_settings (key, value_json, description)
+values
+  (
+    'ai.pricing.gemini-2.0-flash',
+    '{"inputUsdPer1M": 0, "outputUsdPer1M": 0}'::jsonb,
+    'AI pricing for Gemini 2.0 Flash in USD per 1M tokens'
+  ),
+  (
+    'ai.pricing.gemini-embedding-001',
+    '{"inputUsdPer1M": 0, "outputUsdPer1M": 0}'::jsonb,
+    'AI pricing for Gemini embedding model in USD per 1M tokens'
+  ),
+  (
+    'ai.exchange.usd_sek_rate',
+    '{"value": 0, "source": null, "fetchedAt": null}'::jsonb,
+    'Latest USD to SEK exchange rate used for AI cost estimation'
+  )
+on conflict (key) do nothing;

@@ -5,6 +5,8 @@
  * Free tier: 1500 requests/day — sufficient for daily feed ingestion.
  */
 
+import { extractGeminiUsageMetadata, logAiUsage } from "./ai-usage-log";
+
 const GEMINI_EMBED_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
 
@@ -31,6 +33,7 @@ interface BatchEmbedResponse {
 export async function generateEmbedding(text: string): Promise<number[]> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+  const startedAt = Date.now();
 
   const response = await fetch(`${GEMINI_EMBED_URL}?key=${apiKey}`, {
     method: "POST",
@@ -45,10 +48,31 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 
   if (!response.ok) {
     const err = await response.text();
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-embedding-001",
+      operation: "embed-document",
+      status: "error",
+      latencyMs: Date.now() - startedAt,
+      errorMessage: `Gemini embed error ${response.status}: ${err}`,
+      itemCount: 1,
+    });
     throw new Error(`Gemini embed error ${response.status}: ${err}`);
   }
 
   const data: EmbedResponse = await response.json();
+  const usage = extractGeminiUsageMetadata(data);
+  await logAiUsage({
+    provider: "google",
+    model: "gemini-embedding-001",
+    operation: "embed-document",
+    status: "success",
+    latencyMs: Date.now() - startedAt,
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+    itemCount: 1,
+  });
   return data.embedding.values;
 }
 
@@ -59,6 +83,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 export async function generateQueryEmbedding(query: string): Promise<number[]> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+  const startedAt = Date.now();
 
   const response = await fetch(`${GEMINI_EMBED_URL}?key=${apiKey}`, {
     method: "POST",
@@ -73,10 +98,31 @@ export async function generateQueryEmbedding(query: string): Promise<number[]> {
 
   if (!response.ok) {
     const err = await response.text();
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-embedding-001",
+      operation: "embed-query",
+      status: "error",
+      latencyMs: Date.now() - startedAt,
+      errorMessage: `Gemini query embed error ${response.status}: ${err}`,
+      itemCount: 1,
+    });
     throw new Error(`Gemini query embed error ${response.status}: ${err}`);
   }
 
   const data: EmbedResponse = await response.json();
+  const usage = extractGeminiUsageMetadata(data);
+  await logAiUsage({
+    provider: "google",
+    model: "gemini-embedding-001",
+    operation: "embed-query",
+    status: "success",
+    latencyMs: Date.now() - startedAt,
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+    itemCount: 1,
+  });
   return data.embedding.values;
 }
 
@@ -95,6 +141,7 @@ export async function generateBatchEmbeddings(
   const allEmbeddings: number[][] = [];
 
   for (const batch of batches) {
+    const startedAt = Date.now();
     const response = await fetch(`${GEMINI_BATCH_EMBED_URL}?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -110,10 +157,31 @@ export async function generateBatchEmbeddings(
 
     if (!response.ok) {
       const err = await response.text();
+      await logAiUsage({
+        provider: "google",
+        model: "gemini-embedding-001",
+        operation: "embed-batch",
+        status: "error",
+        latencyMs: Date.now() - startedAt,
+        errorMessage: `Gemini batch embed error ${response.status}: ${err}`,
+        itemCount: batch.length,
+      });
       throw new Error(`Gemini batch embed error ${response.status}: ${err}`);
     }
 
     const data: BatchEmbedResponse = await response.json();
+    const usage = extractGeminiUsageMetadata(data);
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-embedding-001",
+      operation: "embed-batch",
+      status: "success",
+      latencyMs: Date.now() - startedAt,
+      inputTokens: usage.promptTokenCount,
+      outputTokens: usage.candidatesTokenCount,
+      totalTokens: usage.totalTokenCount,
+      itemCount: batch.length,
+    });
     allEmbeddings.push(...data.embeddings.map((e) => e.values));
 
     // Rate limiting: small delay between batches

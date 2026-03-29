@@ -1,4 +1,5 @@
 import { createServerClient } from "./supabase";
+import { extractGeminiUsageMetadata, logAiUsage } from "./ai-usage-log";
 import { regenerateEmbeddings } from "./embedding-ingester";
 import { normalizeSearchText } from "./search-language";
 import { CATEGORY_ORDER } from "@/config/sources";
@@ -11,7 +12,7 @@ const BATCH_SIZE = 25;
 const DELAY_BETWEEN_BATCHES_MS = 400;
 const MAX_TAGS_PER_LOT = 8;
 
-interface SubjectEnrichmentResult {
+export interface SubjectEnrichmentResult {
   processed: number;
   errors: number;
   embedded: number;
@@ -94,7 +95,7 @@ function sanitizeTags(tags: string[] | undefined) {
 
   const normalized = tags
     .map((tag) => normalizeSearchText(String(tag)))
-    .flatMap((tag) => tag.split(" ").length > 6 ? [] : [tag])
+    .flatMap((tag) => (tag.split(" ").length > 6 ? [] : [tag]))
     .filter((tag) => tag.length >= 3)
     .slice(0, MAX_TAGS_PER_LOT);
 
@@ -106,7 +107,9 @@ function sanitizeCanonicalCategories(categories: string[] | undefined) {
 
   const normalized = categories
     .map((category) => String(category).trim())
-    .filter((category) => CANONICAL_CATEGORY_SET.has(category as (typeof CATEGORY_ORDER)[number]))
+    .filter((category) =>
+      CANONICAL_CATEGORY_SET.has(category as (typeof CATEGORY_ORDER)[number]),
+    )
     .slice(0, 2);
 
   return Array.from(new Set(normalized));
@@ -117,6 +120,7 @@ async function generateSubjectTagsForBatch(
 ): Promise<Map<number, EnrichmentPayload>> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+  const startedAt = Date.now();
 
   const response = await fetch(`${GEMINI_GENERATE_URL}?key=${apiKey}`, {
     method: "POST",
@@ -150,10 +154,33 @@ async function generateSubjectTagsForBatch(
 
   if (!response.ok) {
     const err = await response.text();
-    throw new Error(`Gemini subject enrichment error ${response.status}: ${err}`);
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-2.0-flash",
+      operation: "subject-enrichment",
+      status: "error",
+      latencyMs: Date.now() - startedAt,
+      errorMessage: `Gemini subject enrichment error ${response.status}: ${err}`,
+      itemCount: lots.length,
+    });
+    throw new Error(
+      `Gemini subject enrichment error ${response.status}: ${err}`,
+    );
   }
 
   const data = await response.json();
+  const usage = extractGeminiUsageMetadata(data);
+  await logAiUsage({
+    provider: "google",
+    model: "gemini-2.0-flash",
+    operation: "subject-enrichment",
+    status: "success",
+    latencyMs: Date.now() - startedAt,
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+    itemCount: lots.length,
+  });
   const text =
     data.candidates?.[0]?.content?.parts
       ?.map((part: { text?: string }) => part.text ?? "")
@@ -173,6 +200,119 @@ async function generateSubjectTagsForBatch(
   return result;
 }
 
+export async function enrichSubjectTagsForLotIds(
+  lotIds: number[],
+): Promise<SubjectEnrichmentResult> {
+  const startTime = Date.now();
+  const supabase = createServerClient();
+  let processed = 0;
+  let errors = 0;
+  let embedded = 0;
+
+  const { data, error } = await supabase
+    .from("auc_lots")
+    .select(
+      "id, title, description, categories, ai_categories, end_time, availability, raw_data",
+    )
+    .in("id", lotIds)
+    .order("id", { ascending: true });
+
+  if (error) {
+    throw new Error(`[subjects] Fetch error: ${error.message}`);
+  }
+
+  const lots = (data ?? []) as LotForSubjectEnrichment[];
+  const batches: LotForSubjectEnrichment[][] = [];
+
+  for (let index = 0; index < lots.length; index += BATCH_SIZE) {
+    batches.push(lots.slice(index, index + BATCH_SIZE));
+  }
+
+  for (const batch of batches) {
+    const pendingLots = batch.filter(
+      (lot) =>
+        !lot.ai_categories ||
+        lot.ai_categories.length === 0 ||
+        needsCanonicalCategoryReview({
+          categories: lot.categories,
+          rawCategories: lot.raw_data?.category,
+        }),
+    );
+
+    if (!pendingLots.length) {
+      continue;
+    }
+
+    try {
+      const generatedTags = await generateSubjectTagsForBatch(pendingLots);
+      const updatedIds: number[] = [];
+
+      for (const lot of pendingLots) {
+        const enrichment = generatedTags.get(lot.id) ?? {
+          tags: [],
+          categories: [],
+        };
+        const nextUpdate: Record<string, unknown> = {};
+
+        if (
+          !lot.ai_categories ||
+          lot.ai_categories.length === 0 ||
+          enrichment.tags.length > 0
+        ) {
+          nextUpdate.ai_categories = enrichment.tags;
+          nextUpdate.embedding = null;
+        }
+
+        if (
+          needsCanonicalCategoryReview({
+            categories: lot.categories,
+            rawCategories: lot.raw_data?.category,
+          }) &&
+          enrichment.categories.length > 0
+        ) {
+          nextUpdate.categories = enrichment.categories;
+          nextUpdate.embedding = null;
+        }
+
+        if (Object.keys(nextUpdate).length === 0) {
+          continue;
+        }
+
+        const { error: updateError } = await supabase
+          .from("auc_lots")
+          .update(nextUpdate)
+          .eq("id", lot.id);
+
+        if (updateError) {
+          errors++;
+          continue;
+        }
+
+        processed++;
+        updatedIds.push(lot.id);
+      }
+
+      if (updatedIds.length) {
+        const embeddingResult = await regenerateEmbeddings(updatedIds);
+        embedded += embeddingResult.processed;
+        errors += embeddingResult.errors;
+      }
+
+      await sleep(DELAY_BETWEEN_BATCHES_MS);
+    } catch {
+      errors += pendingLots.length;
+      await sleep(DELAY_BETWEEN_BATCHES_MS);
+    }
+  }
+
+  return {
+    processed,
+    errors,
+    embedded,
+    durationMs: Date.now() - startTime,
+  };
+}
+
 export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentResult> {
   const startTime = Date.now();
   const supabase = createServerClient();
@@ -182,12 +322,16 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
   let lastId = 0;
   const nowIso = new Date().toISOString();
 
-  console.log("[subjects] Starting AI subject-tag enrichment for active lots...");
+  console.log(
+    "[subjects] Starting AI subject-tag enrichment for active lots...",
+  );
 
   while (true) {
     const { data, error } = await supabase
       .from("auc_lots")
-      .select("id, title, description, categories, ai_categories, end_time, availability, raw_data")
+      .select(
+        "id, title, description, categories, ai_categories, end_time, availability, raw_data",
+      )
       .gt("id", lastId)
       .gt("end_time", nowIso)
       .is("availability", null)

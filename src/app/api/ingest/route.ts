@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ingestAllFeeds, ingestFeedDataOnly } from "@/lib/feed-ingester";
-import { generateMissingEmbeddings } from "@/lib/embedding-ingester";
+import { runIngestPipeline } from "@/lib/ingest-pipeline";
 
 /**
  * POST /api/ingest
@@ -8,7 +7,7 @@ import { generateMissingEmbeddings } from "@/lib/embedding-ingester";
  * Triggered by Vercel Cron (see vercel.json) or manually.
  * Protected by CRON_SECRET.
  *
- * Default pipeline: evening feed sync and embeddings.
+ * Default pipeline: evening feed sync, subject enrichment and embeddings.
  * Use ?mode=full manually when both feed sync and sold-price refresh are needed.
  */
 export async function POST(request: NextRequest) {
@@ -22,31 +21,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const mode = request.nextUrl.searchParams.get("mode");
-    const feedResults =
-      mode === "full" ? await ingestAllFeeds() : await ingestFeedDataOnly();
+    const result = await runIngestPipeline(mode === "full" ? "full" : "feed");
 
-    // Step 2: Generate embeddings for newly added lots (if Gemini key configured)
-    let embeddingResult = null;
-    if (process.env.GEMINI_API_KEY) {
-      try {
-        embeddingResult = await generateMissingEmbeddings();
-      } catch (embErr) {
-        console.error("[api/ingest] Embedding generation failed:", embErr);
-        embeddingResult = {
-          processed: 0,
-          errors: 0,
-          durationMs: 0,
-          error: embErr instanceof Error ? embErr.message : "Unknown",
-        };
-      }
-    }
-
-    return NextResponse.json({
-      ok: true,
-      feedResults,
-      embeddingResult,
-      timestamp: new Date().toISOString(),
-    });
+    return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error("[api/ingest] Fatal error:", error);
     return NextResponse.json(

@@ -12,6 +12,7 @@
  */
 
 import { createServerClient } from "./supabase";
+import { extractGeminiUsageMetadata, logAiUsage } from "./ai-usage-log";
 import { generateQueryEmbedding } from "./embeddings";
 import { formatDate, formatSEK } from "./utils";
 import { FEED_SOURCES } from "@/config/sources";
@@ -1524,6 +1525,8 @@ ${contextBlock}
 
 FRÅGA: ${userQuery}`;
 
+  const startedAt = Date.now();
+
   const response = await fetch(`${GEMINI_GENERATE_URL}?key=${apiKey}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1542,10 +1545,31 @@ FRÅGA: ${userQuery}`;
 
   if (!response.ok) {
     const err = await response.text();
+    await logAiUsage({
+      provider: "google",
+      model: "gemini-2.0-flash",
+      operation: "rag-answer",
+      status: "error",
+      latencyMs: Date.now() - startedAt,
+      errorMessage: `Gemini generation error ${response.status}: ${err}`,
+      itemCount: contextLots.length,
+    });
     throw new Error(`Gemini generation error ${response.status}: ${err}`);
   }
 
   const data = await response.json();
+  const usage = extractGeminiUsageMetadata(data);
+  await logAiUsage({
+    provider: "google",
+    model: "gemini-2.0-flash",
+    operation: "rag-answer",
+    status: "success",
+    latencyMs: Date.now() - startedAt,
+    inputTokens: usage.promptTokenCount,
+    outputTokens: usage.candidatesTokenCount,
+    totalTokens: usage.totalTokenCount,
+    itemCount: contextLots.length,
+  });
   const answer =
     data.candidates?.[0]?.content?.parts?.[0]?.text ??
     "Jag kunde tyvärr inte generera ett svar just nu.";

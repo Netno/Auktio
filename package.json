@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ingest": "npx tsx --env-file=.env.local src/lib/feed-ingester.ts",
-    "ingest:feed": "npx tsx --env-file=.env.local -e \"import { ingestFeedDataOnly } from './src/lib/feed-ingester.ts'; ingestFeedDataOnly().then((results) => { console.log(JSON.stringify(results, null, 2)); process.exit(0); }).catch((error) => { console.error(error); process.exit(1); });\"",
+    "ingest": "npx tsx --env-file=.env.local src/lib/ingest-pipeline.ts full",
+    "ingest:feed": "npx tsx --env-file=.env.local src/lib/ingest-pipeline.ts feed",
     "ingest:sold-prices": "npx tsx --env-file=.env.local -e \"import { refreshAllSoldPrices } from './src/lib/feed-ingester.ts'; refreshAllSoldPrices().then((results) => { console.log(JSON.stringify(results, null, 2)); process.exit(0); }).catch((error) => { console.error(error); process.exit(1); });\"",
     "embed": "npx tsx --env-file=.env.local src/lib/embedding-ingester.ts",
     "describe": "npx tsx --env-file=.env.local src/lib/vision-describer.ts",
@@ -19,12 +19,14 @@
     "db:setup": "npx tsx supabase/setup.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.39.0",
-    "next": "14.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "date-fns": "^3.3.0",
     "lucide-react": "^0.312.0",
-    "date-fns": "^3.3.0"
+    "next": "14.2.0",
+    "next-auth": "^4.24.13",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
