@@ -20,11 +20,7 @@ type HeaderNavItem = {
   active: boolean;
 };
 
-function HeaderMenu({
-  items,
-}: {
-  items: HeaderNavItem[];
-}) {
+function HeaderMenu({ items }: { items: HeaderNavItem[] }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 

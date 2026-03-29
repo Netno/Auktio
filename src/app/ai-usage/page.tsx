@@ -46,9 +46,7 @@ export default async function AiUsagePage() {
         <Header />
         <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-12 sm:px-6">
           <div className="rounded-3xl border border-brand-200 bg-white p-8 shadow-card">
-            <h1 className="font-serif text-3xl text-brand-900">
-              AI-statistik
-            </h1>
+            <h1 className="font-serif text-3xl text-brand-900">AI-statistik</h1>
             <p className="mt-3 text-sm leading-6 text-brand-700">
               Du måste vara inloggad för att se AI-användning och kostnadsdata.
             </p>
@@ -70,9 +68,7 @@ export default async function AiUsagePage() {
         <Header />
         <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-12 sm:px-6">
           <div className="rounded-3xl border border-brand-200 bg-white p-8 shadow-card">
-            <h1 className="font-serif text-3xl text-brand-900">
-              AI-statistik
-            </h1>
+            <h1 className="font-serif text-3xl text-brand-900">AI-statistik</h1>
             <p className="mt-3 text-sm leading-6 text-brand-700">
               Ditt konto saknar rättighet att se AI-användning och kostnadsdata.
             </p>
