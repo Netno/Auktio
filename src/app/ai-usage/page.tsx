@@ -6,6 +6,7 @@ import { canAccessAdmin } from "@/lib/app-users";
 import { authOptions } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
+const REPORT_TIME_ZONE = "Europe/Stockholm";
 
 function formatInteger(value: number) {
   return value.toLocaleString("sv-SE");
@@ -30,10 +31,22 @@ function formatHourLabel(value: string) {
   }
 
   return date.toLocaleString("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+function formatDateLabel(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
   });
 }
 
@@ -120,13 +133,13 @@ export default async function AiUsagePage() {
               </div>
               <div className="mt-1 text-sm font-medium text-slate-200">
                 {report.startedAt
-                  ? new Date(report.startedAt).toLocaleDateString("sv-SE")
+                  ? formatDateLabel(report.startedAt)
                   : "Ingen data än"}
               </div>
               <div className="mt-2 text-xs text-slate-500">
                 USD/SEK: {report.pricing.usdToSek?.toFixed(4) ?? "ej satt"}
                 {report.pricing.usdToSekFetchedAt
-                  ? ` • hämtad ${new Date(report.pricing.usdToSekFetchedAt).toLocaleDateString("sv-SE")}`
+                  ? ` • hämtad ${formatDateLabel(report.pricing.usdToSekFetchedAt)}`
                   : ""}
               </div>
             </div>

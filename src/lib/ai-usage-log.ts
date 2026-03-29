@@ -98,6 +98,7 @@ type GeminiUsageMetadata = {
 };
 
 const AI_USAGE_STATUSES = ["ai-success", "ai-error", "ai-cache-hit"];
+const REPORT_TIME_ZONE = "Europe/Stockholm";
 
 function statusToSyncLogStatus(status: AiUsageStatus) {
   return `ai-${status}`;
@@ -105,6 +106,38 @@ function statusToSyncLogStatus(status: AiUsageStatus) {
 
 function safeNumber(value: unknown) {
   return Number.isFinite(value) ? Number(value) : 0;
+}
+
+function formatInTimeZone(value: string, options: Intl.DateTimeFormatOptions) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    ...options,
+  });
+
+  return formatter.format(date);
+}
+
+function getLocalDayKey(value: string) {
+  return formatInTimeZone(value, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+function getLocalHourKey(value: string) {
+  return formatInTimeZone(value, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  });
 }
 
 function parseAiUsagePayload(row: SyncLogRow): ParsedAiUsageRow | null {
@@ -254,7 +287,11 @@ export async function getAiUsageDashboardData(
       hasEstimatedCost = true;
     }
 
-    const dayKey = row.createdAt.slice(0, 10);
+    const dayKey = getLocalDayKey(row.createdAt);
+    if (!dayKey) {
+      continue;
+    }
+
     const dayEntry = dailyMap.get(dayKey) ?? {
       date: dayKey,
       requests: 0,
@@ -281,7 +318,12 @@ export async function getAiUsageDashboardData(
     }
     dailyMap.set(dayKey, dayEntry);
 
-    const hourKey = row.createdAt.slice(0, 13) + ":00";
+    const localHourKey = getLocalHourKey(row.createdAt);
+    if (!localHourKey) {
+      continue;
+    }
+
+    const hourKey = `${localHourKey}:00`;
     const hourEntry = hourlyMap.get(hourKey) ?? {
       hour: hourKey,
       requests: 0,
