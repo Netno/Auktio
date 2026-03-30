@@ -578,7 +578,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               {formatInteger(lotAudit.lots.length)}
             </div>
             <div className="text-[12px] text-brand-600">
-              av {formatInteger(lotAudit.summary.total)} matchande
+              av {formatInteger(lotAudit.matchingTotal)} matchande
             </div>
           </div>
           <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
@@ -622,10 +622,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </div>
           </div>
 
-          {lotAudit.summary.total > lotAudit.lots.length && (
+          {lotAudit.matchingTotal > lotAudit.lots.length && (
             <div className="rounded-2xl border border-brand-200 bg-brand-50 px-3 py-3 text-[12px] text-brand-600 md:col-span-2 xl:col-span-6">
               Visar de första {formatInteger(lotAudit.lots.length)} av{" "}
-              {formatInteger(lotAudit.summary.total)} matchande lotter.
+              {formatInteger(lotAudit.matchingTotal)} matchande lotter.
             </div>
           )}
         </section>

@@ -48,7 +48,7 @@ export type IngestRunSummary = {
 };
 
 export type MissingLotSummary = {
-  total: number;
+  scopeTotal: number;
   missingCategories: number;
   missingAiTags: number;
   missingImageDescription: number;
@@ -241,10 +241,10 @@ export async function getAdminLotAudit(filters: AdminLotFilters = {}) {
     return selectedMissingFlags.some((flag) => missing.includes(flag));
   });
 
-  const summary = filteredRows.reduce<MissingLotSummary>(
+  const summary = rows.reduce<MissingLotSummary>(
     (accumulator, row) => {
       const missing = getMissingFlags(row);
-      accumulator.total += 1;
+      accumulator.scopeTotal += 1;
       accumulator.missingCategories += missing.includes("categories") ? 1 : 0;
       accumulator.missingAiTags += missing.includes("ai-tags") ? 1 : 0;
       accumulator.missingImageDescription += missing.includes(
@@ -256,7 +256,7 @@ export async function getAdminLotAudit(filters: AdminLotFilters = {}) {
       return accumulator;
     },
     {
-      total: 0,
+      scopeTotal: 0,
       missingCategories: 0,
       missingAiTags: 0,
       missingImageDescription: 0,
@@ -278,6 +278,7 @@ export async function getAdminLotAudit(filters: AdminLotFilters = {}) {
 
   return {
     summary,
+    matchingTotal: filteredRows.length,
     lots,
   };
 }
