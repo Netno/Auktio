@@ -7,6 +7,7 @@ import {
   extractCompoundDescriptorTerms,
   extractCompoundObjectTerms,
 } from "./search-object-intent";
+import { getQueryUnderstandingTerms } from "./search-query-understanding";
 
 export function buildQueryTextMatchTerms(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
@@ -20,6 +21,7 @@ export function buildQueryTextMatchTerms(query: string) {
         ...expandSemanticTerms(query),
         ...extractCompoundDescriptorTerms(query),
         ...extractCompoundObjectTerms(query),
+        ...getQueryUnderstandingTerms(query),
       ]
         .flatMap((value) => value.split(" "))
         .map((value) => value.trim())
@@ -48,6 +50,7 @@ export function buildQueryScoringTerms(query: string) {
         ...extractQueryTerms(query),
         ...extractCompoundDescriptorTerms(query),
         ...extractCompoundObjectTerms(query),
+        ...getQueryUnderstandingTerms(query),
       ]
         .flatMap((value) => value.split(" "))
         .map((value) => value.trim())

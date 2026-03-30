@@ -17,6 +17,11 @@ import {
   shouldRequirePrimaryObjectMatch,
   shouldRequireModifierMatch,
 } from "@/lib/search-object-intent";
+import {
+  evaluateQueryUnderstandingMatch,
+  shouldRequireQueryUnderstandingMatch,
+  understandSearchQuery,
+} from "@/lib/search-query-understanding";
 import type { SortOption } from "@/lib/types";
 
 export interface RankableLot {
@@ -260,6 +265,7 @@ export function rankLotsByRelevance<T extends RankableLot>(
   const { queryTerms, expandedQueryTerms } = buildQueryScoringTerms(query);
   const normalizedQuery = normalizeSearchQuery(query);
   const concreteQuery = isConcreteObjectQuery(query);
+  const understanding = understandSearchQuery(query);
   const primaryObjectIntent = detectPrimaryObjectIntent(query);
   const queryModifierTerms = detectQueryModifierTerms(
     query,
@@ -324,12 +330,17 @@ export function rankLotsByRelevance<T extends RankableLot>(
       const objectMatch = evaluateObjectMatch(lot, primaryObjectIntent);
       const modifierMatch = evaluateModifierMatch(lot, queryModifierTerms);
       const collectionMatch = evaluateCollectionMatch(lot);
+      const queryUnderstandingMatch = evaluateQueryUnderstandingMatch(
+        lot,
+        understanding,
+      );
 
       let score =
         lexicalScore * (concreteQuery ? 1.8 : 1.2) +
         expandedLexicalScore * (concreteQuery ? 1.15 : 0.75) +
         vectorScore * 3 +
-        extraScore(lot);
+        extraScore(lot) +
+        queryUnderstandingMatch.score;
 
       if (primaryObjectIntent) {
         score += getObjectAwareScoreBoost(objectMatch, concreteQuery);
@@ -386,6 +397,9 @@ export function rankLotsByRelevance<T extends RankableLot>(
         hasObjectMatch: objectMatch.hasMatch,
         hasModifierMatch: modifierMatch.hasMatch,
         hasCollectionMatch: collectionMatch.hasMatch,
+        hasQueryUnderstandingMatch: queryUnderstandingMatch.hasMatch,
+        hasStrongQueryUnderstandingMatch:
+          queryUnderstandingMatch.hasStrongMatch,
       };
     })
     .filter(
@@ -410,13 +424,32 @@ export function rankLotsByRelevance<T extends RankableLot>(
     ? rankedEntries.filter((entry) => entry.hasObjectMatch)
     : rankedEntries;
 
+  const queryUnderstandingQualifiedRows = understanding.concepts.length
+    ? rankedEntries.filter((entry) => entry.hasQueryUnderstandingMatch)
+    : rankedEntries;
+
+  const rowsAfterQueryUnderstandingFilter =
+    shouldRequireQueryUnderstandingMatch(
+      understanding,
+      queryUnderstandingQualifiedRows.length,
+    )
+      ? queryUnderstandingQualifiedRows
+      : rankedEntries;
+
+  const objectRowsBase = shouldRequireQueryUnderstandingMatch(
+    understanding,
+    queryUnderstandingQualifiedRows.length,
+  )
+    ? queryUnderstandingQualifiedRows
+    : objectQualifiedRows;
+
   const rowsAfterObjectFilter = shouldRequirePrimaryObjectMatch(
     query,
     primaryObjectIntent,
-    objectQualifiedRows.length,
+    objectRowsBase.filter((entry) => entry.hasObjectMatch).length,
   )
-    ? objectQualifiedRows
-    : rankedEntries;
+    ? objectRowsBase.filter((entry) => entry.hasObjectMatch)
+    : rowsAfterQueryUnderstandingFilter;
 
   const lexicalQualifiedRows = rowsAfterObjectFilter.filter(
     (entry) =>

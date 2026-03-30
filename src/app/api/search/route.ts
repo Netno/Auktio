@@ -11,6 +11,10 @@ import {
 import { buildQueryTextMatchClauses } from "@/lib/search-text-match";
 import { detectCategoryIntent } from "@/lib/search-category-intent";
 import { getDidYouMeanQuery } from "@/lib/search-spelling";
+import {
+  getQueryUnderstandingSemanticPhrases,
+  getQueryUnderstandingTerms,
+} from "@/lib/search-query-understanding";
 import { rankLotsByRelevance } from "@/lib/search-relevance";
 import { FEED_SOURCES } from "@/config/sources";
 import type {
@@ -309,10 +313,17 @@ function getDefaultSort(status: SearchStatus, query?: string): SortOption {
 function buildExpandedSemanticQuery(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
   const expandedTerms = expandSemanticTerms(query);
+  const queryUnderstandingTerms = getQueryUnderstandingTerms(query);
+  const semanticPhrases = getQueryUnderstandingSemanticPhrases(query);
 
   return Array.from(
     new Set(
-      [normalizedQuery, ...expandedTerms]
+      [
+        normalizedQuery,
+        ...expandedTerms,
+        ...queryUnderstandingTerms,
+        ...semanticPhrases,
+      ]
         .flatMap((value) => value.split(" "))
         .map((value) => value.trim())
         .filter(Boolean),
@@ -407,10 +418,11 @@ function applySearchCriteria(
 function buildLexicalCandidateQuery(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
   const expandedTerms = extractQueryTerms(query);
+  const queryUnderstandingTerms = getQueryUnderstandingTerms(query);
 
   return Array.from(
     new Set(
-      [normalizedQuery, ...expandedTerms]
+      [normalizedQuery, ...expandedTerms, ...queryUnderstandingTerms]
         .flatMap((value) => value.split(" "))
         .map((value) => value.trim())
         .filter(Boolean),
@@ -511,7 +523,11 @@ async function getLexicalCandidateIds(
 
   const aiCategoryTerms = Array.from(
     new Set(
-      [normalizeSearchQuery(params.query), ...expandSemanticTerms(params.query)]
+      [
+        normalizeSearchQuery(params.query),
+        ...expandSemanticTerms(params.query),
+        ...getQueryUnderstandingTerms(params.query),
+      ]
         .flatMap((value) => value.split(" "))
         .map((value) => value.trim())
         .filter((value) => value.length >= 3),
