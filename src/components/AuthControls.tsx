@@ -231,10 +231,10 @@ export function AuthControls() {
         type="button"
         onClick={handleSignIn}
         disabled={submitting}
-        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-1.5 text-[13px] font-medium text-white/82 transition-all hover:border-white/20 hover:bg-white/[0.1] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-4 py-1.5 text-[13px] font-semibold text-brand-900 shadow-sm transition-all hover:border-white hover:bg-white hover:text-brand-950 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        <LogIn size={14} />
-        <span>Logga in</span>
+        <LogIn size={14} className="text-brand-900" />
+        <span>Logga in / skapa konto</span>
       </button>
       {errorMessage && (
         <div className="mt-1 text-[11px] text-rose-300">{errorMessage}</div>

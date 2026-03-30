@@ -334,7 +334,8 @@ export function HomePageClient() {
             </span>
             <span>Logga in för att bevaka objekt.</span>
             <span className="text-brand-500">
-              Dina bevakningar sparas pa ditt konto och foljer med mellan enheter.
+              Dina bevakningar sparas pa ditt konto och foljer med mellan
+              enheter.
             </span>
           </div>
         </div>
