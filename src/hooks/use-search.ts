@@ -13,6 +13,7 @@ import type {
 
 interface UseSearchOptions {
   lotIds?: number[];
+  favoritesMode?: boolean;
 }
 
 interface UseSearchReturn {
@@ -213,6 +214,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       query: string;
       searchMode: SearchMode;
       status: SearchStatus;
+      favoritesMode?: boolean;
       lotIds?: number[];
       categories: string[];
       auctionIds: number[];
@@ -230,51 +232,70 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       setLoading(true);
       setError(null);
 
+      const isFavoritesMode = params.favoritesMode === true;
+      const effectiveQuery = isFavoritesMode ? "" : params.query;
+      const effectiveStatus = isFavoritesMode ? "all" : params.status;
+      const effectiveCategories = isFavoritesMode ? [] : params.categories;
+      const effectiveAuctionIds = isFavoritesMode ? [] : params.auctionIds;
+      const effectiveAuctionTitles = isFavoritesMode
+        ? []
+        : params.auctionTitles;
+      const effectiveCity = isFavoritesMode ? "" : params.city;
+      const effectiveHouseId = isFavoritesMode ? "" : params.houseId;
+      const effectiveHasBids = isFavoritesMode ? false : params.hasBids;
+      const effectiveSoldOnly = isFavoritesMode ? false : params.soldOnly;
+      const effectiveMinPrice = isFavoritesMode ? undefined : params.minPrice;
+      const effectiveMaxPrice = isFavoritesMode ? undefined : params.maxPrice;
+      const effectiveSortBy =
+        isFavoritesMode && params.sortBy === "relevance"
+          ? getDefaultSort("all", "")
+          : params.sortBy;
+
       const urlParams = new URLSearchParams();
       const requestParams = new URLSearchParams();
-      if (params.query) urlParams.set("q", params.query);
-      if (params.query) requestParams.set("q", params.query);
+      if (effectiveQuery) urlParams.set("q", effectiveQuery);
+      if (effectiveQuery) requestParams.set("q", effectiveQuery);
       if (params.searchMode !== DEFAULT_SEARCH_MODE) {
         urlParams.set("mode", params.searchMode);
         requestParams.set("mode", params.searchMode);
       }
-      if (params.status !== DEFAULT_STATUS)
-        urlParams.set("status", params.status);
-      if (params.status !== DEFAULT_STATUS)
-        requestParams.set("status", params.status);
+      if (effectiveStatus !== DEFAULT_STATUS)
+        urlParams.set("status", effectiveStatus);
+      if (effectiveStatus !== DEFAULT_STATUS)
+        requestParams.set("status", effectiveStatus);
       if (params.lotIds) {
         requestParams.set("ids", params.lotIds.join(","));
       }
-      if (params.categories.length)
-        urlParams.set("categories", params.categories.join(","));
-      if (params.categories.length)
-        requestParams.set("categories", params.categories.join(","));
-      if (params.auctionIds.length)
-        urlParams.set("auctionId", params.auctionIds.join(","));
-      if (params.auctionIds.length)
-        requestParams.set("auctionId", params.auctionIds.join(","));
-      for (const title of params.auctionTitles) {
+      if (effectiveCategories.length)
+        urlParams.set("categories", effectiveCategories.join(","));
+      if (effectiveCategories.length)
+        requestParams.set("categories", effectiveCategories.join(","));
+      if (effectiveAuctionIds.length)
+        urlParams.set("auctionId", effectiveAuctionIds.join(","));
+      if (effectiveAuctionIds.length)
+        requestParams.set("auctionId", effectiveAuctionIds.join(","));
+      for (const title of effectiveAuctionTitles) {
         urlParams.append("auctionTitle", title);
       }
-      if (params.city) urlParams.set("city", params.city);
-      if (params.city) requestParams.set("city", params.city);
-      if (params.houseId) urlParams.set("houseId", params.houseId);
-      if (params.houseId) requestParams.set("houseId", params.houseId);
-      if (params.hasBids) urlParams.set("hasBids", "true");
-      if (params.hasBids) requestParams.set("hasBids", "true");
-      if (params.soldOnly) urlParams.set("soldOnly", "true");
-      if (params.soldOnly) requestParams.set("soldOnly", "true");
-      if (params.minPrice != null)
-        urlParams.set("minPrice", String(params.minPrice));
-      if (params.minPrice != null)
-        requestParams.set("minPrice", String(params.minPrice));
-      if (params.maxPrice != null)
-        urlParams.set("maxPrice", String(params.maxPrice));
-      if (params.maxPrice != null)
-        requestParams.set("maxPrice", String(params.maxPrice));
-      if (params.sortBy !== getDefaultSort(params.status, params.query)) {
-        urlParams.set("sort", params.sortBy);
-        requestParams.set("sort", params.sortBy);
+      if (effectiveCity) urlParams.set("city", effectiveCity);
+      if (effectiveCity) requestParams.set("city", effectiveCity);
+      if (effectiveHouseId) urlParams.set("houseId", effectiveHouseId);
+      if (effectiveHouseId) requestParams.set("houseId", effectiveHouseId);
+      if (effectiveHasBids) urlParams.set("hasBids", "true");
+      if (effectiveHasBids) requestParams.set("hasBids", "true");
+      if (effectiveSoldOnly) urlParams.set("soldOnly", "true");
+      if (effectiveSoldOnly) requestParams.set("soldOnly", "true");
+      if (effectiveMinPrice != null)
+        urlParams.set("minPrice", String(effectiveMinPrice));
+      if (effectiveMinPrice != null)
+        requestParams.set("minPrice", String(effectiveMinPrice));
+      if (effectiveMaxPrice != null)
+        urlParams.set("maxPrice", String(effectiveMaxPrice));
+      if (effectiveMaxPrice != null)
+        requestParams.set("maxPrice", String(effectiveMaxPrice));
+      if (effectiveSortBy !== getDefaultSort(effectiveStatus, effectiveQuery)) {
+        urlParams.set("sort", effectiveSortBy);
+        requestParams.set("sort", effectiveSortBy);
       }
       if (params.page > 1) urlParams.set("page", String(params.page));
       if (params.page > 1) requestParams.set("page", String(params.page));
@@ -306,10 +327,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       }
 
       // Sync URL (without triggering navigation)
-      const newUrl = urlParams.toString()
-        ? `?${urlParams.toString()}`
-        : window.location.pathname;
-      router.replace(newUrl, { scroll: false });
+      if (!isFavoritesMode) {
+        const newUrl = urlParams.toString()
+          ? `?${urlParams.toString()}`
+          : window.location.pathname;
+        router.replace(newUrl, { scroll: false });
+      }
     },
     [router],
   );
@@ -320,6 +343,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       query: debouncedQuery,
       searchMode,
       status,
+      favoritesMode: options?.favoritesMode,
       lotIds: options?.lotIds,
       categories: selectedCategories,
       auctionIds: selectedAuctionIds,

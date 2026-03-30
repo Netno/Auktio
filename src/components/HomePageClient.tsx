@@ -62,6 +62,7 @@ export function HomePageClient() {
   const {
     favorites,
     toggleFavorite,
+    openFavorites,
     isFavorite,
     count: favCount,
   } = useFavorites();
@@ -100,6 +101,7 @@ export function HomePageClient() {
     setPageSize,
     clearFilters,
   } = useSearch({
+    favoritesMode: showFavsOnly,
     lotIds: showFavsOnly ? Array.from(favorites) : undefined,
   });
   const { suggestions: remoteSuggestions, loading: suggestionsLoading } =
@@ -111,17 +113,17 @@ export function HomePageClient() {
       selectedHouseId,
     });
 
-  const activeFilterCount =
-    selectedCategories.length +
-    (selectedAuctionIds.length > 0 ? 1 : 0) +
-    (selectedCity ? 1 : 0) +
-    (selectedHouseId ? 1 : 0) +
-    (hasBids ? 1 : 0) +
-    (soldOnly ? 1 : 0) +
-    (status !== "active" ? 1 : 0) +
-    (minPrice != null ? 1 : 0) +
-    (maxPrice != null ? 1 : 0) +
-    (showFavsOnly ? 1 : 0);
+  const activeFilterCount = showFavsOnly
+    ? 1
+    : selectedCategories.length +
+      (selectedAuctionIds.length > 0 ? 1 : 0) +
+      (selectedCity ? 1 : 0) +
+      (selectedHouseId ? 1 : 0) +
+      (hasBids ? 1 : 0) +
+      (soldOnly ? 1 : 0) +
+      (status !== "active" ? 1 : 0) +
+      (minPrice != null ? 1 : 0) +
+      (maxPrice != null ? 1 : 0);
 
   const displayLots = lots;
   const soldPriceCount = displayLots.filter(
@@ -296,7 +298,18 @@ export function HomePageClient() {
       <Header
         favoritesCount={favCount}
         showFavsOnly={showFavsOnly}
-        onToggleFavs={() => setShowFavsOnly(!showFavsOnly)}
+        onToggleFavs={async () => {
+          if (showFavsOnly) {
+            setShowFavsOnly(false);
+            return;
+          }
+
+          const canOpenFavorites = await openFavorites();
+
+          if (canOpenFavorites) {
+            setShowFavsOnly(true);
+          }
+        }}
       />
 
       <SearchHero
@@ -313,11 +326,25 @@ export function HomePageClient() {
         onMobileSearchActivate={scrollToSearchTop}
       />
 
+      {!showFavsOnly && (
+        <div className="mx-auto max-w-[1360px] px-4 pt-3 sm:px-6">
+          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-brand-200 bg-white px-4 py-3 text-[12px] text-brand-700 shadow-card">
+            <span className="rounded-full bg-brand-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-700">
+              Bevakningar
+            </span>
+            <span>Logga in för att bevaka objekt.</span>
+            <span className="text-brand-500">
+              Dina bevakningar sparas pa ditt konto och foljer med mellan enheter.
+            </span>
+          </div>
+        </div>
+      )}
+
       <main
         id="search-results-top"
         className="mx-auto max-w-[1360px] px-4 pb-20 sm:px-6"
       >
-        {query.trim() && !mobileSuggestionsOpen && (
+        {query.trim() && !mobileSuggestionsOpen && !showFavsOnly && (
           <div className="sticky top-12 z-30 -mx-4 mb-3 border-b border-brand-200/70 bg-brand-50/95 px-4 py-2 backdrop-blur sm:static sm:mx-0 sm:mb-0 sm:hidden sm:border-b-0 sm:bg-transparent sm:px-0 sm:py-0">
             <div className="flex items-center justify-between gap-3 rounded-full border border-brand-200 bg-white px-3 py-2 shadow-card">
               <div className="min-w-0">
@@ -344,14 +371,41 @@ export function HomePageClient() {
         <StatsBar
           lots={displayLots}
           total={total}
-          status={status}
+          status={showFavsOnly ? "all" : status}
           windowCount={stats.windowCount}
           totalValue={stats.totalValue}
           totalValueCurrency={stats.totalValueCurrency}
           totalValueHasMixedCurrencies={stats.totalValueHasMixedCurrencies}
         />
 
-        {selectedAuctionIds.length > 0 && (
+        {showFavsOnly && (
+          <div className="mb-4 rounded-2xl border border-rose-200 bg-white px-4 py-4 shadow-card sm:px-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-rose-500">
+                  Bevakade
+                </p>
+                <p className="mt-1 text-sm text-brand-800">
+                  Visar dina bevakade föremål oavsett tidigare sökfilter och
+                  statusval.
+                </p>
+                <p className="mt-1 text-[12px] text-brand-500">
+                  Dina vanliga sökfilter ligger kvar i bakgrunden och kommer
+                  tillbaka när du lämnar bevakade-läget.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowFavsOnly(false)}
+                className="inline-flex min-h-10 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 px-4 py-2 text-[13px] font-medium text-brand-800 transition hover:border-brand-300 hover:bg-white"
+              >
+                Visa alla föremål
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!showFavsOnly && selectedAuctionIds.length > 0 && (
           <div className="mb-4 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800 shadow-card sm:px-5">
             Visar föremål från{" "}
             {selectedAuctionTitles.length > 0
@@ -381,7 +435,8 @@ export function HomePageClient() {
           </div>
         )}
 
-        {!loading &&
+        {!showFavsOnly &&
+          !loading &&
           status === "ended" &&
           soldPriceCount === 0 &&
           displayLots.length > 0 && (
@@ -393,34 +448,8 @@ export function HomePageClient() {
           )}
 
         <div id="search-results-controls">
-          <FilterBar
-            selectedCategories={selectedCategories}
-            selectedCity={selectedCity}
-            selectedHouseId={selectedHouseId}
-            hasQuery={Boolean(query.trim())}
-            hasBids={hasBids}
-            soldOnly={soldOnly}
-            status={status}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            sortBy={sortBy}
-            pageSize={pageSize}
-            categoryFacets={facets.categories}
-            cityFacets={facets.cities}
-            houseFacets={facets.houses}
-            onToggleCategory={toggleCategory}
-            onSetStatus={setStatus}
-            onSetCity={setCity}
-            onSetHouseId={setHouseId}
-            onSetHasBids={setHasBids}
-            onSetSoldOnly={setSoldOnly}
-            onSetMinPrice={setMinPrice}
-            onSetMaxPrice={setMaxPrice}
-            onSetSort={setSortBy}
-            onSetPageSize={setPageSize}
-            onClearFilters={clearFilters}
-            activeFilterCount={activeFilterCount}
-            topPagination={
+          {showFavsOnly ? (
+            <div id="search-results-top-pagination">
               <Pagination
                 page={page}
                 pageSize={pageSize}
@@ -428,39 +457,115 @@ export function HomePageClient() {
                 onPageChange={handleTopPageChange}
                 onPageSizeChange={setPageSize}
                 showPageSizeSelector
-                className="!mt-0"
+                className="!mt-0 mb-4"
               />
-            }
-          />
+            </div>
+          ) : (
+            <FilterBar
+              selectedCategories={selectedCategories}
+              selectedCity={selectedCity}
+              selectedHouseId={selectedHouseId}
+              hasQuery={Boolean(query.trim())}
+              hasBids={hasBids}
+              soldOnly={soldOnly}
+              status={status}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              sortBy={sortBy}
+              pageSize={pageSize}
+              categoryFacets={facets.categories}
+              cityFacets={facets.cities}
+              houseFacets={facets.houses}
+              onToggleCategory={toggleCategory}
+              onSetStatus={setStatus}
+              onSetCity={setCity}
+              onSetHouseId={setHouseId}
+              onSetHasBids={setHasBids}
+              onSetSoldOnly={setSoldOnly}
+              onSetMinPrice={setMinPrice}
+              onSetMaxPrice={setMaxPrice}
+              onSetSort={setSortBy}
+              onSetPageSize={setPageSize}
+              onClearFilters={clearFilters}
+              activeFilterCount={activeFilterCount}
+              topPagination={
+                <Pagination
+                  page={page}
+                  pageSize={pageSize}
+                  total={total}
+                  onPageChange={handleTopPageChange}
+                  onPageSizeChange={setPageSize}
+                  showPageSizeSelector
+                  className="!mt-0"
+                />
+              }
+            />
+          )}
         </div>
 
-        {!loading && displayLots.length === 0 && didYouMean && (
-          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-4 text-sm text-amber-900 shadow-card sm:px-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-600">
-              Menade du
-            </p>
-            <div className="mt-2 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={applyDidYouMean}
-                className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-amber-950 shadow-sm transition-colors hover:bg-amber-100"
-              >
-                {didYouMean}
-              </button>
-              <p className="text-sm text-amber-800/80">
-                Tryck för att ersätta sökningen och prova igen.
+        {!showFavsOnly &&
+          !loading &&
+          displayLots.length === 0 &&
+          didYouMean && (
+            <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-4 text-sm text-amber-900 shadow-card sm:px-5">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-600">
+                Menade du
               </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={applyDidYouMean}
+                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-amber-950 shadow-sm transition-colors hover:bg-amber-100"
+                >
+                  {didYouMean}
+                </button>
+                <p className="text-sm text-amber-800/80">
+                  Tryck för att ersätta sökningen och prova igen.
+                </p>
+              </div>
+            </div>
+          )}
+
+        {showFavsOnly && !loading && displayLots.length === 0 ? (
+          <div className="rounded-3xl border border-brand-200 bg-white px-6 py-10 text-center shadow-card sm:px-8">
+            <div className="mx-auto max-w-xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400">
+                Bevakade
+              </p>
+              <h3 className="mt-3 font-serif text-2xl text-brand-900">
+                Du har inga bevakade foremal an
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-brand-600">
+                Nar du markerar ett foremal med hjartat sparas det pa ditt konto
+                och dyker upp har, oavsett vilken enhet du anvander.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowFavsOnly(false)}
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-900 px-4 py-2 text-[13px] font-medium text-white transition hover:bg-brand-950"
+                >
+                  Utforska foremal
+                </button>
+                <button
+                  type="button"
+                  onClick={scrollToSearchTop}
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-brand-200 bg-white px-4 py-2 text-[13px] font-medium text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
+                >
+                  Till sok och filter
+                </button>
+              </div>
             </div>
           </div>
+        ) : (
+          <LotGrid
+            lots={displayLots}
+            loading={loading}
+            status={showFavsOnly ? "all" : status}
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
+          />
         )}
-
-        <LotGrid
-          lots={displayLots}
-          loading={loading}
-          status={status}
-          isFavorite={isFavorite}
-          onToggleFavorite={toggleFavorite}
-        />
 
         <Pagination
           page={page}

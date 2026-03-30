@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, LogIn, LogOut } from "lucide-react";
+import { ChevronDown, LogIn, LogOut, User2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 
@@ -23,23 +23,6 @@ function getDisplayName(email: string | null | undefined, fullName?: string) {
   }
 
   return email.split("@")[0];
-}
-
-function getInitials(name: string) {
-  const parts = name
-    .split(/\s+/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  if (parts.length === 0) {
-    return "AK";
-  }
-
-  if (parts.length === 1) {
-    return parts[0].slice(0, 2).toUpperCase();
-  }
-
-  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
 function getRoleLabel(role: string) {
@@ -162,7 +145,6 @@ export function AuthControls() {
       session.user.email,
       typeof session.user.name === "string" ? session.user.name : undefined,
     );
-    const initials = getInitials(displayName);
     const roleLabel = getRoleLabel(session.user.role);
 
     return (
@@ -175,17 +157,17 @@ export function AuthControls() {
           onClick={() => setMenuOpen((current) => !current)}
           aria-expanded={menuOpen}
           aria-label="Öppna kontomeny"
-          className="group inline-flex min-h-10 w-full items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:w-auto sm:max-w-[220px]"
+          className="group inline-flex min-h-10 w-full items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:w-auto sm:max-w-[220px]"
         >
-          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-800 text-[11px] font-semibold text-white ring-1 ring-white/10">
-            {initials}
+          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-800 text-white ring-1 ring-white/10">
+            <User2 size={14} strokeWidth={2.2} />
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-brand-900 bg-emerald-400" />
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[12px] font-semibold text-white">
+          <span className="flex min-w-0 flex-1 flex-col justify-center leading-none">
+            <span className="truncate text-[12px] font-semibold text-white">
               {displayName}
             </span>
-            <span className="block truncate text-[10px] uppercase tracking-[0.12em] text-white/48">
+            <span className="mt-1 truncate text-[10px] uppercase tracking-[0.12em] text-white/48">
               {roleLabel}
             </span>
           </span>
@@ -199,8 +181,8 @@ export function AuthControls() {
           <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-1.5 shadow-[0_18px_40px_rgba(26,26,24,0.18)]">
             <div className="rounded-xl border border-brand-200 bg-white px-3 py-3 shadow-card">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-[12px] font-semibold text-white">
-                  {initials}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-white">
+                  <User2 size={16} strokeWidth={2.2} />
                 </div>
                 <div className="min-w-0">
                   <div className="truncate text-[13px] font-semibold text-brand-900">
