@@ -47,6 +47,7 @@ export const authOptions: NextAuthOptions = {
           token.isActive = appUser.isActive;
           token.authProvider = appUser.authProvider;
           token.lastLoginAt = appUser.lastLoginAt ?? undefined;
+          token.picture = appUser.imageUrl ?? token.picture;
         } else {
           token.role = getBootstrapRoleForEmail(token.email);
           token.isActive = true;
@@ -70,6 +71,8 @@ export const authOptions: NextAuthOptions = {
           typeof token.authProvider === "string" ? token.authProvider : null;
         session.user.lastLoginAt =
           typeof token.lastLoginAt === "string" ? token.lastLoginAt : null;
+        session.user.image =
+          typeof token.picture === "string" ? token.picture : null;
       }
 
       return session;

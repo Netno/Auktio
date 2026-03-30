@@ -152,6 +152,13 @@ export function FilterBar({
   ] as const;
 
   const hasClearableFilters = activeFilterCount > 0;
+  const filterPanelId = "search-filter-panel";
+  const mobileFilterToggleLabel = mobileFiltersOpen
+    ? "Dölj filter"
+    : "Visa filter";
+  const desktopFilterToggleLabel = expandedFilters
+    ? "Dölj filter"
+    : "Visa filter";
 
   return (
     <div className="space-y-3 mb-4">
@@ -166,11 +173,17 @@ export function FilterBar({
           <button
             type="button"
             onClick={() => setMobileFiltersOpen((open) => !open)}
-            className="flex shrink-0 items-center gap-1.5 rounded-2xl border border-brand-200 bg-white px-3 py-2.5 text-left shadow-card"
+            aria-expanded={mobileFiltersOpen}
+            aria-controls={filterPanelId}
+            className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-3 py-2.5 text-left shadow-card transition-colors ${
+              mobileFiltersOpen
+                ? "border-brand-900 bg-brand-900 text-white"
+                : "border-brand-200 bg-white text-brand-700"
+            }`}
           >
-            <span className="flex items-center gap-1.5 text-[12px] font-medium text-brand-700">
+            <span className="flex items-center gap-1.5 text-[12px] font-medium">
               <Filter size={14} />
-              Filter
+              {mobileFilterToggleLabel}
               {activeFilterCount > 0 && (
                 <span className="rounded-full bg-accent-500 px-2 py-px text-[11px] font-semibold text-white">
                   {activeFilterCount}
@@ -178,9 +191,9 @@ export function FilterBar({
               )}
             </span>
             {mobileFiltersOpen ? (
-              <ChevronUp size={16} className="text-brand-500" />
+              <ChevronUp size={16} className="text-current" />
             ) : (
-              <ChevronDown size={16} className="text-brand-500" />
+              <ChevronDown size={16} className="text-current" />
             )}
           </button>
         </div>
@@ -283,17 +296,28 @@ export function FilterBar({
 
         <div className="grid grid-cols-[1fr_auto] gap-2 md:flex md:flex-nowrap md:items-center md:justify-self-end md:justify-end">
           <button
+            type="button"
             onClick={() => setExpandedFilters(!expandedFilters)}
-            className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-brand-200 bg-white px-3 py-2
-              whitespace-nowrap text-[12px] font-medium text-brand-600
-              hover:border-brand-400 transition-all"
+            aria-expanded={expandedFilters}
+            aria-controls={filterPanelId}
+            className={`flex min-h-10 items-center justify-center gap-1.5 rounded-xl border px-3 py-2
+              whitespace-nowrap text-[12px] font-medium transition-all ${
+                expandedFilters
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-brand-200 bg-white text-brand-600 hover:border-brand-400"
+              }`}
           >
             <Filter size={14} />
-            Filter
+            {desktopFilterToggleLabel}
             {activeFilterCount > 0 && (
               <span className="bg-accent-500 text-white rounded-full px-2 py-px text-[11px] font-semibold">
                 {activeFilterCount}
               </span>
+            )}
+            {expandedFilters ? (
+              <ChevronUp size={14} className="text-current" />
+            ) : (
+              <ChevronDown size={14} className="text-current" />
             )}
           </button>
 
@@ -322,7 +346,10 @@ export function FilterBar({
 
       {/* Expanded filter panel */}
       {(expandedFilters || mobileFiltersOpen) && (
-        <div className="grid grid-cols-1 gap-4 rounded-xl border border-brand-200/60 bg-white p-4 shadow-card animate-fade-in md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.9fr)_auto]">
+        <div
+          id={filterPanelId}
+          className="grid grid-cols-1 gap-4 rounded-xl border border-brand-200/60 bg-white p-4 shadow-card animate-fade-in md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.9fr)_auto]"
+        >
           {/* Categories */}
           <div className="md:col-span-3">
             <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-brand-400">

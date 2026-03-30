@@ -86,6 +86,7 @@ export function AuthControls() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [googleProvider, setGoogleProvider] =
     useState<GoogleProviderConfig | null>(null);
 
@@ -117,6 +118,10 @@ export function AuthControls() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname, searchParams]);
+
+  useEffect(() => {
+    setAvatarLoadFailed(false);
+  }, [session?.user?.image]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -191,6 +196,10 @@ export function AuthControls() {
     const providerLabel = getProviderLabel(session.user.authProvider);
     const lastLoginLabel = formatLastLogin(session.user.lastLoginAt);
     const userIdLabel = formatUserId(session.user.id);
+    const avatarUrl =
+      !avatarLoadFailed && typeof session.user.image === "string"
+        ? session.user.image
+        : null;
 
     return (
       <div
@@ -204,8 +213,20 @@ export function AuthControls() {
           aria-label="Öppna kontomeny"
           className="group inline-flex min-h-10 w-full items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:w-auto sm:max-w-[220px]"
         >
-          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-800 text-white ring-1 ring-white/10">
-            <User2 size={14} strokeWidth={2.2} />
+          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-1 ring-white/10">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={displayName}
+                className="h-8 w-8 rounded-full object-cover"
+                referrerPolicy="no-referrer"
+                onError={() => setAvatarLoadFailed(true)}
+              />
+            ) : (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-800 text-white">
+                <User2 size={14} strokeWidth={2.2} />
+              </span>
+            )}
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-brand-900 bg-emerald-400" />
           </span>
           <span className="flex min-w-0 flex-1 flex-col justify-center leading-none">
@@ -226,12 +247,13 @@ export function AuthControls() {
           <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-1.5 shadow-[0_18px_40px_rgba(26,26,24,0.18)]">
             <div className="rounded-xl border border-brand-200 bg-white px-3 py-3 shadow-card">
               <div className="flex items-center gap-3">
-                {session.user.image ? (
+                {avatarUrl ? (
                   <img
-                    src={session.user.image}
+                    src={avatarUrl}
                     alt={displayName}
                     className="h-10 w-10 shrink-0 rounded-full border border-brand-200 object-cover"
                     referrerPolicy="no-referrer"
+                    onError={() => setAvatarLoadFailed(true)}
                   />
                 ) : (
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-white">
