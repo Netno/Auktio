@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
+import { CATEGORY_ORDER } from "@/config/sources";
+import { AdminCategoryReview } from "@/components/AdminCategoryReview";
 import { AdminLotActions } from "@/components/AdminLotActions";
 import { AdminUsersTable } from "@/components/AdminUsersTable";
 import { Header } from "@/components/Header";
+import { searchAdminCategoryReviewLots } from "@/lib/admin-category-review";
 import {
   getAdminHouseOptions,
   getAdminIngestRuns,
@@ -236,6 +239,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const missingEmbedding = getMissingFilterValue(
     searchParams?.missingEmbedding,
   );
+  const reviewQuery = getSingleValue(searchParams?.reviewQuery)?.trim() ?? "";
   const missingMatchParam = getSingleValue(searchParams?.missingMatch);
   const missingMatch = missingMatchParam === "all" ? "all" : "any";
   const allLots = !onlyActive;
@@ -255,7 +259,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     allLots,
   });
 
-  const [houses, ingestRuns, lotAudit, users] = await Promise.all([
+  const [houses, ingestRuns, lotAudit, users, reviewLots] = await Promise.all([
     getAdminHouseOptions(),
     getAdminIngestRuns({ houseId, status: syncStatus, limit: 40 }),
     getAdminLotAudit({
@@ -269,6 +273,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       limit: 150,
     }),
     listAppUsers(200),
+    reviewQuery
+      ? searchAdminCategoryReviewLots({
+          query: reviewQuery,
+          houseId,
+          limit: 20,
+        })
+      : Promise.resolve([]),
   ]);
 
   const houseName = houseId
@@ -307,6 +318,28 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   if (selectedMissingFilters.length > 1 && missingMatch === "all") {
     activeFilters.push("Datakrav: alla valda måste matcha");
   }
+
+  const preservedReviewSearchParams = Object.entries(
+    searchParams ?? {},
+  ).flatMap(([key, value]) => {
+    if (key === "reviewQuery") {
+      return [] as Array<{ key: string; value: string }>;
+    }
+
+    const values = Array.isArray(value) ? value : value ? [value] : [];
+    return values.map((item) => ({ key, value: item }));
+  });
+
+  const clearReviewHref = (() => {
+    const params = new URLSearchParams();
+
+    preservedReviewSearchParams.forEach((entry) => {
+      params.append(entry.key, entry.value);
+    });
+
+    const query = params.toString();
+    return query.length > 0 ? `/admin?${query}` : "/admin";
+  })();
 
   return (
     <main className="min-h-screen bg-brand-50">
@@ -596,6 +629,14 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </div>
           )}
         </section>
+
+        <AdminCategoryReview
+          lots={reviewLots}
+          reviewQuery={reviewQuery}
+          availableCategories={[...CATEGORY_ORDER]}
+          preservedSearchParams={preservedReviewSearchParams}
+          clearSearchHref={clearReviewHref}
+        />
 
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.55fr]">
           <div className="border border-brand-200 bg-white">

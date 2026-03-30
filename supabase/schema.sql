@@ -173,6 +173,25 @@ create table if not exists auc_user_favorites (
 );
 
 -- ============================================
+-- CATEGORY FEEDBACK (admin corrections for learning)
+-- ============================================
+create table if not exists auc_category_feedback (
+  id                  bigserial primary key,
+  lot_id              bigint not null references auc_lots(id) on delete cascade,
+  user_id             text references auc_users(id) on delete set null,
+  title               text not null,
+  house_id            text references auc_auction_houses(id) on delete set null,
+  previous_categories text[] default '{}',
+  corrected_categories text[] not null default '{}',
+  ai_tags             text[] default '{}',
+  raw_categories      text[] default '{}',
+  normalized_terms    text[] default '{}',
+  correction_type     text not null default 'manual' check (correction_type in ('manual', 'ai-recategorize')),
+  note                text,
+  created_at          timestamptz default now()
+);
+
+-- ============================================
 -- FEED SYNC LOG
 -- ============================================
 create table if not exists auc_sync_log (
@@ -222,6 +241,8 @@ create index if not exists idx_auc_price_history_lot on auc_price_history(lot_id
 create index if not exists idx_auc_favorites_device on auc_favorites(device_id);
 create index if not exists idx_auc_users_role on auc_users(role);
 create index if not exists idx_auc_user_favorites_user on auc_user_favorites(user_id);
+create index if not exists idx_auc_category_feedback_lot on auc_category_feedback(lot_id, created_at desc);
+create index if not exists idx_auc_category_feedback_terms on auc_category_feedback using gin(normalized_terms);
 
 -- ============================================
 -- FUNCTIONS
