@@ -179,6 +179,7 @@ async function generateSubjectTagsForBatch(
     inputTokens: usage.promptTokenCount,
     outputTokens: usage.candidatesTokenCount,
     totalTokens: usage.totalTokenCount,
+    tokenMetricsReported: usage.tokenMetricsReported,
     itemCount: lots.length,
   });
   const text =

@@ -9,9 +9,10 @@ type AiUsageEvent = {
   operation: string;
   status: AiUsageStatus;
   latencyMs: number;
-  inputTokens?: number;
-  outputTokens?: number;
-  totalTokens?: number;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  totalTokens?: number | null;
+  tokenMetricsReported?: boolean;
   itemCount?: number;
   cacheHit?: boolean;
   errorMessage?: string;
@@ -30,6 +31,10 @@ type SyncLogRow = {
 type ParsedAiUsageRow = AiUsageEvent & {
   id: number;
   createdAt: string;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  totalTokens: number | null;
+  tokenMetricsReported: boolean;
 };
 
 export type AiUsageDailySummary = {
@@ -41,6 +46,7 @@ export type AiUsageDailySummary = {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
+  hasUnreportedTokenMetrics: boolean;
   totalLatencyMs: number;
   estimatedCostSek: number | null;
 };
@@ -54,6 +60,7 @@ export type AiUsageHourlySummary = {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
+  hasUnreportedTokenMetrics: boolean;
   totalLatencyMs: number;
   estimatedCostSek: number | null;
 };
@@ -67,6 +74,7 @@ export type AiUsageDashboardData = {
     inputTokens: number;
     outputTokens: number;
     totalTokens: number;
+    hasUnreportedTokenMetrics: boolean;
     averageLatencyMs: number;
     totalLatencyMs: number;
     estimatedCostSek: number | null;
@@ -84,6 +92,7 @@ export type AiUsageDashboardData = {
     success: number;
     errors: number;
     totalTokens: number;
+    hasUnreportedTokenMetrics: boolean;
     averageLatencyMs: number;
     estimatedCostSek: number | null;
   }>;
@@ -91,10 +100,11 @@ export type AiUsageDashboardData = {
 };
 
 type GeminiUsageMetadata = {
-  promptTokenCount?: number;
-  candidatesTokenCount?: number;
-  totalTokenCount?: number;
-  cachedContentTokenCount?: number;
+  promptTokenCount: number | null;
+  candidatesTokenCount: number | null;
+  totalTokenCount: number | null;
+  cachedContentTokenCount: number | null;
+  tokenMetricsReported: boolean;
 };
 
 const AI_USAGE_STATUSES = ["ai-success", "ai-error", "ai-cache-hit"];
@@ -106,6 +116,33 @@ function statusToSyncLogStatus(status: AiUsageStatus) {
 
 function safeNumber(value: unknown) {
   return Number.isFinite(value) ? Number(value) : 0;
+}
+
+function hasTokenMetricValue(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function inferTokenMetricsReported(parsed: AiUsageEvent) {
+  if (typeof parsed.tokenMetricsReported === "boolean") {
+    return parsed.tokenMetricsReported;
+  }
+
+  const isLegacyEmbeddingEvent =
+    parsed.model === "gemini-embedding-001" &&
+    parsed.operation.startsWith("embed") &&
+    safeNumber(parsed.inputTokens) === 0 &&
+    safeNumber(parsed.outputTokens) === 0 &&
+    safeNumber(parsed.totalTokens) === 0;
+
+  if (isLegacyEmbeddingEvent) {
+    return false;
+  }
+
+  return (
+    parsed.inputTokens != null ||
+    parsed.outputTokens != null ||
+    parsed.totalTokens != null
+  );
 }
 
 function formatInTimeZone(value: string, options: Intl.DateTimeFormatOptions) {
@@ -147,14 +184,18 @@ function parseAiUsagePayload(row: SyncLogRow): ParsedAiUsageRow | null {
 
   try {
     const parsed = JSON.parse(row.error_message) as AiUsageEvent;
+    const tokenMetricsReported = inferTokenMetricsReported(parsed);
 
     return {
       ...parsed,
       id: row.id,
       latencyMs: safeNumber(parsed.latencyMs || row.duration_ms),
-      inputTokens: safeNumber(parsed.inputTokens),
-      outputTokens: safeNumber(parsed.outputTokens),
-      totalTokens: safeNumber(parsed.totalTokens),
+      inputTokens: tokenMetricsReported ? safeNumber(parsed.inputTokens) : null,
+      outputTokens: tokenMetricsReported
+        ? safeNumber(parsed.outputTokens)
+        : null,
+      totalTokens: tokenMetricsReported ? safeNumber(parsed.totalTokens) : null,
+      tokenMetricsReported,
       itemCount: safeNumber(parsed.itemCount),
       cacheHit: Boolean(parsed.cacheHit || row.status === "ai-cache-hit"),
       createdAt: parsed.createdAt ?? row.started_at,
@@ -193,11 +234,26 @@ export function extractGeminiUsageMetadata(
 ): GeminiUsageMetadata {
   const usage = (payload as { usageMetadata?: GeminiUsageMetadata } | null)
     ?.usageMetadata;
+  const tokenMetricsReported =
+    hasTokenMetricValue(usage?.promptTokenCount) ||
+    hasTokenMetricValue(usage?.candidatesTokenCount) ||
+    hasTokenMetricValue(usage?.totalTokenCount) ||
+    hasTokenMetricValue(usage?.cachedContentTokenCount);
+
   return {
-    promptTokenCount: safeNumber(usage?.promptTokenCount),
-    candidatesTokenCount: safeNumber(usage?.candidatesTokenCount),
-    totalTokenCount: safeNumber(usage?.totalTokenCount),
-    cachedContentTokenCount: safeNumber(usage?.cachedContentTokenCount),
+    promptTokenCount: tokenMetricsReported
+      ? safeNumber(usage?.promptTokenCount)
+      : null,
+    candidatesTokenCount: tokenMetricsReported
+      ? safeNumber(usage?.candidatesTokenCount)
+      : null,
+    totalTokenCount: tokenMetricsReported
+      ? safeNumber(usage?.totalTokenCount)
+      : null,
+    cachedContentTokenCount: tokenMetricsReported
+      ? safeNumber(usage?.cachedContentTokenCount)
+      : null,
+    tokenMetricsReported,
   };
 }
 
@@ -249,6 +305,7 @@ export async function getAiUsageDashboardData(
     inputTokens: 0,
     outputTokens: 0,
     totalTokens: 0,
+    hasUnreportedTokenMetrics: false,
     averageLatencyMs: 0,
     totalLatencyMs: 0,
     estimatedCostSek: null as number | null,
@@ -264,6 +321,7 @@ export async function getAiUsageDashboardData(
       success: number;
       errors: number;
       totalTokens: number;
+      hasUnreportedTokenMetrics: boolean;
       totalLatencyMs: number;
       estimatedCostSek: number | null;
     }
@@ -279,6 +337,7 @@ export async function getAiUsageDashboardData(
     totals.inputTokens += row.inputTokens ?? 0;
     totals.outputTokens += row.outputTokens ?? 0;
     totals.totalTokens += row.totalTokens ?? 0;
+    totals.hasUnreportedTokenMetrics ||= !row.tokenMetricsReported;
     totals.totalLatencyMs += row.latencyMs;
 
     const rowEstimatedCost = estimateCostSek(row, pricing);
@@ -301,6 +360,7 @@ export async function getAiUsageDashboardData(
       inputTokens: 0,
       outputTokens: 0,
       totalTokens: 0,
+      hasUnreportedTokenMetrics: false,
       totalLatencyMs: 0,
       estimatedCostSek: null,
     };
@@ -311,6 +371,7 @@ export async function getAiUsageDashboardData(
     dayEntry.inputTokens += row.inputTokens ?? 0;
     dayEntry.outputTokens += row.outputTokens ?? 0;
     dayEntry.totalTokens += row.totalTokens ?? 0;
+    dayEntry.hasUnreportedTokenMetrics ||= !row.tokenMetricsReported;
     dayEntry.totalLatencyMs += row.latencyMs;
     if (rowEstimatedCost != null) {
       dayEntry.estimatedCostSek =
@@ -333,6 +394,7 @@ export async function getAiUsageDashboardData(
       inputTokens: 0,
       outputTokens: 0,
       totalTokens: 0,
+      hasUnreportedTokenMetrics: false,
       totalLatencyMs: 0,
       estimatedCostSek: null,
     };
@@ -343,6 +405,7 @@ export async function getAiUsageDashboardData(
     hourEntry.inputTokens += row.inputTokens ?? 0;
     hourEntry.outputTokens += row.outputTokens ?? 0;
     hourEntry.totalTokens += row.totalTokens ?? 0;
+    hourEntry.hasUnreportedTokenMetrics ||= !row.tokenMetricsReported;
     hourEntry.totalLatencyMs += row.latencyMs;
     if (rowEstimatedCost != null) {
       hourEntry.estimatedCostSek =
@@ -356,6 +419,7 @@ export async function getAiUsageDashboardData(
       success: 0,
       errors: 0,
       totalTokens: 0,
+      hasUnreportedTokenMetrics: false,
       totalLatencyMs: 0,
       estimatedCostSek: null as number | null,
     };
@@ -363,6 +427,7 @@ export async function getAiUsageDashboardData(
     modelEntry.success += row.status === "success" ? 1 : 0;
     modelEntry.errors += row.status === "error" ? 1 : 0;
     modelEntry.totalTokens += row.totalTokens ?? 0;
+    modelEntry.hasUnreportedTokenMetrics ||= !row.tokenMetricsReported;
     modelEntry.totalLatencyMs += row.latencyMs;
     if (rowEstimatedCost != null) {
       modelEntry.estimatedCostSek =
@@ -395,6 +460,7 @@ export async function getAiUsageDashboardData(
         success: entry.success,
         errors: entry.errors,
         totalTokens: entry.totalTokens,
+        hasUnreportedTokenMetrics: entry.hasUnreportedTokenMetrics,
         averageLatencyMs:
           entry.requests > 0 ? entry.totalLatencyMs / entry.requests : 0,
         estimatedCostSek: entry.estimatedCostSek,

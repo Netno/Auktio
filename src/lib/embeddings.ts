@@ -71,6 +71,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     inputTokens: usage.promptTokenCount,
     outputTokens: usage.candidatesTokenCount,
     totalTokens: usage.totalTokenCount,
+    tokenMetricsReported: usage.tokenMetricsReported,
     itemCount: 1,
   });
   return data.embedding.values;
@@ -121,6 +122,7 @@ export async function generateQueryEmbedding(query: string): Promise<number[]> {
     inputTokens: usage.promptTokenCount,
     outputTokens: usage.candidatesTokenCount,
     totalTokens: usage.totalTokenCount,
+    tokenMetricsReported: usage.tokenMetricsReported,
     itemCount: 1,
   });
   return data.embedding.values;
@@ -180,6 +182,7 @@ export async function generateBatchEmbeddings(
       inputTokens: usage.promptTokenCount,
       outputTokens: usage.candidatesTokenCount,
       totalTokens: usage.totalTokenCount,
+      tokenMetricsReported: usage.tokenMetricsReported,
       itemCount: batch.length,
     });
     allEmbeddings.push(...data.embeddings.map((e) => e.values));

@@ -26,6 +26,15 @@ function formatCurrencySek(value: number | null) {
   return `${value.toFixed(2).replace(".", ",")} kr`;
 }
 
+function formatTokenCount(value: number, hasUnreportedTokenMetrics: boolean) {
+  if (value === 0 && hasUnreportedTokenMetrics) {
+    return "–";
+  }
+
+  const formattedValue = formatInteger(value);
+  return hasUnreportedTokenMetrics ? `${formattedValue}*` : formattedValue;
+}
+
 function formatHourLabel(value: string) {
   if (LOCAL_HOUR_KEY_PATTERN.test(value)) {
     return value.slice(5);
@@ -202,19 +211,28 @@ export default async function AiUsagePage() {
             <div className="rounded-2xl bg-slate-800/50 p-5">
               <div className="text-sm text-slate-400">Input tokens</div>
               <div className="mt-2 text-2xl font-semibold text-white">
-                {formatInteger(report.totals.inputTokens)}
+                {formatTokenCount(
+                  report.totals.inputTokens,
+                  report.totals.hasUnreportedTokenMetrics,
+                )}
               </div>
             </div>
             <div className="rounded-2xl bg-slate-800/50 p-5">
               <div className="text-sm text-slate-400">Output tokens</div>
               <div className="mt-2 text-2xl font-semibold text-white">
-                {formatInteger(report.totals.outputTokens)}
+                {formatTokenCount(
+                  report.totals.outputTokens,
+                  report.totals.hasUnreportedTokenMetrics,
+                )}
               </div>
             </div>
             <div className="rounded-2xl bg-slate-800/50 p-5">
               <div className="text-sm text-slate-400">Totalt tokens</div>
               <div className="mt-2 text-2xl font-semibold text-white">
-                {formatInteger(report.totals.totalTokens)}
+                {formatTokenCount(
+                  report.totals.totalTokens,
+                  report.totals.hasUnreportedTokenMetrics,
+                )}
               </div>
             </div>
             <div className="rounded-2xl bg-slate-800/50 p-5">
@@ -245,6 +263,13 @@ export default async function AiUsagePage() {
               </div>
             </div>
           </div>
+          {report.totals.hasUnreportedTokenMetrics && (
+            <div className="mt-4 text-xs text-slate-400">
+              * Tokensummor är ofullständiga. Gemini-embedding-001 rapporterar
+              inte tokenanvändning i API-svaret, så de anropen visas inte som 0
+              längre utan räknas som okända.
+            </div>
+          )}
         </section>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-slate-950/30">
@@ -344,7 +369,10 @@ export default async function AiUsagePage() {
                         {formatInteger(row.requests)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {formatInteger(row.totalTokens)}
+                        {formatTokenCount(
+                          row.totalTokens,
+                          row.hasUnreportedTokenMetrics,
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {formatSeconds(row.averageLatencyMs)}
@@ -395,7 +423,10 @@ export default async function AiUsagePage() {
                           {formatInteger(row.cacheHits)}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {formatInteger(row.totalTokens)}
+                          {formatTokenCount(
+                            row.totalTokens,
+                            row.hasUnreportedTokenMetrics,
+                          )}
                         </td>
                         <td className="px-4 py-3 text-right text-slate-400">
                           {formatSeconds(row.totalLatencyMs)}

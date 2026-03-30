@@ -120,6 +120,7 @@ async function describeImage(imageUrl: string): Promise<string | null> {
     inputTokens: usage.promptTokenCount,
     outputTokens: usage.candidatesTokenCount,
     totalTokens: usage.totalTokenCount,
+    tokenMetricsReported: usage.tokenMetricsReported,
     itemCount: 1,
   });
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
