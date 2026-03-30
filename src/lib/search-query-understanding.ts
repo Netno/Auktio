@@ -193,28 +193,72 @@ const SEARCH_CONCEPTS: SearchConceptDefinition[] = [
     triggerPhrases: ["det dukade bordet"],
     expansionTerms: [
       "servis",
+      "teservis",
+      "kaffeservis",
       "tallrik",
       "tallrikar",
+      "mattallrik",
+      "mattallrikar",
       "skål",
       "skålar",
       "glas",
       "karaff",
       "bestick",
       "fat",
+      "serveringsfat",
+      "uppläggningsfat",
       "ljusstake",
+      "kopp",
       "koppar",
       "tekanna",
     ],
     semanticPhrases: ["föremål för dukning"],
-    strongResultTerms: [
+    titleStrongResultTerms: [
       "servis",
+      "teservis",
+      "kaffeservis",
       "tallrik",
       "tallrikar",
+      "mattallrik",
+      "mattallrikar",
       "bestick",
-      "glas",
+      "fat",
+      "serveringsfat",
+      "uppläggningsfat",
       "karaff",
+      "tekanna",
     ],
-    resultTerms: ["skål", "skålar", "fat", "ljusstake", "kopp", "koppar"],
+    strongResultTerms: [
+      "det dukade bordet",
+      "servis",
+      "teservis",
+      "kaffeservis",
+      "tallrik",
+      "tallrikar",
+      "mattallrik",
+      "mattallrikar",
+      "bestick",
+      "fat",
+      "serveringsfat",
+      "uppläggningsfat",
+      "karaff",
+      "tekanna",
+    ],
+    resultTerms: ["skål", "skålar", "glas", "ljusstake", "kopp", "koppar"],
+    penaltyTerms: [
+      "väggrelief",
+      "väggur",
+      "vas",
+      "vaser",
+      "ljuslykta",
+      "ljuslyktor",
+      "armbandsur",
+      "herrarmbandsur",
+      "glassmaskin",
+      "vitrinskåp",
+      "skrivställ",
+      "askfat",
+    ],
   },
 ];
 
@@ -344,8 +388,14 @@ export function evaluateQueryUnderstandingMatch(
       matchedConcepts.push(concept.id);
     }
 
-    if (matchedPenaltyTerm && !matchedResultTerm && !matchedStrongTerm) {
-      score -= 10;
+    if (matchedPenaltyTerm) {
+      if (matchedTitleStrongTerm || matchedStrongTerm) {
+        score -= 0;
+      } else if (matchedResultTerm) {
+        score -= 4;
+      } else {
+        score -= 10;
+      }
     }
   }
 
