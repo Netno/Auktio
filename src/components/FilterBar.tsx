@@ -44,8 +44,6 @@ interface FilterBarProps {
 const PRICE_MIN = 0;
 const PRICE_MAX = 100_000;
 const PRICE_STEP = 500;
-const PAGE_SIZE_OPTIONS = [48, 72, 96] as const;
-
 export function FilterBar({
   selectedCategories,
   selectedCity,
@@ -231,19 +229,6 @@ export function FilterBar({
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={pageSize}
-                onChange={(e) => onSetPageSize(Number(e.target.value))}
-                className="min-w-0 rounded-xl border border-brand-200 bg-white px-3 py-2 text-[12px] text-brand-600 outline-none cursor-pointer"
-                aria-label="Antal föremål per sida"
-              >
-                {PAGE_SIZE_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option} föremål per sida
                   </option>
                 ))}
               </select>

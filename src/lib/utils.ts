@@ -58,6 +58,15 @@ export function formatAmount(
   return `${amount.toLocaleString("sv-SE")} ${resolvedCurrency}`;
 }
 
+export function formatBidAmount(
+  amount: number | null | undefined,
+  currency: string | null | undefined,
+): string {
+  if (amount == null) return "Inga bud";
+
+  return formatAmount(amount, currency);
+}
+
 export function getCountryFlag(country: string | null | undefined): string {
   const code = (country ?? "").trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(code)) {

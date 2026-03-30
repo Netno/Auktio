@@ -16,11 +16,7 @@ export function useFavorites() {
 
   const nextPath = `${pathname}${searchParams.size ? `?${searchParams.toString()}` : ""}`;
 
-  const requireSignIn = useCallback(async () => {
-    if (status === "authenticated") {
-      return true;
-    }
-
+  const signInToContinue = useCallback(async () => {
     setSubmitting(true);
 
     try {
@@ -28,9 +24,7 @@ export function useFavorites() {
     } finally {
       setSubmitting(false);
     }
-
-    return false;
-  }, [nextPath, status]);
+  }, [nextPath]);
 
   useEffect(() => {
     if (status === "loading") {
@@ -111,8 +105,8 @@ export function useFavorites() {
 
   const toggleFavorite = useCallback(
     async (lotId: number) => {
-      if (!(await requireSignIn())) {
-        return;
+      if (status !== "authenticated") {
+        return false;
       }
 
       const isRemoving = favorites.has(lotId);
@@ -145,16 +139,18 @@ export function useFavorites() {
 
         const payload = (await response.json()) as { lotIds?: number[] };
         setFavorites(new Set(payload.lotIds ?? []));
+        return true;
       } catch {
         setFavorites(previousFavorites);
+        return false;
       }
     },
-    [favorites, requireSignIn],
+    [favorites, status],
   );
 
   const openFavorites = useCallback(
-    async () => requireSignIn(),
-    [requireSignIn],
+    async () => status === "authenticated",
+    [status],
   );
 
   const isFavorite = useCallback(
@@ -167,6 +163,7 @@ export function useFavorites() {
     count: favorites.size,
     toggleFavorite,
     openFavorites,
+    signInToContinue,
     isFavorite,
     loaded,
     isAuthenticated: status === "authenticated",

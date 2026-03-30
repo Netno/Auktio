@@ -20,6 +20,7 @@ import {
 import {
   timeLeft,
   formatAmount,
+  formatBidAmount,
   formatDateTimeStamp,
   imgSize,
 } from "@/lib/utils";
@@ -30,6 +31,8 @@ interface LotCardProps {
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
   imagePriority?: boolean;
+  onCategorySelect?: (category: string) => void;
+  onHouseSelect?: (houseId: string) => void;
 }
 
 const TAP_SLOP_PX = 8;
@@ -96,6 +99,8 @@ export function LotCard({
   isFavorite,
   onToggleFavorite,
   imagePriority = false,
+  onCategorySelect,
+  onHouseSelect,
 }: LotCardProps) {
   const PREVIEW_WIDTH_PX = 720;
   const PREVIEW_MIN_WIDTH_PX = 420;
@@ -921,42 +926,60 @@ export function LotCard({
             <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
           </button>
 
-          {zoomImage && (
-            <button
-              ref={zoomButtonRef}
-              type="button"
-              onClick={handleOpenImageZoom}
-              onMouseEnter={openImagePreview}
-              onMouseLeave={closeImagePreview}
-              onFocus={openImagePreview}
-              onBlur={closeImagePreview}
-              className="absolute bottom-2.5 left-2.5 z-10 inline-flex min-h-8 items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-brand-700 backdrop-blur-md transition-colors hover:bg-white hover:text-brand-900"
-              aria-label={`Zooma bild för ${lot.title}`}
-            >
-              <Search size={12} />
-              <span>Zooma</span>
-            </button>
-          )}
+          {(zoomImage || (lot.isActive && tl)) && (
+            <>
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-t from-brand-900/74 via-brand-900/35 to-transparent" />
+              <div className="absolute inset-x-2.5 bottom-5 z-10 flex items-center justify-between gap-2">
+                {zoomImage ? (
+                  <button
+                    ref={zoomButtonRef}
+                    type="button"
+                    onClick={handleOpenImageZoom}
+                    onMouseEnter={openImagePreview}
+                    onMouseLeave={closeImagePreview}
+                    onFocus={openImagePreview}
+                    onBlur={closeImagePreview}
+                    className="inline-flex min-h-8 items-center gap-1 rounded-full border border-white/16 bg-brand-800/90 px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_6px_14px_rgba(13,13,12,0.3)] backdrop-blur-md transition-colors hover:bg-brand-800/96"
+                    aria-label={`Zooma bild för ${lot.title}`}
+                  >
+                    <Search size={12} />
+                    <span>Zooma</span>
+                  </button>
+                ) : (
+                  <span />
+                )}
 
-          {/* Time badge */}
-          {lot.isActive && tl && (
-            <span
-              className={`absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full
-              text-[11px] font-medium text-white backdrop-blur-md
-              ${tl.ended ? "bg-brand-900/50" : tl.urgent ? "bg-accent-500" : "bg-brand-900/70"}`}
-            >
-              {tl.text}
-            </span>
+                {lot.isActive && tl ? (
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-medium text-white shadow-[0_6px_14px_rgba(13,13,12,0.3)] backdrop-blur-md ${
+                      tl.ended
+                        ? "border-white/16 bg-brand-800/90"
+                        : tl.urgent
+                          ? "border-accent-300/28 bg-accent-500/96"
+                          : "border-white/16 bg-brand-800/90"
+                    }`}
+                  >
+                    {tl.text}
+                  </span>
+                ) : null}
+              </div>
+            </>
           )}
 
           {/* Category chip */}
           {lot.categories?.[0] && (
-            <span
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onCategorySelect?.(lot.categories[0]);
+              }}
               className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md
-            px-2.5 py-0.5 rounded-full text-[11px] font-medium text-brand-600"
+            px-2.5 py-0.5 rounded-full text-[11px] font-medium text-brand-600 transition-colors hover:bg-white hover:text-brand-900"
             >
               {lot.categories[0]}
-            </span>
+            </button>
           )}
         </div>
 
@@ -964,7 +987,17 @@ export function LotCard({
         <div className="relative flex flex-1 flex-col p-4 pb-5 overflow-visible">
           <div>
             <div className="mb-1.5 space-y-1.5 min-[520px]:space-y-0 min-[520px]:flex min-[520px]:items-start min-[520px]:justify-between min-[520px]:gap-3">
-              <div className="min-w-0 flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.11em] text-brand-400 min-[520px]:flex-1 min-[520px]:pr-2">
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (lot.houseId) {
+                    onHouseSelect?.(lot.houseId);
+                  }
+                }}
+                className="min-w-0 flex items-center gap-1 text-left text-[11px] font-medium uppercase tracking-[0.11em] text-brand-400 transition-colors hover:text-brand-700 min-[520px]:flex-1 min-[520px]:pr-2"
+              >
                 {lot.houseLogoUrl && (
                   <Image
                     src={lot.houseLogoUrl}
@@ -978,7 +1011,7 @@ export function LotCard({
                 <span className="min-w-0 leading-snug">
                   {lot.houseName ?? "Auktionshus"}
                 </span>
-              </div>
+              </button>
 
               <div className="space-y-1.5 min-[520px]:flex min-[520px]:shrink-0 min-[520px]:items-center min-[520px]:gap-2 min-[520px]:space-y-0">
                 {showCountryBadge && (
@@ -1099,7 +1132,7 @@ export function LotCard({
                     showSoldPrice ? "text-emerald-700" : "text-brand-900"
                   }`}
                 >
-                  {formatAmount(primaryPriceValue, lot.currency)}
+                  {formatBidAmount(primaryPriceValue, lot.currency)}
                 </div>
               </div>
               {shouldShowEstimateColumn && (

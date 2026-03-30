@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import type {
   Lot,
   SearchResponse,
@@ -105,7 +105,6 @@ function getDefaultSort(status: SearchStatus, query: string): SortOption {
 }
 
 export function useSearch(options?: UseSearchOptions): UseSearchReturn {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const lotIdsKey =
     options?.lotIds == null ? "__all__" : options.lotIds.join(",");
@@ -326,15 +325,21 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         setLoading(false);
       }
 
-      // Sync URL (without triggering navigation)
+      // Sync URL without App Router navigation. router.replace() in the App
+      // Router triggers an RSC request, which creates noisy extra network
+      // traffic during infinite scroll.
       if (!isFavoritesMode) {
         const newUrl = urlParams.toString()
           ? `?${urlParams.toString()}`
           : window.location.pathname;
-        router.replace(newUrl, { scroll: false });
+
+        const currentUrl = `${window.location.pathname}${window.location.search}`;
+        if (newUrl !== currentUrl) {
+          window.history.replaceState(null, "", newUrl);
+        }
       }
     },
-    [router],
+    [],
   );
 
   // Trigger search on param changes

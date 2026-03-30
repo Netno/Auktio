@@ -106,26 +106,57 @@ export function StatsBar({
     },
   ];
 
+  const mobileStatusLabel =
+    status === "ended"
+      ? "Avslutade objekt"
+      : status === "all"
+        ? "Alla objekt"
+        : "Pågående auktioner";
+
   return (
-    <div className="mb-4 grid grid-cols-3 gap-x-2 rounded-xl border border-brand-200/40 bg-white px-3 py-2 shadow-card sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:px-5 sm:py-3">
-      {stats.map((stat, i) => (
-        <div
-          key={stat.label}
-          className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-5"
-        >
-          <div className="flex min-w-0 flex-col text-center sm:flex-row sm:items-baseline sm:gap-1.5 sm:text-left">
-            <span className="order-1 text-[11px] leading-tight text-brand-400 sm:order-2 sm:text-xs">
-              {stat.label}
-            </span>
-            <span className="order-2 truncate font-semibold text-[13px] text-brand-900 sm:order-1 sm:text-sm">
-              {stat.num}
-            </span>
+    <>
+      <div className="mb-4 sm:hidden">
+        <div className="overflow-hidden rounded-2xl border border-brand-200/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(245,240,235,0.96))] px-3 py-3 shadow-[0_14px_30px_rgba(93,69,40,0.08)]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-600">
+                Marknadslage
+              </p>
+              <p className="mt-1 text-[13px] font-medium text-brand-800">
+                {mobileStatusLabel}
+              </p>
+            </div>
+
+            <div className="flex shrink-0 gap-1.5">
+              <span className="rounded-full bg-brand-100 px-2.5 py-1 text-[11px] font-semibold text-brand-800">
+                {total.toLocaleString("sv-SE")} objekt
+              </span>
+              <span className="rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-semibold text-accent-700">
+                {resolvedWindowCount.toLocaleString("sv-SE")} snart
+              </span>
+            </div>
           </div>
-          {i < stats.length - 1 && (
-            <div className="w-px h-5 bg-brand-200 hidden sm:block" />
-          )}
         </div>
-      ))}
-    </div>
+      </div>
+
+      <div className="hidden rounded-xl border border-brand-200/40 bg-white px-5 py-3 shadow-card sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
+        {stats.map((stat, i) => (
+          <div
+            key={stat.label}
+            className="flex min-w-0 flex-row items-center gap-5"
+          >
+            <div className="flex min-w-0 flex-row items-baseline gap-1.5 text-left">
+              <span className="truncate text-sm font-semibold text-brand-900">
+                {stat.num}
+              </span>
+              <span className="text-xs leading-tight text-brand-400">
+                {stat.label}
+              </span>
+            </div>
+            {i < stats.length - 1 && <div className="h-5 w-px bg-brand-200" />}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
