@@ -196,27 +196,27 @@ export function AuthControls() {
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-2xl border border-white/10 bg-brand-950 p-1.5 shadow-2xl shadow-black/40">
-            <div className="rounded-xl border border-white/8 bg-white/[0.04] px-3 py-3">
+          <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-1.5 shadow-[0_18px_40px_rgba(26,26,24,0.18)]">
+            <div className="rounded-xl border border-brand-200 bg-white px-3 py-3 shadow-card">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[12px] font-semibold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-[12px] font-semibold text-white">
                   {initials}
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-[13px] font-semibold text-white">
+                  <div className="truncate text-[13px] font-semibold text-brand-900">
                     {displayName}
                   </div>
                   {session.user.email && (
-                    <div className="truncate text-[11px] text-white/58">
+                    <div className="truncate text-[11px] text-brand-500">
                       {session.user.email}
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="mt-3 flex items-center justify-between rounded-xl bg-white/[0.04] px-2.5 py-2 text-[11px] text-white/68">
+              <div className="mt-3 flex items-center justify-between rounded-xl bg-brand-100 px-2.5 py-2 text-[11px] text-brand-600">
                 <span>Konto</span>
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/76">
+                <span className="rounded-full bg-brand-300/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-800">
                   {roleLabel}
                 </span>
               </div>
@@ -225,7 +225,7 @@ export function AuthControls() {
                 type="button"
                 onClick={handleSignOut}
                 disabled={submitting}
-                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-3 text-[12px] font-medium text-white/82 transition-all hover:border-white/20 hover:bg-white/[0.12] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-3 text-[12px] font-medium text-brand-800 transition-all hover:border-brand-300 hover:bg-brand-100 hover:text-brand-900 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <LogOut size={14} />
                 <span>Logga ut</span>

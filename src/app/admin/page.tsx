@@ -19,6 +19,7 @@ type AdminPageProps = {
 
 type MissingFilterValue = "any" | "missing" | "present";
 type MissingPresetKey = "image-missing" | "image-present" | "embedding-missing";
+type SyncStatus = "success" | "error" | "partial";
 
 function getSingleValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -120,6 +121,28 @@ function formatMissingLabel(value: string) {
   }
 }
 
+function formatMissingFilterState(value: MissingFilterValue) {
+  switch (value) {
+    case "missing":
+      return "saknas";
+    case "present":
+      return "finns";
+    default:
+      return "alla";
+  }
+}
+
+function formatSyncStatusLabel(value: SyncStatus) {
+  switch (value) {
+    case "success":
+      return "OK";
+    case "partial":
+      return "Delvis";
+    case "error":
+      return "Fel";
+  }
+}
+
 function getStatusBadge(status: "success" | "error" | "partial") {
   switch (status) {
     case "success":
@@ -143,6 +166,12 @@ function getStatusBadge(status: "success" | "error" | "partial") {
       };
   }
 }
+
+const FILTER_SELECT_CLASSNAME =
+  "h-10 w-full rounded-xl border border-brand-200 bg-white px-3 text-[13px] text-brand-900 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-200";
+
+const FILTER_LABEL_CLASSNAME =
+  "mb-1 block text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-600";
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const session = await getServerSession(authOptions);
@@ -242,156 +271,328 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     listAppUsers(200),
   ]);
 
+  const houseName = houseId
+    ? (houses.find((house) => house.id === houseId)?.name ?? houseId)
+    : null;
+  const selectedMissingFilters = [
+    { key: "categories", label: "Kategorier", value: missingCategories },
+    { key: "ai-tags", label: "AI-taggar", value: missingAiTags },
+    {
+      key: "image-description",
+      label: "Bildbeskrivning",
+      value: missingImageDescription,
+    },
+    { key: "embedding", label: "Embedding", value: missingEmbedding },
+  ].filter((item) => item.value !== "any");
+  const activeFilters: string[] = [];
+
+  if (houseName) {
+    activeFilters.push(`Hus: ${houseName}`);
+  }
+
+  if (syncStatus) {
+    activeFilters.push(`Ingeststatus: ${formatSyncStatusLabel(syncStatus)}`);
+  }
+
+  if (allLots) {
+    activeFilters.push("Lotter: alla");
+  }
+
+  activeFilters.push(
+    ...selectedMissingFilters.map(
+      (item) => `${item.label}: ${formatMissingFilterState(item.value)}`,
+    ),
+  );
+
+  if (selectedMissingFilters.length > 1 && missingMatch === "all") {
+    activeFilters.push("Datakrav: alla valda måste matcha");
+  }
+
   return (
     <main className="min-h-screen bg-brand-50">
       <Header />
 
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-3 px-3 py-3 text-[12px] sm:px-4">
-        <section className="border border-brand-200 bg-white p-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="font-mono text-[13px] text-brand-900">admin</div>
-            <div className="text-brand-600">
+        <section className="rounded-3xl border border-brand-200 bg-white p-4 shadow-card">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div className="font-mono text-[13px] uppercase tracking-[0.12em] text-brand-500">
+                Admin
+              </div>
+              <h1 className="mt-1 font-serif text-2xl text-brand-900">
+                Ingest och datakvalitet
+              </h1>
+              <p className="mt-2 max-w-3xl text-[13px] leading-6 text-brand-700">
+                Filtren nedan styr två saker: ingest-listan till vänster och
+                listan med lotter som saknar data. Hus påverkar båda.
+                Ingeststatus påverkar bara ingest-körningar. Datakvalitetsfälten
+                påverkar bara lotter med saknad information.
+              </p>
+            </div>
+            <div className="text-[12px] text-brand-600">
               {session.user.email ?? session.user.name ?? "okänd användare"}
             </div>
           </div>
 
-          <form className="mt-3 flex flex-wrap items-center gap-2">
-            <select
-              name="houseId"
-              defaultValue={houseId ?? ""}
-              className="h-8 min-w-[180px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-            >
-              <option value="">alla hus</option>
-              {houses.map((house) => (
-                <option key={house.id} value={house.id}>
-                  {house.name}
-                </option>
-              ))}
-            </select>
+          <form className="mt-4 space-y-4" method="get">
+            <div className="grid gap-3 lg:grid-cols-3">
+              <div className="rounded-2xl border border-brand-200 bg-brand-50/70 p-3">
+                <label className={FILTER_LABEL_CLASSNAME}>Auktionshus</label>
+                <select
+                  name="houseId"
+                  defaultValue={houseId ?? ""}
+                  className={FILTER_SELECT_CLASSNAME}
+                >
+                  <option value="">Alla hus</option>
+                  {houses.map((house) => (
+                    <option key={house.id} value={house.id}>
+                      {house.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-2 text-[12px] text-brand-600">
+                  Påverkar både ingest-körningar och listan med lotter.
+                </p>
+              </div>
 
-            <select
-              name="status"
-              defaultValue={syncStatus ?? ""}
-              className="h-8 min-w-[120px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-            >
-              <option value="">alla status</option>
-              <option value="success">success</option>
-              <option value="partial">partial</option>
-              <option value="error">error</option>
-            </select>
+              <div className="rounded-2xl border border-brand-200 bg-brand-50/70 p-3">
+                <label className={FILTER_LABEL_CLASSNAME}>Ingeststatus</label>
+                <select
+                  name="status"
+                  defaultValue={syncStatus ?? ""}
+                  className={FILTER_SELECT_CLASSNAME}
+                >
+                  <option value="">Alla status</option>
+                  <option value="success">OK</option>
+                  <option value="partial">Delvis</option>
+                  <option value="error">Fel</option>
+                </select>
+                <p className="mt-2 text-[12px] text-brand-600">
+                  Påverkar bara tabellen med ingest-körningar.
+                </p>
+              </div>
 
-            <label className="inline-flex items-center gap-1 text-brand-700">
-              <span>kategorier</span>
-              <select
-                name="missingCategories"
-                defaultValue={missingCategories}
-                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-              >
-                <option value="any">visa alla</option>
-                <option value="missing">saknas</option>
-                <option value="present">finns</option>
-              </select>
-            </label>
-            <label className="inline-flex items-center gap-1 text-brand-700">
-              <span>ai-taggar</span>
-              <select
-                name="missingAiTags"
-                defaultValue={missingAiTags}
-                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-              >
-                <option value="any">visa alla</option>
-                <option value="missing">saknas</option>
-                <option value="present">finns</option>
-              </select>
-            </label>
-            <label className="inline-flex items-center gap-1 text-brand-700">
-              <span>bild</span>
-              <select
-                name="missingImageDescription"
-                defaultValue={missingImageDescription}
-                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-              >
-                <option value="any">visa alla</option>
-                <option value="missing">saknas</option>
-                <option value="present">finns</option>
-              </select>
-            </label>
-            <label className="inline-flex items-center gap-1 text-brand-700">
-              <span>embedding</span>
-              <select
-                name="missingEmbedding"
-                defaultValue={missingEmbedding}
-                className="h-8 min-w-[92px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-              >
-                <option value="any">visa alla</option>
-                <option value="missing">saknas</option>
-                <option value="present">finns</option>
-              </select>
-            </label>
-            <select
-              name="missingMatch"
-              defaultValue={missingMatch}
-              className="h-8 min-w-[132px] border border-brand-200 bg-white px-2 text-[12px] text-brand-900 outline-none"
-            >
-              <option value="any">minst en vald saknas</option>
-              <option value="all">alla valda saknas</option>
-            </select>
-            <label className="inline-flex items-center gap-1 text-brand-700">
-              <input type="checkbox" name="allLots" defaultChecked={allLots} />
-              alla lotter
-            </label>
+              <div className="rounded-2xl border border-brand-200 bg-brand-50/70 p-3">
+                <label className={FILTER_LABEL_CLASSNAME}>
+                  Lotter att visa
+                </label>
+                <select
+                  name="allLots"
+                  defaultValue={allLots ? "on" : ""}
+                  className={FILTER_SELECT_CLASSNAME}
+                >
+                  <option value="">Endast aktiva lotter</option>
+                  <option value="on">Alla lotter</option>
+                </select>
+                <p className="mt-2 text-[12px] text-brand-600">
+                  Påverkar bara listan med lotter som saknar data.
+                </p>
+              </div>
+            </div>
 
-            <button
-              type="submit"
-              className="h-8 border border-brand-900 bg-brand-900 px-3 text-[12px] text-white"
-            >
-              filtrera
-            </button>
+            <div className="rounded-2xl border border-brand-200 bg-white p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-[14px] font-semibold text-brand-900">
+                    Datakvalitet
+                  </h2>
+                  <p className="mt-1 max-w-3xl text-[12px] leading-5 text-brand-600">
+                    Välj vad som ska saknas eller finnas på lotterna. Om du inte
+                    väljer något här visas ändå bara lotter som har minst en
+                    datalucka.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-brand-200 bg-brand-50 px-3 py-2 text-[11px] text-brand-700">
+                  Standard: visar lotter med någon saknad data
+                </div>
+              </div>
+
+              <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <div>
+                  <label className={FILTER_LABEL_CLASSNAME}>Kategorier</label>
+                  <select
+                    name="missingCategories"
+                    defaultValue={missingCategories}
+                    className={FILTER_SELECT_CLASSNAME}
+                  >
+                    <option value="any">Spelar ingen roll</option>
+                    <option value="missing">Saknas</option>
+                    <option value="present">Finns</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={FILTER_LABEL_CLASSNAME}>AI-taggar</label>
+                  <select
+                    name="missingAiTags"
+                    defaultValue={missingAiTags}
+                    className={FILTER_SELECT_CLASSNAME}
+                  >
+                    <option value="any">Spelar ingen roll</option>
+                    <option value="missing">Saknas</option>
+                    <option value="present">Finns</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={FILTER_LABEL_CLASSNAME}>
+                    Bildbeskrivning
+                  </label>
+                  <select
+                    name="missingImageDescription"
+                    defaultValue={missingImageDescription}
+                    className={FILTER_SELECT_CLASSNAME}
+                  >
+                    <option value="any">Spelar ingen roll</option>
+                    <option value="missing">Saknas</option>
+                    <option value="present">Finns</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={FILTER_LABEL_CLASSNAME}>Embedding</label>
+                  <select
+                    name="missingEmbedding"
+                    defaultValue={missingEmbedding}
+                    className={FILTER_SELECT_CLASSNAME}
+                  >
+                    <option value="any">Spelar ingen roll</option>
+                    <option value="missing">Saknas</option>
+                    <option value="present">Finns</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,280px)_1fr] lg:items-end">
+                <div>
+                  <label className={FILTER_LABEL_CLASSNAME}>
+                    När flera saknas-filter är valda
+                  </label>
+                  <select
+                    name="missingMatch"
+                    defaultValue={missingMatch}
+                    className={FILTER_SELECT_CLASSNAME}
+                  >
+                    <option value="any">
+                      Minst ett av de valda villkoren räcker
+                    </option>
+                    <option value="all">Alla valda villkor måste matcha</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="submit"
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-900 px-4 py-2 text-[13px] font-medium text-white transition hover:bg-brand-950"
+                  >
+                    Använd filter
+                  </button>
+                  <Link
+                    href="/admin"
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-brand-200 bg-white px-4 py-2 text-[13px] font-medium text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
+                  >
+                    Återställ allt
+                  </Link>
+                </div>
+              </div>
+            </div>
           </form>
 
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[12px] text-brand-700">
+          <div className="mt-4 flex flex-wrap gap-2">
+            {activeFilters.length > 0 ? (
+              activeFilters.map((filter) => (
+                <span
+                  key={filter}
+                  className="inline-flex items-center rounded-full bg-brand-100 px-3 py-1 text-[11px] font-medium text-brand-700"
+                >
+                  {filter}
+                </span>
+              ))
+            ) : (
+              <span className="text-[12px] text-brand-500">
+                Inga extra filter valda. Standardläget visar aktiva lotter med
+                någon saknad data.
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-[12px] text-brand-700">
             <span className="font-medium text-brand-900">Snabbval:</span>
             <Link
               href={imageMissingHref}
-              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+              className="inline-flex min-h-9 items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-brand-900 transition hover:border-brand-300 hover:bg-white"
             >
-              bara bildluckor
+              Lotter utan bildbeskrivning
             </Link>
             <Link
               href={imagePresentHref}
-              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+              className="inline-flex min-h-9 items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-brand-900 transition hover:border-brand-300 hover:bg-white"
             >
-              utan bildluckor
+              Lotter med bildbeskrivning
             </Link>
             <Link
               href={embeddingMissingHref}
-              className="inline-flex h-8 items-center border border-brand-200 bg-brand-50 px-3 text-brand-900 transition hover:border-brand-300 hover:bg-white"
+              className="inline-flex min-h-9 items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-brand-900 transition hover:border-brand-300 hover:bg-white"
             >
-              bara embeddingsaknade
+              Lotter utan embedding
             </Link>
           </div>
         </section>
 
-        <section className="border border-brand-200 bg-white px-3 py-2 font-mono text-[12px] text-brand-800">
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <span>
-              lista: {formatInteger(lotAudit.lots.length)}/
-              {formatInteger(lotAudit.summary.total)}
-            </span>
-            <span>
-              kat: {formatInteger(lotAudit.summary.missingCategories)}
-            </span>
-            <span>ai: {formatInteger(lotAudit.summary.missingAiTags)}</span>
-            <span>
-              bild: {formatInteger(lotAudit.summary.missingImageDescription)}
-            </span>
-            <span>emb: {formatInteger(lotAudit.summary.missingEmbedding)}</span>
-            <span>ingests: {formatInteger(ingestRuns.length)}</span>
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              Visade lotter
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(lotAudit.lots.length)}
+            </div>
+            <div className="text-[12px] text-brand-600">
+              av {formatInteger(lotAudit.summary.total)} matchande
+            </div>
           </div>
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              Kategorier saknas
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(lotAudit.summary.missingCategories)}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              AI-taggar saknas
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(lotAudit.summary.missingAiTags)}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              Bildbeskrivning saknas
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(lotAudit.summary.missingImageDescription)}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              Embedding saknas
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(lotAudit.summary.missingEmbedding)}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-brand-200 bg-white px-3 py-3 shadow-card xl:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-500">
+              Ingest-körningar
+            </div>
+            <div className="mt-1 text-2xl font-semibold text-brand-900">
+              {formatInteger(ingestRuns.length)}
+            </div>
+          </div>
+
           {lotAudit.summary.total > lotAudit.lots.length && (
-            <div className="mt-1 text-brand-500">
-              visar forsta {formatInteger(lotAudit.lots.length)} av{" "}
-              {formatInteger(lotAudit.summary.total)} matchande lotter
+            <div className="rounded-2xl border border-brand-200 bg-brand-50 px-3 py-3 text-[12px] text-brand-600 md:col-span-2 xl:col-span-6">
+              Visar de första {formatInteger(lotAudit.lots.length)} av{" "}
+              {formatInteger(lotAudit.summary.total)} matchande lotter.
             </div>
           )}
         </section>
