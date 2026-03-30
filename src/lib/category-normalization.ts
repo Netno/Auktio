@@ -168,12 +168,51 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
     ],
   },
   {
+    category: "Hem & Hushåll",
+    terms: [
+      "hem",
+      "hushall",
+      "hushåll",
+      "kok",
+      "kök",
+      "koket",
+      "köket",
+      "pepparkvarn",
+      "saltkvarn",
+      "kryddkvarn",
+      "kaffekvarn",
+      "mortel",
+      "bricka",
+      "hushallsmaskin",
+      "hushållsmaskin",
+      "termos",
+      "stekpanna",
+      "gryta",
+      "kastrull",
+      "durkslag",
+      "skärbräda",
+      "skarbrada",
+      "skärbrada",
+      "skål",
+      "skal",
+      "peugeot",
+    ],
+  },
+  {
     category: "Mattor",
     terms: ["mattor", "matta", "teppe", "teppich", "rug", "carpet"],
   },
   {
     category: "Belysning",
-    terms: ["belysning", "lamp", "lampe", "lamper", "pendel", "ljusstake", "lighting"],
+    terms: [
+      "belysning",
+      "lamp",
+      "lampe",
+      "lamper",
+      "pendel",
+      "ljusstake",
+      "lighting",
+    ],
   },
   {
     category: "Glas",
@@ -443,7 +482,9 @@ export function hasOnlyGenericRawCategories(
 
   return (
     normalizedRawCategories.length > 0 &&
-    normalizedRawCategories.every((category) => GENERIC_CATEGORY_TERMS.has(category))
+    normalizedRawCategories.every((category) =>
+      GENERIC_CATEGORY_TERMS.has(category),
+    )
   );
 }
 
@@ -529,7 +570,8 @@ function getStrongSingleTermCategories(
   return scores
     .filter(
       (rule) =>
-        rule.score === 1 && STRONG_SINGLE_TERM_CATEGORY_MATCHES.has(rule.category),
+        rule.score === 1 &&
+        STRONG_SINGLE_TERM_CATEGORY_MATCHES.has(rule.category),
     )
     .map((rule) => rule.category);
 }
@@ -576,6 +618,16 @@ function reconcileCategories(
     }
   }
 
+  if (resolved.has("Hem & Hushåll") && resolved.has("Det dukade bordet")) {
+    const hushallScore = textScoreMap.get("Hem & Hushåll") ?? 0;
+    const dukatScore = textScoreMap.get("Det dukade bordet") ?? 0;
+    if (dukatScore > hushallScore) {
+      resolved.delete("Hem & Hushåll");
+    } else {
+      resolved.delete("Det dukade bordet");
+    }
+  }
+
   if (resolved.has("Fordon") && resolved.has("Elektronik")) {
     const fordonScore = textScoreMap.get("Fordon") ?? 0;
     const elektronikScore = textScoreMap.get("Elektronik") ?? 0;
@@ -589,6 +641,16 @@ function reconcileCategories(
     const leksakerScore = textScoreMap.get("Leksaker") ?? 0;
     if (leksakerScore >= fordonScore) {
       resolved.delete("Fordon");
+    }
+  }
+
+  if (resolved.has("Fordon") && resolved.has("Hem & Hushåll")) {
+    const fordonScore = textScoreMap.get("Fordon") ?? 0;
+    const hushallScore = textScoreMap.get("Hem & Hushåll") ?? 0;
+    if (hushallScore >= fordonScore) {
+      resolved.delete("Fordon");
+    } else {
+      resolved.delete("Hem & Hushåll");
     }
   }
 

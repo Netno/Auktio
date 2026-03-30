@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import type { AdminCategoryReviewLot } from "@/lib/admin-category-review";
 
 type SearchParamEntry = {
@@ -92,6 +92,13 @@ export function AdminCategoryReview({
   const [rows, setRows] = useState<RowState[]>(() => createInitialRows(lots));
   const [pendingLotId, setPendingLotId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
+  const sortedCategories = useMemo(
+    () =>
+      [...availableCategories].sort((left, right) =>
+        left.localeCompare(right, "sv-SE"),
+      ),
+    [availableCategories],
+  );
 
   function updateRow(lotId: number, updater: (row: RowState) => RowState) {
     setRows((current) =>
@@ -352,7 +359,7 @@ export function AdminCategoryReview({
                         className="h-11 w-full rounded-xl border border-brand-200 bg-white px-3 text-[13px] text-brand-900 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-200"
                       >
                         <option value="">Välj kategori</option>
-                        {availableCategories.map((category) => (
+                        {sortedCategories.map((category) => (
                           <option key={category} value={category}>
                             {category}
                           </option>

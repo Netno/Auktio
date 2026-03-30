@@ -267,6 +267,7 @@ export const CATEGORY_ORDER = [
   "Silver",
   "Smycken",
   "Det dukade bordet",
+  "Hem & Hushåll",
   "Mattor",
   "Belysning",
   "Glas",
