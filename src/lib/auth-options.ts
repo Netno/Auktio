@@ -45,9 +45,12 @@ export const authOptions: NextAuthOptions = {
           token.appUserId = appUser.id;
           token.role = appUser.role;
           token.isActive = appUser.isActive;
+          token.authProvider = appUser.authProvider;
+          token.lastLoginAt = appUser.lastLoginAt ?? undefined;
         } else {
           token.role = getBootstrapRoleForEmail(token.email);
           token.isActive = true;
+          token.authProvider = "google";
         }
       }
 
@@ -63,6 +66,10 @@ export const authOptions: NextAuthOptions = {
               : "";
         session.user.role = isAppUserRole(token.role) ? token.role : "user";
         session.user.isActive = token.isActive !== false;
+        session.user.authProvider =
+          typeof token.authProvider === "string" ? token.authProvider : null;
+        session.user.lastLoginAt =
+          typeof token.lastLoginAt === "string" ? token.lastLoginAt : null;
       }
 
       return session;

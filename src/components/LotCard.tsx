@@ -232,27 +232,43 @@ export function LotCard({
   const googleMapsExternalUrl = mapQuery
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : undefined;
+  const hasDisplayableSoldPrice =
+    typeof lot.soldPrice === "number" &&
+    Number.isFinite(lot.soldPrice) &&
+    lot.soldPrice > 0;
+  const hasDisplayableEndedBid =
+    typeof lot.currentBid === "number" &&
+    Number.isFinite(lot.currentBid) &&
+    lot.currentBid > 0;
+  const isUnsold = !lot.isActive && lot.availability === "unsold";
   const hasVerifiedSoldPrice =
-    !lot.isActive && lot.availability === "sold" && lot.soldPrice != null;
+    !lot.isActive && lot.availability === "sold" && hasDisplayableSoldPrice;
   const hasEndedBid =
-    !lot.isActive && !hasVerifiedSoldPrice && lot.currentBid != null;
+    !lot.isActive &&
+    !isUnsold &&
+    !hasVerifiedSoldPrice &&
+    hasDisplayableEndedBid;
   const endedAtLabel = !lot.isActive
     ? formatDateTimeStamp(lot.localEndTime ?? lot.endTime)
     : "";
   const primaryPriceLabel = lot.isActive
     ? "Aktuellt bud"
-    : hasVerifiedSoldPrice
-      ? "Slutpris"
-      : hasEndedBid
-        ? "Sista bud"
-        : "Värdering";
+    : isUnsold
+      ? "Osålt"
+      : hasVerifiedSoldPrice
+        ? "Slutpris"
+        : hasEndedBid
+          ? "Sista bud"
+          : "Pris saknas";
   const primaryPriceValue = lot.isActive
     ? lot.currentBid
-    : hasVerifiedSoldPrice
-      ? lot.soldPrice
-      : hasEndedBid
-        ? lot.currentBid
-        : lot.estimate;
+    : isUnsold
+      ? null
+      : hasVerifiedSoldPrice
+        ? lot.soldPrice
+        : hasEndedBid
+          ? lot.currentBid
+          : null;
   const showSoldPrice = hasVerifiedSoldPrice;
   const shouldShowEstimateColumn = lot.isActive;
 

@@ -6,6 +6,8 @@ declare module "next-auth/jwt" {
     appUserId?: string;
     role?: AppUserRole;
     isActive?: boolean;
+    authProvider?: string;
+    lastLoginAt?: string;
   }
 }
 
@@ -15,6 +17,8 @@ declare module "next-auth" {
       id: string;
       role: AppUserRole;
       isActive: boolean;
+      authProvider: string | null;
+      lastLoginAt: string | null;
     };
   }
 }

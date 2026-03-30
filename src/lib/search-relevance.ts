@@ -427,11 +427,15 @@ export function rankLotsByRelevance<T extends RankableLot>(
   const queryUnderstandingQualifiedRows = understanding.concepts.length
     ? rankedEntries.filter((entry) => entry.hasQueryUnderstandingMatch)
     : rankedEntries;
+  const strongQueryUnderstandingQualifiedRows = understanding.concepts.length
+    ? rankedEntries.filter((entry) => entry.hasStrongQueryUnderstandingMatch)
+    : rankedEntries;
 
   const rowsAfterQueryUnderstandingFilter =
     shouldRequireQueryUnderstandingMatch(
       understanding,
       queryUnderstandingQualifiedRows.length,
+      strongQueryUnderstandingQualifiedRows.length,
     )
       ? queryUnderstandingQualifiedRows
       : rankedEntries;
@@ -439,6 +443,7 @@ export function rankLotsByRelevance<T extends RankableLot>(
   const objectRowsBase = shouldRequireQueryUnderstandingMatch(
     understanding,
     queryUnderstandingQualifiedRows.length,
+    strongQueryUnderstandingQualifiedRows.length,
   )
     ? queryUnderstandingQualifiedRows
     : objectQualifiedRows;

@@ -484,6 +484,10 @@ export function evaluateQueryUnderstandingMatch(
 export function shouldRequireQueryUnderstandingMatch(
   understanding: SearchQueryUnderstanding,
   qualifiedCount: number,
+  strongQualifiedCount = 0,
 ) {
-  return understanding.concepts.length > 0 && qualifiedCount >= 4;
+  return (
+    understanding.concepts.length > 0 &&
+    (qualifiedCount >= 4 || strongQualifiedCount >= 2)
+  );
 }

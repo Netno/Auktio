@@ -37,6 +37,47 @@ function getRoleLabel(role: string) {
   return "Konto";
 }
 
+function getProviderLabel(provider: string | null | undefined) {
+  if (provider === "google") {
+    return "Google";
+  }
+
+  if (!provider) {
+    return "Okänd";
+  }
+
+  return provider;
+}
+
+function formatLastLogin(value: string | null | undefined) {
+  if (!value) {
+    return "Saknas";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Saknas";
+  }
+
+  return new Intl.DateTimeFormat("sv-SE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function formatUserId(value: string | null | undefined) {
+  if (!value) {
+    return "Saknas";
+  }
+
+  if (value.length <= 16) {
+    return value;
+  }
+
+  return `${value.slice(0, 8)}...${value.slice(-6)}`;
+}
+
 export function AuthControls() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
@@ -146,6 +187,10 @@ export function AuthControls() {
       typeof session.user.name === "string" ? session.user.name : undefined,
     );
     const roleLabel = getRoleLabel(session.user.role);
+    const accountStatus = session.user.isActive ? "Aktiv" : "Inaktiv";
+    const providerLabel = getProviderLabel(session.user.authProvider);
+    const lastLoginLabel = formatLastLogin(session.user.lastLoginAt);
+    const userIdLabel = formatUserId(session.user.id);
 
     return (
       <div
@@ -181,9 +226,18 @@ export function AuthControls() {
           <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-1.5 shadow-[0_18px_40px_rgba(26,26,24,0.18)]">
             <div className="rounded-xl border border-brand-200 bg-white px-3 py-3 shadow-card">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-white">
-                  <User2 size={16} strokeWidth={2.2} />
-                </div>
+                {session.user.image ? (
+                  <img
+                    src={session.user.image}
+                    alt={displayName}
+                    className="h-10 w-10 shrink-0 rounded-full border border-brand-200 object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-900 text-white">
+                    <User2 size={16} strokeWidth={2.2} />
+                  </div>
+                )}
                 <div className="min-w-0">
                   <div className="truncate text-[13px] font-semibold text-brand-900">
                     {displayName}
@@ -201,6 +255,38 @@ export function AuthControls() {
                 <span className="rounded-full bg-brand-300/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-800">
                   {roleLabel}
                 </span>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-brand-200 bg-brand-50 px-3 py-2.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-400">
+                  Användardetaljer
+                </div>
+                <dl className="mt-2 space-y-2 text-[11px] text-brand-700">
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="text-brand-500">Status</dt>
+                    <dd className="text-right font-medium text-brand-900">
+                      {accountStatus}
+                    </dd>
+                  </div>
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="text-brand-500">Inloggad med</dt>
+                    <dd className="text-right font-medium text-brand-900">
+                      {providerLabel}
+                    </dd>
+                  </div>
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="text-brand-500">Senaste inloggning</dt>
+                    <dd className="text-right font-medium text-brand-900">
+                      {lastLoginLabel}
+                    </dd>
+                  </div>
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="text-brand-500">Användar-ID</dt>
+                    <dd className="text-right font-medium text-brand-900">
+                      {userIdLabel}
+                    </dd>
+                  </div>
+                </dl>
               </div>
 
               <button

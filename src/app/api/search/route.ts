@@ -305,6 +305,24 @@ function isLotActive(row: Pick<SearchRow, "availability" | "end_time">) {
   return new Date(row.end_time).getTime() > Date.now();
 }
 
+function hasPositiveAmount(value: number | null | undefined) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
+function getResolvedAvailability(
+  row: Pick<SearchRow, "availability" | "sold_price">,
+): string | null {
+  if (row.availability === "sold" && !hasPositiveAmount(row.sold_price)) {
+    return "unsold";
+  }
+
+  return row.availability;
+}
+
+function getResolvedSoldPrice(value: number | null | undefined): number | null {
+  return hasPositiveAmount(value) ? Number(value) : null;
+}
+
 function getDefaultSort(status: SearchStatus, query?: string): SortOption {
   if (query?.trim()) return "relevance";
   return status === "ended" ? "recently-ended" : "ending-soon";
@@ -615,6 +633,8 @@ async function getWindowCount(
 
   if (params.status === "ended") {
     query = query.gte("end_time", windowStartIso).lte("end_time", nowIso);
+  } else if (params.status === "all") {
+    query = query.gte("end_time", nowIso).lte("end_time", windowEndIso);
   } else {
     query = query.lte("end_time", windowEndIso);
   }
@@ -645,7 +665,12 @@ async function getTotalValueStats(
 
   const valueRows = rows
     .map((row) => {
-      const amount = isLotActive(row) ? row.current_bid : row.sold_price;
+      const resolvedAvailability = getResolvedAvailability(row);
+      const amount = isLotActive(row)
+        ? row.current_bid
+        : resolvedAvailability === "sold"
+          ? getResolvedSoldPrice(row.sold_price)
+          : row.current_bid;
 
       return {
         amount,
@@ -819,14 +844,11 @@ export async function GET(request: NextRequest) {
   const shouldTreatAsCategoryBrowse = Boolean(
     detectedCategory && effectiveQuery && normalizeSearchQuery(effectiveQuery),
   );
-  const normalizedEffectiveQuery = effectiveQuery
-    ? normalizeSearchQuery(effectiveQuery)
-    : undefined;
   const effectiveParams: SearchParams = {
     ...params,
     query: shouldTreatAsCategoryBrowse
       ? undefined
-      : normalizedEffectiveQuery || effectiveQuery || undefined,
+      : effectiveQuery?.trim() || undefined,
     categories:
       params.categories?.length || !detectedCategory
         ? params.categories
@@ -989,14 +1011,14 @@ export async function GET(request: NextRequest) {
         estimate: row.estimate,
         currentBid: row.current_bid,
         minBid: row.min_bid,
-        soldPrice: row.sold_price,
+        soldPrice: getResolvedSoldPrice(row.sold_price),
         startTime: row.start_time,
         endTime: row.end_time,
         localEndTime: row.local_end_time,
         createdAt: row.created_at,
         city: row.city,
         country: row.country,
-        availability: row.availability,
+        availability: getResolvedAvailability(row),
         url: row.url,
         houseId: row.house_id,
         houseName: row.auc_auction_houses?.name ?? undefined,

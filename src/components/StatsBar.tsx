@@ -97,7 +97,12 @@ export function StatsBar({
     },
     {
       num: String(resolvedWindowCount),
-      label: status === "ended" ? "avslutade senaste 24h" : "avslutas inom 24h",
+      label:
+        status === "ended"
+          ? "avslutade senaste 24h"
+          : status === "all"
+            ? "aktiva avslutas inom 24h"
+            : "avslutas inom 24h",
     },
   ];
 
