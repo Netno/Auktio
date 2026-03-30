@@ -435,7 +435,11 @@ function applyNonQueryCriteria(
   params: SearchParams,
   nowIso: string,
 ) {
-  query = applyStatusFilter(query, params.status ?? "active", nowIso);
+  const hasExplicitLotIds = Boolean(params.lotIds && params.lotIds.length > 0);
+
+  if (!hasExplicitLotIds) {
+    query = applyStatusFilter(query, params.status ?? "active", nowIso);
+  }
 
   if (params.lotIds) {
     if (params.lotIds.length > 0) {
