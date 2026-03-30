@@ -8,7 +8,14 @@ import {
 } from "@/lib/user-favorites";
 
 function getSessionUserId(
-  session: Awaited<ReturnType<typeof getServerSession>>,
+  session:
+    | {
+        user?: {
+          id?: string | null;
+        };
+      }
+    | null
+    | undefined,
 ) {
   const userId = session?.user?.id;
   return typeof userId === "string" && userId.trim().length > 0 ? userId : null;
