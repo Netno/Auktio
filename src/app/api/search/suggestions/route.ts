@@ -18,6 +18,7 @@ import {
   getModifierAwareScoreBoost,
   shouldRequirePrimaryObjectMatch,
 } from "@/lib/search-object-intent";
+import { getQueryUnderstandingTerms } from "@/lib/search-query-understanding";
 import { createServerClient } from "@/lib/supabase";
 import type {
   SearchStatus,
@@ -109,9 +110,12 @@ function buildQueryTerms(query: string) {
   const normalizedQuery = normalizeSwedishSearchQuery(query);
   const normalizedText = normalizeSearchText(query);
   const baseTerms = extractSwedishQueryTerms(query);
-  const expandedTerms = expandSwedishSemanticQueryTerms(query).filter(
-    (term) => !baseTerms.includes(term) && term.length >= 3,
-  );
+  const expandedTerms = Array.from(
+    new Set([
+      ...expandSwedishSemanticQueryTerms(query),
+      ...getQueryUnderstandingTerms(query),
+    ]),
+  ).filter((term) => !baseTerms.includes(term) && term.length >= 3);
   const tokens = Array.from(
     new Set(
       [normalizedQuery, normalizedText]

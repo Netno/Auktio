@@ -7,7 +7,8 @@ export type SearchConceptId =
   | "garden"
   | "wall-display"
   | "storage"
-  | "table-setting";
+  | "table-setting"
+  | "sewing";
 
 export interface SearchQueryUnderstanding {
   normalizedQuery: string;
@@ -258,6 +259,79 @@ const SEARCH_CONCEPTS: SearchConceptDefinition[] = [
       "vitrinskåp",
       "skrivställ",
       "askfat",
+    ],
+  },
+  {
+    id: "sewing",
+    triggerTerms: [
+      "sömnad",
+      "somnad",
+      "symaskin",
+      "symaskiner",
+      "sytillbehör",
+      "sytillbehor",
+      "sybehör",
+      "sybehor",
+      "handarbete",
+      "textilhantverk",
+    ],
+    triggerPhrases: [
+      "sy med",
+      "saker man kan sy med",
+      "för sömnad",
+      "for somnad",
+    ],
+    expansionTerms: [
+      "symaskin",
+      "symaskiner",
+      "trampsymaskin",
+      "overlock",
+      "singer",
+      "husqvarna",
+      "sybord",
+      "sylåda",
+      "sylada",
+      "nåldyna",
+      "naldyna",
+      "sybehör",
+      "sybehor",
+      "spole",
+      "spolar",
+    ],
+    semanticPhrases: [
+      "föremål för sömnad",
+      "redskap för sömnad",
+      "utrustning för sömnad",
+    ],
+    titleStrongResultTerms: [
+      "symaskin",
+      "symaskiner",
+      "trampsymaskin",
+      "overlock",
+      "symaskinsbord",
+    ],
+    strongResultTerms: [
+      "symaskin",
+      "symaskiner",
+      "trampsymaskin",
+      "overlock",
+      "symaskinsbord",
+      "singer",
+      "husqvarna",
+    ],
+    resultTerms: [
+      "sybord",
+      "sylåda",
+      "sylada",
+      "nåldyna",
+      "naldyna",
+      "sybehör",
+      "sybehor",
+      "spole",
+      "spolar",
+      "sömnad",
+      "somnad",
+      "handarbete",
     ],
   },
 ];
