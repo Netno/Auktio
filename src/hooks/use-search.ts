@@ -37,6 +37,7 @@ interface UseSearchReturn {
 
   // Params
   query: string;
+  settledQuery: string;
   selectedCategories: string[];
   selectedAuctionIds: number[];
   selectedAuctionTitles: string[];
@@ -69,7 +70,7 @@ interface UseSearchReturn {
   clearFilters: () => void;
 }
 
-const QUERY_DEBOUNCE_MS = 500;
+const QUERY_DEBOUNCE_MS = 650;
 const DEFAULT_STATUS: SearchStatus = "active";
 const DEFAULT_SEARCH_MODE: SearchMode = "hybrid";
 const DEFAULT_PAGE_SIZE = 48;
@@ -102,6 +103,17 @@ function getDefaultSortForStatus(status: SearchStatus): SortOption {
 
 function getDefaultSort(status: SearchStatus, query: string): SortOption {
   return query.trim() ? "relevance" : getDefaultSortForStatus(status);
+}
+
+function normalizeSortForStatus(
+  status: SearchStatus,
+  sort: SortOption,
+): SortOption {
+  if (status === "ended" && sort === "newly-listed") {
+    return "recently-ended";
+  }
+
+  return sort;
 }
 
 export function useSearch(options?: UseSearchOptions): UseSearchReturn {
@@ -156,11 +168,14 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     getInitialStatus(searchParams),
   );
   const [sortBy, setSortByState] = useState<SortOption>(
-    (searchParams.get("sort") as SortOption) ??
-      getDefaultSort(
-        getInitialStatus(searchParams),
-        searchParams.get("q") ?? "",
-      ),
+    normalizeSortForStatus(
+      getInitialStatus(searchParams),
+      (searchParams.get("sort") as SortOption) ??
+        getDefaultSort(
+          getInitialStatus(searchParams),
+          searchParams.get("q") ?? "",
+        ),
+    ),
   );
   const [sortIsManual, setSortIsManual] = useState(
     Boolean(searchParams.get("sort")),
@@ -193,6 +208,8 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
 
   // Debounce timer
   const queryDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const activeSearchControllerRef = useRef<AbortController | null>(null);
+  const latestRequestIdRef = useRef(0);
 
   // Debounce only the typed search query to avoid jumpy updates while typing.
   useEffect(() => {
@@ -228,6 +245,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       page: number;
       pageSize: number;
     }) => {
+      const requestId = latestRequestIdRef.current + 1;
+      latestRequestIdRef.current = requestId;
+      activeSearchControllerRef.current?.abort();
+      const controller = new AbortController();
+      activeSearchControllerRef.current = controller;
+
       setLoading(true);
       setError(null);
 
@@ -248,7 +271,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       const effectiveSortBy =
         isFavoritesMode && params.sortBy === "relevance"
           ? getDefaultSort("all", "")
-          : params.sortBy;
+          : normalizeSortForStatus(effectiveStatus, params.sortBy);
 
       const urlParams = new URLSearchParams();
       const requestParams = new URLSearchParams();
@@ -302,16 +325,33 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       requestParams.set("pageSize", String(params.pageSize));
 
       try {
-        const res = await fetch(`/api/search?${requestParams.toString()}`);
+        const res = await fetch(`/api/search?${requestParams.toString()}`, {
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error(`Search failed: ${res.status}`);
 
         const data: SearchResponse = await res.json();
+        if (
+          controller.signal.aborted ||
+          requestId !== latestRequestIdRef.current
+        ) {
+          return;
+        }
+
         setLots(data.lots);
         setTotal(data.total);
         setDidYouMean(data.didYouMean ?? null);
         setFacets(data.facets);
         setStats(data.stats);
       } catch (err) {
+        if ((err as Error).name === "AbortError") {
+          return;
+        }
+
+        if (requestId !== latestRequestIdRef.current) {
+          return;
+        }
+
         setError(err instanceof Error ? err.message : "Search failed");
         setLots([]);
         setDidYouMean(null);
@@ -322,7 +362,16 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
           totalValueHasMixedCurrencies: false,
         });
       } finally {
-        setLoading(false);
+        if (
+          requestId === latestRequestIdRef.current &&
+          !controller.signal.aborted
+        ) {
+          setLoading(false);
+        }
+
+        if (activeSearchControllerRef.current === controller) {
+          activeSearchControllerRef.current = null;
+        }
       }
 
       // Sync URL without App Router navigation. router.replace() in the App
@@ -388,6 +437,12 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     setSortByState(getDefaultSort(status, debouncedQuery));
   }, [debouncedQuery, status, sortIsManual]);
 
+  useEffect(() => {
+    return () => {
+      activeSearchControllerRef.current?.abort();
+    };
+  }, []);
+
   // Actions
   const setQuery = (q: string) => {
     setQueryState(q);
@@ -447,7 +502,10 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
       if (!sortIsManual) {
         return getDefaultSort(nextStatus, debouncedQuery);
       }
-      if (nextStatus === "ended" && currentSort === "ending-soon") {
+      if (
+        nextStatus === "ended" &&
+        (currentSort === "ending-soon" || currentSort === "newly-listed")
+      ) {
         return "recently-ended";
       }
       if (
@@ -465,7 +523,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
 
   const setSortBy = (sort: SortOption) => {
     setSortIsManual(true);
-    setSortByState(sort);
+    setSortByState(normalizeSortForStatus(status, sort));
     setPageState(1);
   };
 
@@ -503,6 +561,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
     facets,
     stats,
     query,
+    settledQuery: debouncedQuery,
     searchMode,
     status,
     selectedCategories,

@@ -328,6 +328,17 @@ function getDefaultSort(status: SearchStatus, query?: string): SortOption {
   return status === "ended" ? "recently-ended" : "ending-soon";
 }
 
+function normalizeSortForStatus(
+  status: SearchStatus,
+  sortBy: SortOption,
+): SortOption {
+  if (status === "ended" && sortBy === "newly-listed") {
+    return "recently-ended";
+  }
+
+  return sortBy;
+}
+
 function buildExpandedSemanticQuery(query: string) {
   const normalizedQuery = normalizeSearchQuery(query);
   const expandedTerms = expandSemanticTerms(query);
@@ -820,9 +831,11 @@ export async function GET(request: NextRequest) {
     maxPrice: searchParams.get("maxPrice")
       ? Number(searchParams.get("maxPrice"))
       : undefined,
-    sortBy:
+    sortBy: normalizeSortForStatus(
+      status,
       (searchParams.get("sort") as SortOption) ??
-      getDefaultSort(status, searchParams.get("q") ?? undefined),
+        getDefaultSort(status, searchParams.get("q") ?? undefined),
+    ),
     activeOnly: status === "active",
     page: Math.max(1, Number(searchParams.get("page")) || 1),
     pageSize: Math.min(

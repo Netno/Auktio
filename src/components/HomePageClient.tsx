@@ -176,7 +176,9 @@ function buildSortOptions(hasQuery: boolean, status: SearchStatus) {
     ...(status !== "active"
       ? [{ value: "sold-price-desc", label: "Högsta slutpris" }]
       : []),
-    { value: "newly-listed", label: "Senast inkommet" },
+    ...(status !== "ended"
+      ? [{ value: "newly-listed", label: "Senast inkommet" }]
+      : []),
     { value: "price-desc", label: "Högsta bud" },
     { value: "price-asc", label: "Lägsta bud" },
     { value: "estimate-desc", label: "Högsta utrop" },
@@ -244,6 +246,7 @@ export function HomePageClient() {
     facets,
     stats,
     query,
+    settledQuery,
     selectedCategories,
     selectedAuctionIds,
     selectedAuctionTitles,
@@ -276,7 +279,7 @@ export function HomePageClient() {
   });
   const { suggestions: remoteSuggestions, loading: suggestionsLoading } =
     useSearchSuggestions({
-      query,
+      query: settledQuery,
       status,
       selectedCategories,
       selectedCity,
@@ -303,7 +306,7 @@ export function HomePageClient() {
     [lots],
   );
   const searchSuggestions = useMemo<SearchSuggestion[]>(() => {
-    const trimmedQuery = query.trim();
+    const trimmedQuery = settledQuery.trim();
 
     if (!trimmedQuery) {
       return [];
@@ -330,10 +333,10 @@ export function HomePageClient() {
         ]),
       ).values(),
     ).slice(0, 8);
-  }, [query, remoteSuggestions, resultDrivenSuggestions, status]);
+  }, [remoteSuggestions, resultDrivenSuggestions, settledQuery, status]);
   const sortOptions = useMemo(
-    () => buildSortOptions(Boolean(query.trim()), status),
-    [query, status],
+    () => buildSortOptions(Boolean(settledQuery.trim()), status),
+    [settledQuery, status],
   );
   const cityOptions = useMemo(
     () =>
@@ -398,7 +401,7 @@ export function HomePageClient() {
     () =>
       JSON.stringify({
         showFavsOnly,
-        query: query.trim(),
+        query: settledQuery.trim(),
         status,
         categories: selectedCategories,
         auctionIds: selectedAuctionIds,
@@ -416,7 +419,7 @@ export function HomePageClient() {
       maxPrice,
       minPrice,
       pageSize,
-      query,
+      settledQuery,
       selectedAuctionIds,
       selectedCategories,
       selectedCity,
@@ -777,33 +780,24 @@ export function HomePageClient() {
           <div
             className="mx-auto flex h-[50px] max-w-[1360px] items-center gap-2 px-3 transition-transform duration-200 ease-out"
             style={{
+              paddingLeft: "calc(0.75rem + env(safe-area-inset-left, 0px))",
+              paddingRight: "calc(1rem + env(safe-area-inset-right, 0px))",
               transform: mobileHeaderVisible
                 ? "translateY(0)"
                 : "translateY(-100%)",
             }}
           >
-            <Link href="/" className="group flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-accent-500 transition-transform group-hover:scale-125" />
-              <span className="font-serif text-[18px] font-semibold tracking-tight text-brand-950">
+            <Link
+              href="/"
+              className="group flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden pr-1"
+            >
+              <span className="h-2 w-2 shrink-0 rounded-full bg-accent-500 transition-transform group-hover:scale-125" />
+              <span className="truncate font-serif text-[17px] font-semibold tracking-tight text-brand-950">
                 Auktio
               </span>
             </Link>
 
-            <div className="ml-auto flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setMobileSearchOpen((current) => !current)}
-                aria-expanded={mobileSearchOpen}
-                aria-label="Öppna sök"
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
-                  mobileSearchOpen
-                    ? "border-brand-900 bg-brand-900 text-white"
-                    : "border-brand-200 bg-white text-brand-700"
-                }`}
-              >
-                {mobileSearchOpen ? <X size={16} /> : <Search size={16} />}
-              </button>
-
+            <div className="flex shrink-0 items-center">
               <button
                 type="button"
                 onClick={() => {
@@ -814,7 +808,7 @@ export function HomePageClient() {
                 }}
                 aria-expanded={mobileMenuOpen}
                 aria-label="Öppna meny"
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
+                className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
                   mobileMenuOpen
                     ? "border-brand-900 bg-brand-900 text-white"
                     : "border-brand-200 bg-white text-brand-700"
@@ -823,21 +817,21 @@ export function HomePageClient() {
                 {mobileMenuOpen ? (
                   <X size={16} />
                 ) : session?.user ? (
-                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full ring-1 ring-brand-200/80">
+                  <span className="relative flex h-7 w-7 items-center justify-center rounded-full ring-1 ring-brand-200/80">
                     {mobileAvatarUrl ? (
                       <img
                         src={mobileAvatarUrl}
                         alt={mobileDisplayName}
-                        className="h-8 w-8 rounded-full object-cover"
+                        className="h-7 w-7 rounded-full object-cover"
                         referrerPolicy="no-referrer"
                         onError={() => setAvatarLoadFailed(true)}
                       />
                     ) : (
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-900 text-white">
-                        <User2 size={14} strokeWidth={2.2} />
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-900 text-white">
+                        <User2 size={13} strokeWidth={2.2} />
                       </span>
                     )}
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-[#fcfaf8] bg-emerald-400" />
+                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full border border-[#fcfaf8] bg-emerald-400" />
                   </span>
                 ) : (
                   <Menu size={16} />
@@ -849,11 +843,49 @@ export function HomePageClient() {
 
         <div
           className="fixed inset-x-0 z-[55] border-b border-brand-200/70 bg-[#fcfaf8] px-3 py-2 transition-[top] duration-200 ease-out"
-          style={{ top: mobileFilterTop }}
+          style={{
+            top: mobileFilterTop,
+            paddingLeft: "calc(0.75rem + env(safe-area-inset-left, 0px))",
+            paddingRight: "calc(1rem + env(safe-area-inset-right, 0px))",
+          }}
         >
           <div className="mx-auto flex max-w-[1360px] items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileSearchOpen((current) => !current);
+                setMobileHeaderVisible(true);
+                setMobileMenuOpen(false);
+                setMobileFiltersOpen(false);
+              }}
+              aria-expanded={mobileSearchOpen}
+              aria-label="Öppna sök"
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                mobileSearchOpen
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-brand-200 bg-white text-brand-700"
+              }`}
+            >
+              {mobileSearchOpen ? <X size={16} /> : <Search size={16} />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMobileFiltersOpen(true);
+                setMobileHeaderVisible(true);
+                setMobileMenuOpen(false);
+                setMobileSearchOpen(false);
+              }}
+              aria-label="Visa filter"
+              className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-full border border-brand-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-brand-800"
+            >
+              <SlidersHorizontal size={14} />
+              <span className="max-[430px]:hidden">Filter</span>
+            </button>
+
             <div className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="flex gap-2 pr-2">
+              <div className="flex gap-2 pr-1">
                 <button
                   type="button"
                   onClick={() => handleQuickCategorySelect(null)}
@@ -886,39 +918,6 @@ export function HomePageClient() {
                 })}
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setMobileFiltersOpen(true);
-                setMobileHeaderVisible(true);
-                setMobileMenuOpen(false);
-                setMobileSearchOpen(false);
-              }}
-              className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-brand-200 bg-white px-3 py-1.5 text-[12px] font-medium text-brand-800"
-            >
-              <SlidersHorizontal size={14} />
-              Visa filter
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                setMobileViewMode((current) =>
-                  current === "grid" ? "list" : "grid",
-                )
-              }
-              aria-label={
-                mobileViewMode === "grid" ? "Visa lista" : "Visa rutnät"
-              }
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-700"
-            >
-              {mobileViewMode === "grid" ? (
-                <Rows3 size={16} />
-              ) : (
-                <LayoutGrid size={16} />
-              )}
-            </button>
           </div>
         </div>
 
@@ -1247,6 +1246,38 @@ export function HomePageClient() {
               </div>
 
               <div className="space-y-4">
+                <div>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-400">
+                    Visning
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 rounded-2xl bg-brand-50 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setMobileViewMode("grid")}
+                      className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-[12px] font-medium ${
+                        mobileViewMode === "grid"
+                          ? "bg-brand-900 text-white"
+                          : "text-brand-600"
+                      }`}
+                    >
+                      <LayoutGrid size={15} />
+                      <span>Rutnät</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMobileViewMode("list")}
+                      className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-[12px] font-medium ${
+                        mobileViewMode === "list"
+                          ? "bg-brand-900 text-white"
+                          : "text-brand-600"
+                      }`}
+                    >
+                      <Rows3 size={15} />
+                      <span>Lista</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-3 gap-2 rounded-2xl bg-brand-50 p-1">
                   {(
                     [

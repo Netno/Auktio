@@ -143,7 +143,9 @@ export function FilterBar({
     ...(status !== "active"
       ? [{ value: "sold-price-desc", label: "Högsta slutpris" }]
       : []),
-    { value: "newly-listed", label: "Senast inkommet" },
+    ...(status !== "ended"
+      ? [{ value: "newly-listed", label: "Senast inkommet" }]
+      : []),
     { value: "price-desc", label: "Högsta bud" },
     { value: "price-asc", label: "Lägsta bud" },
     { value: "estimate-desc", label: "Högsta utrop" },
@@ -285,7 +287,7 @@ export function FilterBar({
             onClick={() => setExpandedFilters(!expandedFilters)}
             aria-expanded={expandedFilters}
             aria-controls={filterPanelId}
-            className={`flex min-h-10 items-center justify-center gap-1.5 rounded-xl border px-3 py-2
+            className={`flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border px-3
               whitespace-nowrap text-[12px] font-medium transition-all ${
                 expandedFilters
                   ? "border-brand-900 bg-brand-900 text-white"
@@ -309,8 +311,8 @@ export function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => onSetSort(e.target.value as SortOption)}
-            className="min-w-0 max-w-full rounded-xl border border-brand-200 bg-white px-3 py-2
-              text-[12px] text-brand-600 outline-none cursor-pointer md:min-w-[9rem] md:shrink-0 md:rounded-lg md:py-1.5"
+            className="h-10 min-w-0 max-w-full rounded-xl border border-brand-200 bg-white px-3
+              text-[12px] text-brand-600 outline-none cursor-pointer md:min-w-[9rem] md:shrink-0 md:rounded-lg"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>

@@ -174,7 +174,7 @@ export function AuthControls() {
 
   if (!googleProvider) {
     return (
-      <div className="hidden rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[12px] font-medium text-white/45 lg:block">
+      <div className="hidden h-9 items-center rounded-lg border border-white/10 bg-white/[0.05] px-3 text-[12px] font-medium text-white/45 lg:inline-flex">
         Google-login ej aktiv
       </div>
     );
@@ -211,29 +211,29 @@ export function AuthControls() {
           onClick={() => setMenuOpen((current) => !current)}
           aria-expanded={menuOpen}
           aria-label="Öppna kontomeny"
-          className="group inline-flex min-h-10 w-full items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:w-auto sm:max-w-[220px]"
+          className="group inline-flex min-h-10 w-full items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:h-9 sm:min-h-0 sm:w-auto sm:max-w-[248px] sm:rounded-lg sm:py-0"
         >
-          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-1 ring-white/10">
+          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-1 ring-white/10 sm:h-7 sm:w-7">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="h-8 w-8 rounded-full object-cover"
+                className="h-8 w-8 rounded-full object-cover sm:h-7 sm:w-7"
                 referrerPolicy="no-referrer"
                 onError={() => setAvatarLoadFailed(true)}
               />
             ) : (
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-800 text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-800 text-white sm:h-7 sm:w-7">
                 <User2 size={14} strokeWidth={2.2} />
               </span>
             )}
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-brand-900 bg-emerald-400" />
           </span>
-          <span className="flex min-w-0 flex-1 flex-col justify-center leading-none">
-            <span className="truncate text-[12px] font-semibold text-white">
+          <span className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+            <span className="truncate text-[13px] font-semibold text-white">
               {displayName}
             </span>
-            <span className="mt-1 truncate text-[10px] uppercase tracking-[0.12em] text-white/48">
+            <span className="shrink-0 rounded-full border border-white/16 bg-white/[0.14] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
               {roleLabel}
             </span>
           </span>
@@ -339,9 +339,9 @@ export function AuthControls() {
         type="button"
         onClick={handleSignIn}
         disabled={submitting}
-        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white bg-white px-4 py-1.5 text-[13px] font-semibold text-brand-950 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition-all hover:bg-brand-50 hover:text-black disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white/88 shadow-none transition-all hover:border-white/20 hover:bg-white/[0.12] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:h-9 sm:min-h-0 sm:w-auto sm:rounded-lg sm:py-0"
       >
-        <LogIn size={14} className="text-brand-950" />
+        <LogIn size={14} className="text-current" />
         <span>Logga in</span>
       </button>
       {errorMessage && (

@@ -7,7 +7,7 @@ import type {
   SearchSuggestionsResponse,
 } from "@/lib/types";
 
-const SUGGESTION_DEBOUNCE_MS = 160;
+const SUGGESTION_DEBOUNCE_MS = 320;
 
 interface UseSearchSuggestionsOptions {
   query: string;
