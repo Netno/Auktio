@@ -285,6 +285,9 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturn {
         urlParams.set("status", effectiveStatus);
       if (effectiveStatus !== DEFAULT_STATUS)
         requestParams.set("status", effectiveStatus);
+      if (isFavoritesMode) {
+        requestParams.set("favoritesMode", "true");
+      }
       if (params.lotIds) {
         requestParams.set("ids", params.lotIds.join(","));
       }

@@ -385,6 +385,65 @@ function mergeUniqueIds(...groups: number[][]) {
   return merged;
 }
 
+function getTimestampOrNull(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const timestamp = new Date(value).getTime();
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function compareFavoritesLots(
+  left: Pick<NormalizedLot, "id" | "endTime" | "isActive">,
+  right: Pick<NormalizedLot, "id" | "endTime" | "isActive">,
+) {
+  if (left.isActive !== right.isActive) {
+    return left.isActive ? -1 : 1;
+  }
+
+  const leftEndTime = getTimestampOrNull(left.endTime);
+  const rightEndTime = getTimestampOrNull(right.endTime);
+
+  if (left.isActive) {
+    if (leftEndTime == null && rightEndTime == null) {
+      return right.id - left.id;
+    }
+
+    if (leftEndTime == null) {
+      return 1;
+    }
+
+    if (rightEndTime == null) {
+      return -1;
+    }
+
+    if (leftEndTime !== rightEndTime) {
+      return leftEndTime - rightEndTime;
+    }
+
+    return right.id - left.id;
+  }
+
+  if (leftEndTime == null && rightEndTime == null) {
+    return right.id - left.id;
+  }
+
+  if (leftEndTime == null) {
+    return 1;
+  }
+
+  if (rightEndTime == null) {
+    return -1;
+  }
+
+  if (leftEndTime !== rightEndTime) {
+    return rightEndTime - leftEndTime;
+  }
+
+  return right.id - left.id;
+}
+
 function getStatusWindowCountFromRows(
   rows: Array<Pick<SearchRow, "end_time" | "availability">>,
   status: SearchStatus,
@@ -795,6 +854,7 @@ export async function GET(request: NextRequest) {
   }
   const { searchParams } = new URL(request.url);
   const supabase = createServerClient();
+  const favoritesMode = searchParams.get("favoritesMode") === "true";
 
   // Parse params
   const statusParam = searchParams.get("status");
@@ -947,8 +1007,13 @@ export async function GET(request: NextRequest) {
       Boolean(effectiveParams.query?.trim()) &&
       ((effectiveParams.sortBy ?? "relevance") === "relevance" ||
         (needsVector && Boolean(vectorLotIds?.length)));
+    const useFavoritesSort =
+      favoritesMode &&
+      Boolean(effectiveParams.lotIds?.length) &&
+      !effectiveParams.query?.trim();
+    const useClientSideSort = useRelevanceSort || useFavoritesSort;
 
-    if (!useRelevanceSort) {
+    if (!useClientSideSort) {
       // DB-level sorting
       switch (params.sortBy) {
         case "ending-soon":
@@ -1054,6 +1119,10 @@ export async function GET(request: NextRequest) {
       );
       resultTotal = finalRankedRows.length;
       lots = finalRankedRows.slice(offset, offset + params.pageSize!);
+    } else if (useFavoritesSort) {
+      const sortedFavorites = [...allRows].sort(compareFavoritesLots);
+      resultTotal = sortedFavorites.length;
+      lots = sortedFavorites.slice(offset, offset + params.pageSize!);
     } else {
       lots = allRows;
       resultTotal = count ?? 0;
