@@ -339,10 +339,14 @@ export function AuthControls() {
         type="button"
         onClick={handleSignIn}
         disabled={submitting}
-        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white/88 shadow-none transition-all hover:border-white/20 hover:bg-white/[0.12] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:h-9 sm:min-h-0 sm:w-auto sm:rounded-lg sm:py-0"
+        className="group inline-flex min-h-10 w-full items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-1.5 text-left text-white/88 transition-all hover:border-white/20 hover:bg-white/[0.1] sm:h-9 sm:min-h-0 sm:w-auto sm:rounded-lg sm:py-0"
       >
-        <LogIn size={14} className="text-current" />
-        <span>Logga in</span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-800 text-white ring-1 ring-white/10 sm:h-7 sm:w-7">
+          <LogIn size={14} className="text-current" />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-white">
+          Logga in
+        </span>
       </button>
       {errorMessage && (
         <div className="mt-1 text-[11px] text-rose-300">{errorMessage}</div>
