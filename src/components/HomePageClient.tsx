@@ -1671,12 +1671,15 @@ export function HomePageClient() {
         }
         description={
           authSheetKind === "favorite"
-            ? "När du är inloggad kan du spara objekt och komma tillbaka till dem senare."
-            : "Dina bevakade objekt sparas på kontot och följer med mellan enheter."
+            ? "När du är inloggad kan du spara objekt och komma tillbaka till dem senare. Har du inget konto skapas det första gången du fortsätter."
+            : "Dina bevakade objekt sparas på kontot och följer med mellan enheter. Har du inget konto skapas det första gången du fortsätter."
         }
+        confirmLabel="Logga in"
+        secondaryLabel="Registrera dig"
         confirmBusy={isPendingAuth}
         onClose={() => setAuthSheetKind(null)}
         onConfirm={() => void signInToContinue()}
+        onSecondaryAction={() => void signInToContinue()}
       />
     </div>
   );
