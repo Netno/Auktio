@@ -29,6 +29,10 @@ import { CATEGORY_ORDER } from "@/config/sources";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useSearch } from "@/hooks/use-search";
 import { useSearchSuggestions } from "@/hooks/use-search-suggestions";
+import {
+  hasPersonalizationConsent,
+  readConsentPreferences,
+} from "@/lib/consent";
 import { normalizeSearchText } from "@/lib/search-language";
 import type {
   Lot,
@@ -48,6 +52,19 @@ type AuthSheetKind = "favorite" | "favorites";
 interface HomePageClientProps {
   canAccessRecommendations?: boolean;
 }
+
+type SearchLogSource =
+  | "search_bar"
+  | "autocomplete"
+  | "category_pill"
+  | "filter_change";
+
+type PendingSearchLog = {
+  eventId: number;
+  source: SearchLogSource;
+  queryText: string | null;
+  selectedCategories: string[];
+};
 
 function getDisplayName(email: string | null | undefined, fullName?: string) {
   if (fullName?.trim()) {
@@ -211,6 +228,47 @@ function readStoredStringList(key: string) {
   }
 }
 
+function normalizeSearchLogCategories(categories: string[]) {
+  return Array.from(
+    new Set(
+      categories
+        .map((category) => normalizeSearchText(category))
+        .filter((category) => category.length > 0),
+    ),
+  ).sort((left, right) => left.localeCompare(right, "sv-SE"));
+}
+
+function haveSameSearchLogCategories(left: string[], right: string[]) {
+  const normalizedLeft = normalizeSearchLogCategories(left);
+  const normalizedRight = normalizeSearchLogCategories(right);
+
+  return JSON.stringify(normalizedLeft) === JSON.stringify(normalizedRight);
+}
+
+function buildSearchLogFilters(params: {
+  status: SearchStatus;
+  sortBy: SortOption;
+  selectedAuctionIds: number[];
+  selectedCity: string;
+  selectedHouseId: string;
+  hasBids: boolean;
+  soldOnly: boolean;
+  minPrice: number | undefined;
+  maxPrice: number | undefined;
+}) {
+  return {
+    status: params.status,
+    sortBy: params.sortBy,
+    auctionIds: params.selectedAuctionIds,
+    city: params.selectedCity || undefined,
+    houseId: params.selectedHouseId || undefined,
+    hasBids: params.hasBids || undefined,
+    soldOnly: params.soldOnly || undefined,
+    minPrice: params.minPrice,
+    maxPrice: params.maxPrice,
+  };
+}
+
 export function HomePageClient({
   canAccessRecommendations = false,
 }: HomePageClientProps) {
@@ -228,12 +286,16 @@ export function HomePageClient({
   const [authSheetKind, setAuthSheetKind] = useState<AuthSheetKind | null>(
     null,
   );
+  const [pendingSearchLog, setPendingSearchLog] =
+    useState<PendingSearchLog | null>(null);
   const [displayLots, setDisplayLots] = useState<Lot[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement | null>(null);
   const lastScrollYRef = useRef(0);
+  const pendingSearchLogIdRef = useRef(0);
+  const activeSearchLogRequestIdRef = useRef<number | null>(null);
   const {
     favorites,
     toggleFavorite,
@@ -495,6 +557,32 @@ export function HomePageClient({
     });
   }, []);
 
+  const queueSearchLog = useCallback(
+    (nextEvent: {
+      source: SearchLogSource;
+      queryText?: string | null;
+      selectedCategories?: string[];
+    }) => {
+      const trimmedQuery = nextEvent.queryText?.trim() ?? "";
+      const normalizedCategories = normalizeSearchLogCategories(
+        nextEvent.selectedCategories ?? [],
+      );
+
+      if (!trimmedQuery && normalizedCategories.length === 0) {
+        return;
+      }
+
+      pendingSearchLogIdRef.current += 1;
+      setPendingSearchLog({
+        eventId: pendingSearchLogIdRef.current,
+        source: nextEvent.source,
+        queryText: trimmedQuery || null,
+        selectedCategories: normalizedCategories,
+      });
+    },
+    [],
+  );
+
   const scrollToResults = useCallback(() => {
     if (typeof window === "undefined") {
       return;
@@ -574,23 +662,34 @@ export function HomePageClient({
       persistRecentSearch(trimmedQuery);
     }
 
+    queueSearchLog({
+      source: "search_bar",
+      queryText: trimmedQuery,
+      selectedCategories,
+    });
+
     if (typeof window !== "undefined" && window.innerWidth < 640) {
       setPendingMobileResultsJump(true);
       setMobileSearchOpen(false);
     }
-  }, [persistRecentSearch, query]);
+  }, [persistRecentSearch, query, queueSearchLog, selectedCategories]);
 
   const handleSuggestionSelect = useCallback(
     (suggestion: SearchSuggestion) => {
       setQuery(suggestion.query);
       persistRecentSearch(suggestion.query);
+      queueSearchLog({
+        source: "autocomplete",
+        queryText: suggestion.query,
+        selectedCategories,
+      });
 
       if (typeof window !== "undefined" && window.innerWidth < 640) {
         setPendingMobileResultsJump(true);
         setMobileSearchOpen(false);
       }
     },
-    [persistRecentSearch, setQuery],
+    [persistRecentSearch, queueSearchLog, selectedCategories, setQuery],
   );
 
   const handleRecentSearchSelect = useCallback(
@@ -607,10 +706,17 @@ export function HomePageClient({
     (category: string | null) => {
       setShowFavsOnly(false);
       applySingleCategory(category);
+      if (category) {
+        queueSearchLog({
+          source: "category_pill",
+          queryText: query,
+          selectedCategories: [category],
+        });
+      }
       setMobileSearchOpen(false);
       setPendingMobileResultsJump(true);
     },
-    [applySingleCategory],
+    [applySingleCategory, query, queueSearchLog],
   );
 
   const handleQuickHouseSelect = useCallback(
@@ -636,6 +742,94 @@ export function HomePageClient({
     persistRecentSearch(didYouMean);
     scrollToSearchTop();
   }, [didYouMean, persistRecentSearch, scrollToSearchTop, setQuery]);
+
+  useEffect(() => {
+    if (!pendingSearchLog || loading) {
+      return;
+    }
+
+    if (activeSearchLogRequestIdRef.current === pendingSearchLog.eventId) {
+      return;
+    }
+
+    const normalizedPendingQuery = normalizeSearchText(
+      pendingSearchLog.queryText ?? "",
+    );
+    const normalizedSettledQuery = normalizeSearchText(settledQuery);
+
+    if (normalizedPendingQuery !== normalizedSettledQuery) {
+      return;
+    }
+
+    if (
+      !haveSameSearchLogCategories(
+        selectedCategories,
+        pendingSearchLog.selectedCategories,
+      )
+    ) {
+      return;
+    }
+
+    if (!hasPersonalizationConsent(readConsentPreferences())) {
+      setPendingSearchLog(null);
+      return;
+    }
+
+    let cancelled = false;
+    activeSearchLogRequestIdRef.current = pendingSearchLog.eventId;
+
+    const filtersApplied = buildSearchLogFilters({
+      status,
+      sortBy,
+      selectedAuctionIds,
+      selectedCity,
+      selectedHouseId,
+      hasBids,
+      soldOnly,
+      minPrice,
+      maxPrice,
+    });
+
+    void fetch("/api/search/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        queryText: pendingSearchLog.queryText,
+        selectedCategories: pendingSearchLog.selectedCategories,
+        filtersApplied,
+        resultCount: total,
+        source: pendingSearchLog.source,
+      }),
+    }).finally(() => {
+      if (cancelled) {
+        return;
+      }
+
+      activeSearchLogRequestIdRef.current = null;
+      setPendingSearchLog((current) =>
+        current?.eventId === pendingSearchLog.eventId ? null : current,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    hasBids,
+    loading,
+    maxPrice,
+    minPrice,
+    pendingSearchLog,
+    selectedAuctionIds,
+    selectedCategories,
+    selectedCity,
+    selectedHouseId,
+    settledQuery,
+    soldOnly,
+    sortBy,
+    status,
+    total,
+  ]);
 
   useEffect(() => {
     setRecentSearches(readStoredStringList(RECENT_SEARCHES_STORAGE_KEY));
