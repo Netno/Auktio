@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
+import { AnonymousActivityMigration } from "@/components/AnonymousActivityMigration";
 import { AnonymousSessionBootstrap } from "@/components/AnonymousSessionBootstrap";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ConsentBanner } from "@/components/ConsentBanner";
@@ -85,6 +86,7 @@ export default function RootLayout({
             `}
           </Script>
           <AnonymousSessionBootstrap />
+          <AnonymousActivityMigration />
           <Suspense fallback={null}>
             <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
           </Suspense>
