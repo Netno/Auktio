@@ -13,6 +13,7 @@ import {
   listUserFavoriteLotIds,
   removeUserFavorite,
 } from "@/lib/user-favorites";
+import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
 
 function getSessionUserId(
   session:
@@ -92,10 +93,13 @@ export async function POST(request: NextRequest) {
         ...lotIds,
       ]);
 
+      await markUserInterestProfileDirty(userId);
+
       return NextResponse.json({ ok: true, lotIds: nextLotIds });
     }
 
     const nextLotIds = await addUserFavorites(userId, lotIds);
+    await markUserInterestProfileDirty(userId);
     return NextResponse.json({ ok: true, lotIds: nextLotIds });
   }
 
@@ -121,6 +125,7 @@ export async function DELETE(request: NextRequest) {
 
   if (userId) {
     const nextLotIds = await removeUserFavorite(userId, lotId);
+    await markUserInterestProfileDirty(userId);
     return NextResponse.json({ ok: true, lotIds: nextLotIds });
   }
 

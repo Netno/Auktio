@@ -1,5 +1,6 @@
 import { consumeAnonymousFavoritesIntoUser } from "@/lib/anonymous-favorites";
 import { createServerClient } from "@/lib/supabase";
+import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
 
 export async function migrateAnonymousActivityToUser(
   userId: string,
@@ -29,6 +30,10 @@ export async function migrateAnonymousActivityToUser(
     throw new Error(
       `[anonymous-migration] Failed to migrate search logs: ${error.message}`,
     );
+  }
+
+  if (migratedFavoriteLotIds.length > 0 || (Array.isArray(data) && data.length > 0)) {
+    await markUserInterestProfileDirty(userId);
   }
 
   return {

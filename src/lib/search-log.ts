@@ -1,6 +1,7 @@
 import { generateQueryEmbedding } from "@/lib/embeddings";
 import { normalizeSearchText } from "@/lib/search-language";
 import { createServerClient } from "@/lib/supabase";
+import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
 
 const SEARCH_LOG_DEDUPE_WINDOW_MS = 30_000;
 
@@ -40,7 +41,10 @@ export type SearchLogInput = {
 };
 
 export function isSearchLogSource(value: unknown): value is SearchLogSource {
-  return typeof value === "string" && SEARCH_LOG_SOURCES.includes(value as SearchLogSource);
+  return (
+    typeof value === "string" &&
+    SEARCH_LOG_SOURCES.includes(value as SearchLogSource)
+  );
 }
 
 function normalizeCategories(categories: string[] | undefined) {
@@ -138,7 +142,9 @@ export async function createSearchLog(input: SearchLogInput) {
     filtersApplied,
     source: input.source,
   });
-  const cutoffIso = new Date(Date.now() - SEARCH_LOG_DEDUPE_WINDOW_MS).toISOString();
+  const cutoffIso = new Date(
+    Date.now() - SEARCH_LOG_DEDUPE_WINDOW_MS,
+  ).toISOString();
 
   let duplicateQuery = supabase
     .from("auc_user_search_log")
@@ -204,7 +210,17 @@ export async function createSearchLog(input: SearchLogInput) {
     .single();
 
   if (error) {
-    throw new Error(`[search-log] Failed to create search log: ${error.message}`);
+    throw new Error(
+      `[search-log] Failed to create search log: ${error.message}`,
+    );
+  }
+
+  if (userId) {
+    try {
+      await markUserInterestProfileDirty(userId);
+    } catch (dirtyError) {
+      console.error("[search-log] Failed to mark interest profile dirty:", dirtyError);
+    }
   }
 
   return {
