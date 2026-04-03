@@ -270,7 +270,9 @@ create table if not exists auc_user_interest_profiles (
   is_dirty           boolean not null default true,
   last_signal_at     timestamptz,
   created_at         timestamptz default now(),
-  updated_at         timestamptz default now()
+  updated_at         timestamptz default now(),
+
+  unique(user_id)
 );
 
 -- ============================================
@@ -283,7 +285,7 @@ create table if not exists auc_user_matches (
   interest_profile_id bigint references auc_user_interest_profiles(id) on delete set null,
   source_lot_id       bigint references auc_lots(id) on delete set null,
   score               double precision not null,
-  match_source        text not null check (match_source in ('expired_favorite', 'active_favorite', 'search')),
+  match_source        text not null check (match_source in ('expired_favorite', 'active_favorite', 'search', 'interest_profile_v1')),
   source_context      text,
   notified_at         timestamptz,
   created_at          timestamptz default now(),
@@ -526,6 +528,16 @@ alter table auc_price_history enable row level security;
 alter table auc_favorites enable row level security;
 alter table auc_users enable row level security;
 alter table auc_user_favorites enable row level security;
+alter table auc_user_search_log enable row level security;
+alter table auc_search_click_log enable row level security;
+alter table auc_user_email_verification_tokens enable row level security;
+alter table auc_user_password_reset_tokens enable row level security;
+alter table auc_auth_rate_limits enable row level security;
+alter table auc_anonymous_favorites enable row level security;
+alter table auc_user_interest_profiles enable row level security;
+alter table auc_user_matches enable row level security;
+alter table auc_user_preference_settings enable row level security;
+alter table auc_category_feedback enable row level security;
 alter table auc_sync_log enable row level security;
 alter table auc_settings enable row level security;
 
