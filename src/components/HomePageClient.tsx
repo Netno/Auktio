@@ -45,6 +45,10 @@ const MOBILE_FILTER_BAR_HEIGHT = 48;
 type MobileViewMode = "grid" | "list";
 type AuthSheetKind = "favorite" | "favorites";
 
+interface HomePageClientProps {
+  canAccessRecommendations?: boolean;
+}
+
 function getDisplayName(email: string | null | undefined, fullName?: string) {
   if (fullName?.trim()) {
     return fullName.trim();
@@ -207,7 +211,9 @@ function readStoredStringList(key: string) {
   }
 }
 
-export function HomePageClient() {
+export function HomePageClient({
+  canAccessRecommendations = false,
+}: HomePageClientProps) {
   const { data: session } = useSession();
   const [showFavsOnly, setShowFavsOnly] = useState(false);
   const [pendingMobileResultsJump, setPendingMobileResultsJump] =
@@ -774,7 +780,12 @@ export function HomePageClient() {
   }, [hasMoreResults, loading, loadingMore, page, setPage]);
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f7f1eb_0%,#fbf8f6_26%,#f8f4f0_100%)]">
+    <div
+      className="min-h-screen bg-[linear-gradient(180deg,#f7f1eb_0%,#fbf8f6_26%,#f8f4f0_100%)]"
+      data-recommendations-access={
+        canAccessRecommendations ? "enabled" : "disabled"
+      }
+    >
       <div className="sm:hidden">
         <div className="fixed inset-x-0 top-0 z-[60] border-b border-brand-200/80 bg-[#fcfaf8] shadow-[0_10px_24px_rgba(93,69,40,0.06)]">
           <div
