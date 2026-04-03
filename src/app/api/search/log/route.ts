@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { ANONYMOUS_SESSION_COOKIE_NAME } from "@/lib/anonymous-session";
 import { createSearchLog, isSearchLogSource } from "@/lib/search-log";
+import { getUserPreferenceSettings } from "@/lib/user-preference-settings";
 
 function getSessionUserId(
   session:
@@ -21,7 +22,8 @@ function getSessionUserId(
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = getSessionUserId(session);
-  const sessionId = request.cookies.get(ANONYMOUS_SESSION_COOKIE_NAME)?.value ?? null;
+  const sessionId =
+    request.cookies.get(ANONYMOUS_SESSION_COOKIE_NAME)?.value ?? null;
   const body = (await request.json()) as {
     queryText?: unknown;
     selectedCategories?: unknown;
@@ -56,6 +58,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (userId) {
+    const settings = await getUserPreferenceSettings(userId);
+
+    if (
+      settings.personalizationEnabled !== true ||
+      settings.searchHistoryEnabled !== true
+    ) {
+      return NextResponse.json({
+        ok: true,
+        searchId: null,
+        deduplicated: false,
+        skipped: true,
+      });
+    }
+  }
+
   try {
     const result = await createSearchLog({
       userId,
@@ -72,7 +90,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : "Failed to create search log",
+          error instanceof Error
+            ? error.message
+            : "Failed to create search log",
       },
       { status: 500 },
     );

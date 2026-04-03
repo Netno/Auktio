@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { isPersonalizationEnabledForUser } from "@/lib/user-preference-settings";
 import { computeAndStoreUserInterestProfile } from "@/lib/user-interest-profile";
 
 type SemanticMatchRow = {
@@ -15,7 +16,8 @@ type ProfileRow = {
 function parseEmbedding(value: unknown) {
   if (Array.isArray(value)) {
     const vector = value.filter(
-      (item): item is number => typeof item === "number" && Number.isFinite(item),
+      (item): item is number =>
+        typeof item === "number" && Number.isFinite(item),
     );
 
     return vector.length > 0 ? vector : null;
@@ -50,6 +52,10 @@ function buildCategoryBoost(
 
 export async function markUserInterestProfileDirty(userId: string) {
   if (userId.trim().length === 0) {
+    return;
+  }
+
+  if (!(await isPersonalizationEnabledForUser(userId))) {
     return;
   }
 
@@ -99,14 +105,12 @@ export async function refreshUserRecommendationMatches(userId: string) {
     };
   }
 
-  const { data: semanticMatches, error: semanticMatchesError } = await supabase.rpc(
-    "auc_semantic_search_lots",
-    {
+  const { data: semanticMatches, error: semanticMatchesError } =
+    await supabase.rpc("auc_semantic_search_lots", {
       query_embedding: JSON.stringify(centroidEmbedding),
       match_threshold: 0.72,
       match_count: 60,
-    },
-  );
+    });
 
   if (semanticMatchesError) {
     throw new Error(
@@ -138,14 +142,16 @@ export async function refreshUserRecommendationMatches(userId: string) {
   }
 
   if (candidates.length > 0) {
-    const { error: insertError } = await supabase.from("auc_user_matches").insert(
-      candidates.map((candidate) => ({
-        user_id: userId,
-        lot_id: candidate.lotId,
-        score: candidate.score,
-        match_source: "interest_profile_v1",
-      })),
-    );
+    const { error: insertError } = await supabase
+      .from("auc_user_matches")
+      .insert(
+        candidates.map((candidate) => ({
+          user_id: userId,
+          lot_id: candidate.lotId,
+          score: candidate.score,
+          match_source: "interest_profile_v1",
+        })),
+      );
 
     if (insertError) {
       throw new Error(

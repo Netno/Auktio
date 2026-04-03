@@ -541,6 +541,10 @@ export function HomePageClient({
       { href: "/auctions", label: "Auktioner" },
     ];
 
+    if (session?.user) {
+      items.push({ href: "/min-data", label: "Min data" });
+    }
+
     if (session?.user?.role === "admin" || session?.user?.role === "owner") {
       items.push({ href: "/admin", label: "Admin" });
       items.push({ href: "/ai-usage", label: "AI-statistik" });

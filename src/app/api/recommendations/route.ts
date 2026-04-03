@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { canAccessRecommendationsForSession } from "@/lib/recommendations-access";
 import { loadUserRecommendations } from "@/lib/recommendations-feed";
+import { getUserPreferenceSettings } from "@/lib/user-preference-settings";
 
 function getSessionUserId(
   session:
@@ -29,6 +30,21 @@ export async function GET(request: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const settings = await getUserPreferenceSettings(userId);
+
+  if (!settings.personalizationEnabled) {
+    return NextResponse.json({
+      ok: true,
+      enabled: false,
+      lots: [],
+      refreshed: false,
+      topCategories: [],
+      sourceBreakdown: {},
+      avgPriceRange: {},
+      updatedAt: null,
+    });
   }
 
   const forceRefresh = request.nextUrl.searchParams.get("refresh") === "true";

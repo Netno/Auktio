@@ -319,6 +319,13 @@ export function AuthControls() {
                 </dl>
               </div>
 
+              <a
+                href="/min-data"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl border border-brand-200 bg-white px-3 text-[12px] font-medium text-brand-800 transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
+              >
+                Min data
+              </a>
+
               <button
                 type="button"
                 onClick={handleSignOut}

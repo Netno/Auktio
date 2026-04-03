@@ -293,6 +293,20 @@ create table if not exists auc_user_matches (
 );
 
 -- ============================================
+-- USER PREFERENCE SETTINGS
+-- ============================================
+create table if not exists auc_user_preference_settings (
+  id                      bigserial primary key,
+  user_id                 text not null references auc_users(id) on delete cascade,
+  personalization_enabled boolean not null default true,
+  search_history_enabled  boolean not null default true,
+  created_at              timestamptz default now(),
+  updated_at              timestamptz default now(),
+
+  unique(user_id)
+);
+
+-- ============================================
 -- CATEGORY FEEDBACK (admin corrections for learning)
 -- ============================================
 create table if not exists auc_category_feedback (
@@ -372,6 +386,7 @@ create index if not exists idx_auc_user_interest_profiles_user on auc_user_inter
 create index if not exists idx_auc_user_interest_profiles_dirty on auc_user_interest_profiles(updated_at asc) where is_dirty = true;
 create index if not exists idx_auc_user_matches_user on auc_user_matches(user_id, score desc, created_at desc);
 create index if not exists idx_auc_user_matches_lot on auc_user_matches(lot_id);
+create index if not exists idx_auc_user_preference_settings_user on auc_user_preference_settings(user_id);
 create index if not exists idx_auc_category_feedback_lot on auc_category_feedback(lot_id, created_at desc);
 create index if not exists idx_auc_category_feedback_terms on auc_category_feedback using gin(normalized_terms);
 
