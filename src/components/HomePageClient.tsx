@@ -286,6 +286,9 @@ export function HomePageClient({
   const [authSheetKind, setAuthSheetKind] = useState<AuthSheetKind | null>(
     null,
   );
+  const [latestSearchLogId, setLatestSearchLogId] = useState<number | null>(
+    null,
+  );
   const [pendingSearchLog, setPendingSearchLog] =
     useState<PendingSearchLog | null>(null);
   const [displayLots, setDisplayLots] = useState<Lot[]>([]);
@@ -733,6 +736,25 @@ export function HomePageClient({
     [setHouseId],
   );
 
+  const handleSearchResultClick = useCallback(
+    async (lotId: number, positionInResults: number) => {
+      if (!latestSearchLogId) {
+        return;
+      }
+
+      void fetch("/api/search/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          searchId: latestSearchLogId,
+          lotId,
+          positionInResults,
+        }),
+      });
+    },
+    [latestSearchLogId],
+  );
+
   const applyDidYouMean = useCallback(() => {
     if (!didYouMean) {
       return;
@@ -800,16 +822,33 @@ export function HomePageClient({
         resultCount: total,
         source: pendingSearchLog.source,
       }),
-    }).finally(() => {
-      if (cancelled) {
-        return;
-      }
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          return null;
+        }
 
-      activeSearchLogRequestIdRef.current = null;
-      setPendingSearchLog((current) =>
-        current?.eventId === pendingSearchLog.eventId ? null : current,
-      );
-    });
+        return (await response.json()) as { searchId?: number | null };
+      })
+      .then((payload) => {
+        if (cancelled) {
+          return;
+        }
+
+        setLatestSearchLogId(
+          typeof payload?.searchId === "number" ? payload.searchId : null,
+        );
+      })
+      .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
+        activeSearchLogRequestIdRef.current = null;
+        setPendingSearchLog((current) =>
+          current?.eventId === pendingSearchLog.eventId ? null : current,
+        );
+      });
 
     return () => {
       cancelled = true;
@@ -1835,6 +1874,7 @@ export function HomePageClient({
               status={showFavsOnly ? "all" : status}
               isFavorite={isFavorite}
               onToggleFavorite={handleFavoriteToggle}
+              onResultClick={handleSearchResultClick}
               viewMode={mobileViewMode}
               relatedCategories={relatedCategories}
               onCategorySelect={handleQuickCategorySelect}

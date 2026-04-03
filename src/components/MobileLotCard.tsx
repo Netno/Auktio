@@ -18,6 +18,8 @@ interface MobileLotCardProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
+  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  resultPosition?: number;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
 }
@@ -62,6 +64,8 @@ export function MobileLotCard({
   lot,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
+  resultPosition = 0,
   onCategorySelect,
   onHouseSelect,
 }: MobileLotCardProps) {
@@ -184,6 +188,11 @@ export function MobileLotCard({
         href={lot.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => {
+          if (resultPosition > 0) {
+            void onResultClick?.(lot.id, resultPosition);
+          }
+        }}
         className="group flex min-h-[18.9rem] flex-col overflow-hidden rounded-lg border border-brand-200/80 bg-white shadow-[0_8px_20px_rgba(26,26,24,0.06)] transition-transform duration-200 ease-out hover:-translate-y-0.5"
       >
         <div

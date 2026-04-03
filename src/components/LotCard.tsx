@@ -30,6 +30,8 @@ interface LotCardProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  resultPosition?: number;
   imagePriority?: boolean;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
@@ -98,6 +100,8 @@ export function LotCard({
   lot,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
+  resultPosition = 0,
   imagePriority = false,
   onCategorySelect,
   onHouseSelect,
@@ -121,6 +125,11 @@ export function LotCard({
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+        onClick={() => {
+          if (resultPosition > 0) {
+            void onResultClick?.(lot.id, resultPosition);
+          }
+        }}
   const [showLocationOverlay, setShowLocationOverlay] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [showImagePreviewActive, setShowImagePreviewActive] = useState(false);

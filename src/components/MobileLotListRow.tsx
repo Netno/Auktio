@@ -10,6 +10,8 @@ interface MobileLotListRowProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
+  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  resultPosition?: number;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
 }
@@ -50,6 +52,8 @@ export function MobileLotListRow({
   lot,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
+  resultPosition = 0,
   onCategorySelect,
   onHouseSelect,
 }: MobileLotListRowProps) {
@@ -125,6 +129,11 @@ export function MobileLotListRow({
       href={lot.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => {
+        if (resultPosition > 0) {
+          void onResultClick?.(lot.id, resultPosition);
+        }
+      }}
       className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-[20px] border border-brand-200/80 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf8_100%)] p-3 shadow-[0_10px_24px_rgba(26,26,24,0.06)]"
     >
       <div
