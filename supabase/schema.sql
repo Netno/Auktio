@@ -173,6 +173,87 @@ create table if not exists auc_user_favorites (
 );
 
 -- ============================================
+-- USER SEARCH LOG (meaningful searches only)
+-- ============================================
+create table if not exists auc_user_search_log (
+  id                  bigserial primary key,
+  user_id             text references auc_users(id) on delete cascade,
+  session_id          text,
+  query_text          text,
+  query_embedding     vector(768),
+  selected_categories text[] not null default '{}',
+  filters_applied     jsonb not null default '{}'::jsonb,
+  result_count        int not null default 0,
+  results_clicked     int not null default 0,
+  first_click_position int,
+  source              text not null check (source in ('search_bar', 'autocomplete', 'category_pill', 'filter_change')),
+  created_at          timestamptz default now(),
+
+  check (user_id is not null or session_id is not null),
+  check (result_count >= 0),
+  check (results_clicked >= 0),
+  check (first_click_position is null or first_click_position > 0)
+);
+
+-- ============================================
+-- SEARCH CLICK LOG (outbound result clicks)
+-- ============================================
+create table if not exists auc_search_click_log (
+  id                  bigserial primary key,
+  search_id           bigint not null references auc_user_search_log(id) on delete cascade,
+  lot_id              bigint not null references auc_lots(id) on delete cascade,
+  position_in_results int not null check (position_in_results > 0),
+  created_at          timestamptz default now()
+);
+
+-- ============================================
+-- ANONYMOUS FAVORITES (session based)
+-- ============================================
+create table if not exists auc_anonymous_favorites (
+  id            bigserial primary key,
+  session_id    text not null,
+  lot_id        bigint not null references auc_lots(id) on delete cascade,
+  created_at    timestamptz default now(),
+
+  unique(session_id, lot_id)
+);
+
+-- ============================================
+-- USER INTEREST PROFILES (recommendation centroids)
+-- ============================================
+create table if not exists auc_user_interest_profiles (
+  id                 bigserial primary key,
+  user_id            text not null references auc_users(id) on delete cascade,
+  centroid_embedding vector(768),
+  source_breakdown   jsonb not null default '{}'::jsonb,
+  top_categories     text[] not null default '{}',
+  avg_price_range    jsonb not null default '{}'::jsonb,
+  is_dirty           boolean not null default true,
+  last_signal_at     timestamptz,
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
+);
+
+-- ============================================
+-- USER MATCHES (stored recommendations)
+-- ============================================
+create table if not exists auc_user_matches (
+  id                  bigserial primary key,
+  user_id             text not null references auc_users(id) on delete cascade,
+  lot_id              bigint not null references auc_lots(id) on delete cascade,
+  interest_profile_id bigint references auc_user_interest_profiles(id) on delete set null,
+  source_lot_id       bigint references auc_lots(id) on delete set null,
+  score               double precision not null,
+  match_source        text not null check (match_source in ('expired_favorite', 'active_favorite', 'search')),
+  source_context      text,
+  notified_at         timestamptz,
+  created_at          timestamptz default now(),
+  updated_at          timestamptz default now(),
+
+  unique(user_id, lot_id)
+);
+
+-- ============================================
 -- CATEGORY FEEDBACK (admin corrections for learning)
 -- ============================================
 create table if not exists auc_category_feedback (
@@ -241,6 +322,14 @@ create index if not exists idx_auc_price_history_lot on auc_price_history(lot_id
 create index if not exists idx_auc_favorites_device on auc_favorites(device_id);
 create index if not exists idx_auc_users_role on auc_users(role);
 create index if not exists idx_auc_user_favorites_user on auc_user_favorites(user_id);
+create index if not exists idx_auc_user_search_log_user on auc_user_search_log(user_id, created_at desc);
+create index if not exists idx_auc_user_search_log_session on auc_user_search_log(session_id, created_at desc);
+create index if not exists idx_auc_search_click_log_search on auc_search_click_log(search_id, created_at desc);
+create index if not exists idx_auc_anonymous_favorites_session on auc_anonymous_favorites(session_id, created_at desc);
+create index if not exists idx_auc_user_interest_profiles_user on auc_user_interest_profiles(user_id, updated_at desc);
+create index if not exists idx_auc_user_interest_profiles_dirty on auc_user_interest_profiles(updated_at asc) where is_dirty = true;
+create index if not exists idx_auc_user_matches_user on auc_user_matches(user_id, score desc, created_at desc);
+create index if not exists idx_auc_user_matches_lot on auc_user_matches(lot_id);
 create index if not exists idx_auc_category_feedback_lot on auc_category_feedback(lot_id, created_at desc);
 create index if not exists idx_auc_category_feedback_terms on auc_category_feedback using gin(normalized_terms);
 
