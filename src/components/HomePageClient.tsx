@@ -23,6 +23,7 @@ import { BrowseAuthSheet } from "@/components/BrowseAuthSheet";
 import { FilterBar } from "@/components/FilterBar";
 import { Header } from "@/components/Header";
 import { LotGrid } from "@/components/LotGrid";
+import { RecommendationsSection } from "@/components/RecommendationsSection";
 import { SearchHero } from "@/components/SearchHero";
 import { StatsBar } from "@/components/StatsBar";
 import { CATEGORY_ORDER } from "@/config/sources";
@@ -30,6 +31,7 @@ import { useFavorites } from "@/hooks/use-favorites";
 import { useSearch } from "@/hooks/use-search";
 import { useSearchSuggestions } from "@/hooks/use-search-suggestions";
 import {
+  CONSENT_UPDATED_EVENT,
   hasPersonalizationConsent,
   readConsentPreferences,
 } from "@/lib/consent";
@@ -64,6 +66,16 @@ type PendingSearchLog = {
   source: SearchLogSource;
   queryText: string | null;
   selectedCategories: string[];
+};
+
+type RecommendationsPayload = {
+  lots?: Lot[];
+  topCategories?: string[];
+  sourceBreakdown?: Record<string, unknown>;
+  avgPriceRange?: Record<string, unknown>;
+  updatedAt?: string | null;
+  refreshed?: boolean;
+  error?: string;
 };
 
 function getDisplayName(email: string | null | undefined, fullName?: string) {
@@ -294,11 +306,30 @@ export function HomePageClient({
   const [displayLots, setDisplayLots] = useState<Lot[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
+  const [personalizationConsentGranted, setPersonalizationConsentGranted] =
+    useState(() => hasPersonalizationConsent(readConsentPreferences()));
+  const [recommendationLots, setRecommendationLots] = useState<Lot[]>([]);
+  const [recommendationTopCategories, setRecommendationTopCategories] =
+    useState<string[]>([]);
+  const [recommendationSourceBreakdown, setRecommendationSourceBreakdown] =
+    useState<Record<string, unknown>>({});
+  const [recommendationAvgPriceRange, setRecommendationAvgPriceRange] =
+    useState<Record<string, unknown>>({});
+  const [recommendationUpdatedAt, setRecommendationUpdatedAt] = useState<
+    string | null
+  >(null);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsRefreshed, setRecommendationsRefreshed] =
+    useState(false);
+  const [recommendationsError, setRecommendationsError] = useState<string | null>(
+    null,
+  );
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement | null>(null);
   const lastScrollYRef = useRef(0);
   const pendingSearchLogIdRef = useRef(0);
   const activeSearchLogRequestIdRef = useRef<number | null>(null);
+  const activeRecommendationsRequestRef = useRef(0);
   const {
     favorites,
     toggleFavorite,
@@ -534,6 +565,108 @@ export function HomePageClient({
     !avatarLoadFailed && typeof session?.user?.image === "string"
       ? session.user.image
       : null;
+  const shouldShowRecommendations =
+    canAccessRecommendations &&
+    isAuthenticated &&
+    personalizationConsentGranted &&
+    !showFavsOnly;
+
+  const loadRecommendations = useCallback(
+    async (forceRefresh = false) => {
+      if (!canAccessRecommendations || !isAuthenticated) {
+        return;
+      }
+
+      const requestId = activeRecommendationsRequestRef.current + 1;
+      activeRecommendationsRequestRef.current = requestId;
+      setRecommendationsLoading(true);
+      setRecommendationsError(null);
+
+      try {
+        const response = await fetch(
+          `/api/recommendations${forceRefresh ? "?refresh=true" : ""}`,
+          { cache: "no-store" },
+        );
+        const payload = (await response.json()) as RecommendationsPayload;
+
+        if (activeRecommendationsRequestRef.current !== requestId) {
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Kunde inte ladda För dig.");
+        }
+
+        setRecommendationLots(Array.isArray(payload.lots) ? payload.lots : []);
+        setRecommendationTopCategories(
+          Array.isArray(payload.topCategories) ? payload.topCategories : [],
+        );
+        setRecommendationSourceBreakdown(
+          payload.sourceBreakdown && typeof payload.sourceBreakdown === "object"
+            ? payload.sourceBreakdown
+            : {},
+        );
+        setRecommendationAvgPriceRange(
+          payload.avgPriceRange && typeof payload.avgPriceRange === "object"
+            ? payload.avgPriceRange
+            : {},
+        );
+        setRecommendationUpdatedAt(
+          typeof payload.updatedAt === "string" ? payload.updatedAt : null,
+        );
+        setRecommendationsRefreshed(payload.refreshed === true);
+      } catch (error) {
+        if (activeRecommendationsRequestRef.current !== requestId) {
+          return;
+        }
+
+        setRecommendationsError(
+          error instanceof Error ? error.message : "Kunde inte ladda För dig.",
+        );
+      } finally {
+        if (activeRecommendationsRequestRef.current === requestId) {
+          setRecommendationsLoading(false);
+        }
+      }
+    },
+    [canAccessRecommendations, isAuthenticated],
+  );
+
+  useEffect(() => {
+    const syncConsent = () => {
+      setPersonalizationConsentGranted(
+        hasPersonalizationConsent(readConsentPreferences()),
+      );
+    };
+
+    syncConsent();
+
+    const handleConsentUpdate = () => syncConsent();
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key == null || event.key === "auktio-consent-v1") {
+        syncConsent();
+      }
+    };
+
+    window.addEventListener(CONSENT_UPDATED_EVENT, handleConsentUpdate);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener(CONSENT_UPDATED_EVENT, handleConsentUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldShowRecommendations) {
+      setRecommendationLots([]);
+      setRecommendationsError(null);
+      setRecommendationsLoading(false);
+      return;
+    }
+
+    void loadRecommendations(false);
+  }, [loadRecommendations, shouldShowRecommendations]);
 
   const persistRecentSearch = useCallback((value: string) => {
     const trimmedValue = value.trim();
@@ -1725,6 +1858,42 @@ export function HomePageClient({
           totalValueCurrency={stats.totalValueCurrency}
           totalValueHasMixedCurrencies={stats.totalValueHasMixedCurrencies}
         />
+
+        {canAccessRecommendations && isAuthenticated && !showFavsOnly ? (
+          personalizationConsentGranted ? (
+            <RecommendationsSection
+              lots={recommendationLots}
+              loading={recommendationsLoading}
+              errorMessage={recommendationsError}
+              topCategories={recommendationTopCategories}
+              sourceBreakdown={recommendationSourceBreakdown}
+              avgPriceRange={recommendationAvgPriceRange}
+              updatedAt={recommendationUpdatedAt}
+              refreshed={recommendationsRefreshed}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleFavoriteToggle}
+              onRefresh={() => void loadRecommendations(true)}
+              viewMode={mobileViewMode}
+            />
+          ) : (
+            <div className="mb-6 rounded-3xl border border-amber-200 bg-amber-50 px-5 py-5 text-sm text-amber-900 shadow-card">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-700">
+                För dig är pausad
+              </p>
+              <p className="mt-2 max-w-2xl leading-6 text-amber-900/85">
+                Personalisering är inte aktiv i den här webbläsaren. Aktivera den i banner-valet eller via Min data för att visa rekommendationer igen.
+              </p>
+              <div className="mt-4">
+                <Link
+                  href="/min-data"
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 text-[13px] font-medium text-amber-950 transition hover:bg-amber-100"
+                >
+                  Öppna Min data
+                </Link>
+              </div>
+            </div>
+          )
+        ) : null}
 
         {showFavsOnly ? (
           <div className="mb-4 rounded-2xl border border-rose-200 bg-white px-4 py-4 shadow-card sm:px-5">
