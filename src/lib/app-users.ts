@@ -33,6 +33,26 @@ export type AppUser = {
   updatedAt: string;
 };
 
+export function mergeAuthProvider(
+  existingProvider: string | null | undefined,
+  nextProvider: "google" | "email",
+) {
+  const existingParts = (existingProvider ?? "")
+    .split("+")
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  if (!existingParts.includes(nextProvider)) {
+    existingParts.push(nextProvider);
+  }
+
+  const orderedProviders = ["google", "email"].filter((provider) =>
+    existingParts.includes(provider),
+  );
+
+  return orderedProviders.length > 0 ? orderedProviders.join("+") : nextProvider;
+}
+
 function mapAppUser(row: AppUserRow): AppUser {
   return {
     id: row.id,
@@ -205,7 +225,7 @@ export async function syncGoogleUser(params: {
         name: params.name ?? existing.name,
         image_url: params.imageUrl ?? existing.image_url,
         google_subject: params.googleSubject,
-        auth_provider: "google",
+        auth_provider: mergeAuthProvider(existing.auth_provider, "google"),
         role: existing.role === "user" ? bootstrapRole : existing.role,
         last_login_at: nowIso,
         updated_at: nowIso,

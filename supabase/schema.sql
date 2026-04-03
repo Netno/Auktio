@@ -153,6 +153,9 @@ create table if not exists auc_users (
   auth_provider text not null default 'google',
   google_subject text unique,
   image_url     text,
+  password_hash text,
+  password_set_at timestamptz,
+  email_verified_at timestamptz,
   role          text not null default 'user' check (role in ('user', 'admin', 'owner')),
   is_active     boolean not null default true,
   last_login_at timestamptz,
@@ -204,6 +207,42 @@ create table if not exists auc_search_click_log (
   lot_id              bigint not null references auc_lots(id) on delete cascade,
   position_in_results int not null check (position_in_results > 0),
   created_at          timestamptz default now()
+);
+
+-- ============================================
+-- EMAIL VERIFICATION TOKENS
+-- ============================================
+create table if not exists auc_user_email_verification_tokens (
+  id            bigserial primary key,
+  user_id       text not null references auc_users(id) on delete cascade,
+  email         text not null,
+  token_hash    text not null unique,
+  expires_at    timestamptz not null,
+  consumed_at   timestamptz,
+  created_at    timestamptz default now()
+);
+
+-- ============================================
+-- PASSWORD RESET TOKENS
+-- ============================================
+create table if not exists auc_user_password_reset_tokens (
+  id            bigserial primary key,
+  user_id       text not null references auc_users(id) on delete cascade,
+  email         text not null,
+  token_hash    text not null unique,
+  expires_at    timestamptz not null,
+  consumed_at   timestamptz,
+  created_at    timestamptz default now()
+);
+
+-- ============================================
+-- AUTH RATE LIMIT EVENTS
+-- ============================================
+create table if not exists auc_auth_rate_limits (
+  id            bigserial primary key,
+  action        text not null,
+  identifier    text not null,
+  created_at    timestamptz default now()
 );
 
 -- ============================================
@@ -326,6 +365,9 @@ create index if not exists idx_auc_user_search_log_user on auc_user_search_log(u
 create index if not exists idx_auc_user_search_log_session on auc_user_search_log(session_id, created_at desc);
 create index if not exists idx_auc_search_click_log_search on auc_search_click_log(search_id, created_at desc);
 create index if not exists idx_auc_anonymous_favorites_session on auc_anonymous_favorites(session_id, created_at desc);
+create index if not exists idx_auc_user_email_verification_tokens_lookup on auc_user_email_verification_tokens(token_hash, expires_at) where consumed_at is null;
+create index if not exists idx_auc_user_password_reset_tokens_lookup on auc_user_password_reset_tokens(token_hash, expires_at) where consumed_at is null;
+create index if not exists idx_auc_auth_rate_limits_lookup on auc_auth_rate_limits(action, identifier, created_at desc);
 create index if not exists idx_auc_user_interest_profiles_user on auc_user_interest_profiles(user_id, updated_at desc);
 create index if not exists idx_auc_user_interest_profiles_dirty on auc_user_interest_profiles(updated_at asc) where is_dirty = true;
 create index if not exists idx_auc_user_matches_user on auc_user_matches(user_id, score desc, created_at desc);
