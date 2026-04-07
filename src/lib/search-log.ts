@@ -1,6 +1,7 @@
 import { generateQueryEmbedding } from "@/lib/embeddings";
 import { normalizeSearchText } from "@/lib/search-language";
 import { createServerClient } from "@/lib/supabase";
+import { isMissingSupabaseTableError } from "@/lib/supabase-table-errors";
 import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
 
 const SEARCH_LOG_DEDUPE_WINDOW_MS = 30_000;
@@ -160,6 +161,13 @@ export async function createSearchLog(input: SearchLogInput) {
   const { data: recentRows, error: recentRowsError } = await duplicateQuery;
 
   if (recentRowsError) {
+    if (isMissingSupabaseTableError(recentRowsError, "auc_user_search_log")) {
+      console.warn(
+        "[search-log] Search log table is missing; skipping search log write.",
+      );
+      return { searchId: null, deduplicated: false, skipped: true };
+    }
+
     throw new Error(
       `[search-log] Failed to inspect recent searches: ${recentRowsError.message}`,
     );
@@ -210,6 +218,13 @@ export async function createSearchLog(input: SearchLogInput) {
     .single();
 
   if (error) {
+    if (isMissingSupabaseTableError(error, "auc_user_search_log")) {
+      console.warn(
+        "[search-log] Search log table is missing; skipping search log write.",
+      );
+      return { searchId: null, deduplicated: false, skipped: true };
+    }
+
     throw new Error(
       `[search-log] Failed to create search log: ${error.message}`,
     );
@@ -219,7 +234,10 @@ export async function createSearchLog(input: SearchLogInput) {
     try {
       await markUserInterestProfileDirty(userId);
     } catch (dirtyError) {
-      console.error("[search-log] Failed to mark interest profile dirty:", dirtyError);
+      console.error(
+        "[search-log] Failed to mark interest profile dirty:",
+        dirtyError,
+      );
     }
   }
 

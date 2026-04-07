@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { isPersonalizationEnabledForUser } from "@/lib/user-preference-settings";
 import { computeAndStoreUserInterestProfile } from "@/lib/user-interest-profile";
+import { buildRuleDrivenMatches } from "@/lib/recommendation-rule-engine";
 
 type SemanticMatchRow = {
   lot_id: number;
@@ -78,7 +79,14 @@ export async function markUserInterestProfileDirty(userId: string) {
 }
 
 export async function refreshUserRecommendationMatches(userId: string) {
-  const profileResult = await computeAndStoreUserInterestProfile(userId);
+  const personalizationEnabled = await isPersonalizationEnabledForUser(userId);
+  const profileResult = personalizationEnabled
+    ? await computeAndStoreUserInterestProfile(userId)
+    : {
+        topCategories: [] as string[],
+        sourceBreakdown: {},
+        avgPriceRange: {},
+      };
   const supabase = createServerClient();
   const { data: profile, error: profileError } = await supabase
     .from("auc_user_interest_profiles")
@@ -96,6 +104,53 @@ export async function refreshUserRecommendationMatches(userId: string) {
     (profile as ProfileRow | null)?.centroid_embedding,
   );
   const topCategories = (profile as ProfileRow | null)?.top_categories ?? [];
+
+  const ruleDrivenMatches = await buildRuleDrivenMatches({
+    userId,
+    surface: "home",
+    profileContext: {
+      centroidEmbedding: personalizationEnabled ? centroidEmbedding : null,
+      topCategories,
+    },
+    perRuleLimit: 12,
+    totalLimit: 40,
+  });
+
+  if (ruleDrivenMatches.length > 0) {
+    const { error: deleteError } = await supabase
+      .from("auc_user_matches")
+      .delete()
+      .eq("user_id", userId);
+
+    if (deleteError) {
+      throw new Error(
+        `[recommendation-matches] Failed to clear previous matches: ${deleteError.message}`,
+      );
+    }
+
+    const { error: insertError } = await supabase
+      .from("auc_user_matches")
+      .insert(
+        ruleDrivenMatches.map((candidate) => ({
+          user_id: userId,
+          lot_id: candidate.lotId,
+          score: candidate.score,
+          match_source: "interest_profile_v1",
+          source_context: candidate.sourceContext,
+        })),
+      );
+
+    if (insertError) {
+      throw new Error(
+        `[recommendation-matches] Failed to store rule-driven matches: ${insertError.message}`,
+      );
+    }
+
+    return {
+      ...profileResult,
+      matchCount: ruleDrivenMatches.length,
+    };
+  }
 
   if (!centroidEmbedding) {
     await supabase.from("auc_user_matches").delete().eq("user_id", userId);

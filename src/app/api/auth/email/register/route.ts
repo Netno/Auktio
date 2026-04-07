@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
   }
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Missing email or password" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing email or password" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -56,7 +59,8 @@ export async function POST(request: NextRequest) {
       emailVerificationRequired: !user.emailVerifiedAt,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Registration failed";
+    const message =
+      error instanceof Error ? error.message : "Registration failed";
     const status = message === "ACCOUNT_ALREADY_EXISTS" ? 409 : 500;
 
     return NextResponse.json({ error: message }, { status });

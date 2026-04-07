@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { canAccessRecommendationsForSession } from "@/lib/recommendations-access";
 import { loadUserRecommendations } from "@/lib/recommendations-feed";
+import { listUserRecommendationRules } from "@/lib/user-recommendation-rules";
 import { getUserPreferenceSettings } from "@/lib/user-preference-settings";
 
 function getSessionUserId(
@@ -33,8 +34,13 @@ export async function GET(request: NextRequest) {
   }
 
   const settings = await getUserPreferenceSettings(userId);
+  const rules = await listUserRecommendationRules(userId);
+  const hasExplicitHomeRules = rules.some(
+    (rule) =>
+      rule.enabled && (rule.surface === "home" || rule.surface === "both"),
+  );
 
-  if (!settings.personalizationEnabled) {
+  if (!settings.personalizationEnabled && !hasExplicitHomeRules) {
     return NextResponse.json({
       ok: true,
       enabled: false,
@@ -61,7 +67,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : "Failed to load recommendations",
+          error instanceof Error
+            ? error.message
+            : "Failed to load recommendations",
       },
       { status: 500 },
     );

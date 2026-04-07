@@ -30,7 +30,10 @@ interface LotCardProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
-  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
   resultPosition?: number;
   imagePriority?: boolean;
   onCategorySelect?: (category: string) => void;
@@ -125,11 +128,6 @@ export function LotCard({
   const [hovering, setHovering] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-        onClick={() => {
-          if (resultPosition > 0) {
-            void onResultClick?.(lot.id, resultPosition);
-          }
-        }}
   const [showLocationOverlay, setShowLocationOverlay] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [showImagePreviewActive, setShowImagePreviewActive] = useState(false);
@@ -801,6 +799,11 @@ export function LotCard({
         href={lot.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => {
+          if (resultPosition > 0) {
+            void onResultClick?.(lot.id, resultPosition);
+          }
+        }}
         onClickCapture={(e) => {
           if (!suppressClickRef.current) return;
           e.preventDefault();

@@ -2,11 +2,7 @@ export const ANONYMOUS_SESSION_COOKIE_NAME = "auktio_session_id";
 export const ANONYMOUS_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 function buildCookieAttributes(maxAgeSeconds: number) {
-  const attributes = [
-    `Max-Age=${maxAgeSeconds}`,
-    "Path=/",
-    "SameSite=Lax",
-  ];
+  const attributes = [`Max-Age=${maxAgeSeconds}`, "Path=/", "SameSite=Lax"];
 
   if (typeof window !== "undefined" && window.location.protocol === "https:") {
     attributes.push("Secure");
@@ -16,7 +12,10 @@ function buildCookieAttributes(maxAgeSeconds: number) {
 }
 
 function generateAnonymousSessionId() {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
     return crypto.randomUUID();
   }
 

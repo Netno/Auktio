@@ -93,7 +93,9 @@ export function useFavorites() {
         const payload = (await response.json()) as { lotIds?: number[] };
         if (
           Array.isArray(payload.lotIds) &&
-          (payload.lotIds.length > 0 || mergedLotIds.length === 0 || didImportStoredFavorites)
+          (payload.lotIds.length > 0 ||
+            mergedLotIds.length === 0 ||
+            didImportStoredFavorites)
         ) {
           mergedLotIds = payload.lotIds;
         }

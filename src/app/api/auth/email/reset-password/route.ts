@@ -31,22 +31,27 @@ export async function POST(request: NextRequest) {
   }
 
   if (!token || !password) {
-    return NextResponse.json({ error: "Missing token or password" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing token or password" },
+      { status: 400 },
+    );
   }
 
   try {
     const reset = await resetPasswordWithToken(token, password);
 
     if (!reset) {
-      return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Password reset failed",
+        error: error instanceof Error ? error.message : "Password reset failed",
       },
       { status: 500 },
     );

@@ -1,11 +1,22 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordPageContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordPageContent() {
   const searchParams = useSearchParams();
-  const token = useMemo(() => searchParams.get("token")?.trim() ?? "", [searchParams]);
+  const token = useMemo(
+    () => searchParams.get("token")?.trim() ?? "",
+    [searchParams],
+  );
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -35,7 +46,9 @@ export default function ResetPasswordPage() {
       );
       setPassword("");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Något gick fel.");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Något gick fel.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -46,12 +59,15 @@ export default function ResetPasswordPage() {
       <div className="mx-auto max-w-md rounded-[28px] border border-brand-200 bg-white p-6 shadow-card sm:p-8">
         <h1 className="font-serif text-3xl text-brand-900">Nytt lösenord</h1>
         <p className="mt-3 text-sm leading-6 text-brand-700">
-          Ange ett nytt lösenord för ditt konto. Länken från e-postmeddelandet behövs för att detta ska fungera.
+          Ange ett nytt lösenord för ditt konto. Länken från e-postmeddelandet
+          behövs för att detta ska fungera.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-brand-800">Nytt lösenord</span>
+            <span className="mb-1.5 block text-sm font-medium text-brand-800">
+              Nytt lösenord
+            </span>
             <input
               type="password"
               value={password}
@@ -78,7 +94,9 @@ export default function ResetPasswordPage() {
           </p>
         )}
         {message && <p className="mt-4 text-sm text-emerald-700">{message}</p>}
-        {errorMessage && <p className="mt-4 text-sm text-rose-700">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="mt-4 text-sm text-rose-700">{errorMessage}</p>
+        )}
       </div>
     </main>
   );

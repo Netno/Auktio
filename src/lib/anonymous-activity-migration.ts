@@ -1,5 +1,6 @@
 import { consumeAnonymousFavoritesIntoUser } from "@/lib/anonymous-favorites";
 import { createServerClient } from "@/lib/supabase";
+import { isMissingSupabaseTableError } from "@/lib/supabase-table-errors";
 import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
 
 export async function migrateAnonymousActivityToUser(
@@ -27,12 +28,22 @@ export async function migrateAnonymousActivityToUser(
     .select("id");
 
   if (error) {
+    if (isMissingSupabaseTableError(error, "auc_user_search_log")) {
+      return {
+        migratedFavoriteCount: migratedFavoriteLotIds.length,
+        migratedSearchCount: 0,
+      };
+    }
+
     throw new Error(
       `[anonymous-migration] Failed to migrate search logs: ${error.message}`,
     );
   }
 
-  if (migratedFavoriteLotIds.length > 0 || (Array.isArray(data) && data.length > 0)) {
+  if (
+    migratedFavoriteLotIds.length > 0 ||
+    (Array.isArray(data) && data.length > 0)
+  ) {
     await markUserInterestProfileDirty(userId);
   }
 

@@ -69,7 +69,9 @@ function hashPassword(password: string) {
   }
 
   const salt = randomBytes(16).toString("hex");
-  const derived = scryptSync(password, salt, PASSWORD_KEY_LENGTH).toString("hex");
+  const derived = scryptSync(password, salt, PASSWORD_KEY_LENGTH).toString(
+    "hex",
+  );
   return `scrypt:${salt}:${derived}`;
 }
 
@@ -99,7 +101,9 @@ async function getEmailAuthUserByEmail(email: string) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`[email-auth] Failed to load user by email: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to load user by email: ${error.message}`,
+    );
   }
 
   return data ? mapEmailAuthUser(data as AuthUserRow) : null;
@@ -128,7 +132,9 @@ export async function authenticateEmailUser(email: string, password: string) {
     .eq("id", user.id);
 
   if (error) {
-    throw new Error(`[email-auth] Failed to update last login: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to update last login: ${error.message}`,
+    );
   }
 
   return {
@@ -155,7 +161,9 @@ export async function registerEmailUser(params: {
     .maybeSingle();
 
   if (existingError) {
-    throw new Error(`[email-auth] Failed to check existing user: ${existingError.message}`);
+    throw new Error(
+      `[email-auth] Failed to check existing user: ${existingError.message}`,
+    );
   }
 
   const existingUser = existing as AuthUserRow | null;
@@ -184,7 +192,9 @@ export async function registerEmailUser(params: {
       .single();
 
     if (error) {
-      throw new Error(`[email-auth] Failed to update user for email auth: ${error.message}`);
+      throw new Error(
+        `[email-auth] Failed to update user for email auth: ${error.message}`,
+      );
     }
 
     return mapEmailAuthUser(data as AuthUserRow);
@@ -208,27 +218,38 @@ export async function registerEmailUser(params: {
     .single();
 
   if (error) {
-    throw new Error(`[email-auth] Failed to create email user: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to create email user: ${error.message}`,
+    );
   }
 
   return mapEmailAuthUser(data as AuthUserRow);
 }
 
-export async function createEmailVerificationToken(userId: string, email: string) {
+export async function createEmailVerificationToken(
+  userId: string,
+  email: string,
+) {
   const token = randomBytes(32).toString("hex");
   const tokenHash = hashToken(token);
-  const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS).toISOString();
+  const expiresAt = new Date(
+    Date.now() + EMAIL_VERIFICATION_TTL_MS,
+  ).toISOString();
   const supabase = createServerClient();
 
-  const { error } = await supabase.from("auc_user_email_verification_tokens").insert({
-    user_id: userId,
-    email: normalizeEmail(email),
-    token_hash: tokenHash,
-    expires_at: expiresAt,
-  });
+  const { error } = await supabase
+    .from("auc_user_email_verification_tokens")
+    .insert({
+      user_id: userId,
+      email: normalizeEmail(email),
+      token_hash: tokenHash,
+      expires_at: expiresAt,
+    });
 
   if (error) {
-    throw new Error(`[email-auth] Failed to create email verification token: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to create email verification token: ${error.message}`,
+    );
   }
 
   return token;
@@ -245,10 +266,16 @@ export async function verifyEmailToken(token: string) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`[email-auth] Failed to load verification token: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to load verification token: ${error.message}`,
+    );
   }
 
-  if (!data || data.consumed_at || new Date(data.expires_at).getTime() < Date.now()) {
+  if (
+    !data ||
+    data.consumed_at ||
+    new Date(data.expires_at).getTime() < Date.now()
+  ) {
     return false;
   }
 
@@ -258,7 +285,9 @@ export async function verifyEmailToken(token: string) {
     .eq("id", data.user_id);
 
   if (updateUserError) {
-    throw new Error(`[email-auth] Failed to mark email verified: ${updateUserError.message}`);
+    throw new Error(
+      `[email-auth] Failed to mark email verified: ${updateUserError.message}`,
+    );
   }
 
   const { error: consumeError } = await supabase
@@ -267,7 +296,9 @@ export async function verifyEmailToken(token: string) {
     .eq("id", data.id);
 
   if (consumeError) {
-    throw new Error(`[email-auth] Failed to consume verification token: ${consumeError.message}`);
+    throw new Error(
+      `[email-auth] Failed to consume verification token: ${consumeError.message}`,
+    );
   }
 
   return true;
@@ -285,15 +316,19 @@ export async function createPasswordResetToken(email: string) {
   const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS).toISOString();
   const supabase = createServerClient();
 
-  const { error } = await supabase.from("auc_user_password_reset_tokens").insert({
-    user_id: user.id,
-    email: user.email,
-    token_hash: tokenHash,
-    expires_at: expiresAt,
-  });
+  const { error } = await supabase
+    .from("auc_user_password_reset_tokens")
+    .insert({
+      user_id: user.id,
+      email: user.email,
+      token_hash: tokenHash,
+      expires_at: expiresAt,
+    });
 
   if (error) {
-    throw new Error(`[email-auth] Failed to create password reset token: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to create password reset token: ${error.message}`,
+    );
   }
 
   return { token, email: user.email };
@@ -311,10 +346,16 @@ export async function resetPasswordWithToken(token: string, password: string) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`[email-auth] Failed to load password reset token: ${error.message}`);
+    throw new Error(
+      `[email-auth] Failed to load password reset token: ${error.message}`,
+    );
   }
 
-  if (!data || data.consumed_at || new Date(data.expires_at).getTime() < Date.now()) {
+  if (
+    !data ||
+    data.consumed_at ||
+    new Date(data.expires_at).getTime() < Date.now()
+  ) {
     return false;
   }
 
@@ -327,7 +368,9 @@ export async function resetPasswordWithToken(token: string, password: string) {
     .maybeSingle();
 
   if (existingUserError) {
-    throw new Error(`[email-auth] Failed to load user during password reset: ${existingUserError.message}`);
+    throw new Error(
+      `[email-auth] Failed to load user during password reset: ${existingUserError.message}`,
+    );
   }
 
   const { error: updateUserError } = await supabase
@@ -341,7 +384,9 @@ export async function resetPasswordWithToken(token: string, password: string) {
     .eq("id", data.user_id);
 
   if (updateUserError) {
-    throw new Error(`[email-auth] Failed to reset password: ${updateUserError.message}`);
+    throw new Error(
+      `[email-auth] Failed to reset password: ${updateUserError.message}`,
+    );
   }
 
   const { error: consumeError } = await supabase
@@ -350,7 +395,9 @@ export async function resetPasswordWithToken(token: string, password: string) {
     .eq("id", data.id);
 
   if (consumeError) {
-    throw new Error(`[email-auth] Failed to consume password reset token: ${consumeError.message}`);
+    throw new Error(
+      `[email-auth] Failed to consume password reset token: ${consumeError.message}`,
+    );
   }
 
   return true;
@@ -378,7 +425,9 @@ export async function recordAuthRateLimitAttempt(params: {
     .gte("created_at", windowStartIso);
 
   if (countError) {
-    throw new Error(`[email-auth] Failed to read auth rate limit: ${countError.message}`);
+    throw new Error(
+      `[email-auth] Failed to read auth rate limit: ${countError.message}`,
+    );
   }
 
   if ((count ?? 0) >= params.maxAttempts) {
@@ -388,13 +437,17 @@ export async function recordAuthRateLimitAttempt(params: {
     };
   }
 
-  const { error: insertError } = await supabase.from("auc_auth_rate_limits").insert({
-    action: params.action,
-    identifier,
-  });
+  const { error: insertError } = await supabase
+    .from("auc_auth_rate_limits")
+    .insert({
+      action: params.action,
+      identifier,
+    });
 
   if (insertError) {
-    throw new Error(`[email-auth] Failed to write auth rate limit: ${insertError.message}`);
+    throw new Error(
+      `[email-auth] Failed to write auth rate limit: ${insertError.message}`,
+    );
   }
 
   return { allowed: true, retryAfterSeconds: 0 };

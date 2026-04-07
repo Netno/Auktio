@@ -117,7 +117,9 @@ export async function loadUserRecommendations(params: {
 
   let { data: profile, error: profileError } = await supabase
     .from("auc_user_interest_profiles")
-    .select("is_dirty, updated_at, top_categories, source_breakdown, avg_price_range")
+    .select(
+      "is_dirty, updated_at, top_categories, source_breakdown, avg_price_range",
+    )
     .eq("user_id", params.userId)
     .maybeSingle();
 
@@ -142,9 +144,8 @@ export async function loadUserRecommendations(params: {
 
   const shouldRefresh =
     params.forceRefresh === true ||
-    !profile ||
-    profile.is_dirty === true ||
-    isProfileStale(profile.updated_at) ||
+    profile?.is_dirty === true ||
+    (profile ? isProfileStale(profile.updated_at) : false) ||
     (rawMatches ?? []).length === 0;
 
   let refreshed = false;
@@ -155,7 +156,9 @@ export async function loadUserRecommendations(params: {
 
     const refreshedProfileResult = await supabase
       .from("auc_user_interest_profiles")
-      .select("is_dirty, updated_at, top_categories, source_breakdown, avg_price_range")
+      .select(
+        "is_dirty, updated_at, top_categories, source_breakdown, avg_price_range",
+      )
       .eq("user_id", params.userId)
       .maybeSingle();
 

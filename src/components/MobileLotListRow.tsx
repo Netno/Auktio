@@ -10,7 +10,10 @@ interface MobileLotListRowProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
-  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
   resultPosition?: number;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;

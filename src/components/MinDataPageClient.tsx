@@ -64,7 +64,9 @@ export function MinDataPageClient() {
 
     try {
       const response = await fetch("/api/me/data", { cache: "no-store" });
-      const payload = (await response.json()) as MinDataPayload & { error?: string };
+      const payload = (await response.json()) as MinDataPayload & {
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(payload.error ?? "Kunde inte ladda Min data.");
@@ -72,7 +74,9 @@ export function MinDataPageClient() {
 
       setData(payload);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Kunde inte ladda Min data.");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Kunde inte ladda Min data.",
+      );
     } finally {
       setLoading(false);
     }
@@ -131,7 +135,11 @@ export function MinDataPageClient() {
 
         setMessage("Inställningen uppdaterades.");
       } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : "Kunde inte spara inställningen.");
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : "Kunde inte spara inställningen.",
+        );
       } finally {
         setSaving(false);
       }
@@ -171,7 +179,11 @@ export function MinDataPageClient() {
       setMessage("Din sökhistorik och rekommendationsdata har rensats.");
       await loadData();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Kunde inte rensa personlig data.");
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Kunde inte rensa personlig data.",
+      );
     } finally {
       setClearing(false);
     }
@@ -179,7 +191,7 @@ export function MinDataPageClient() {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f7f1eb_0%,#fbf8f6_26%,#f8f4f0_100%)]">
-      <Header />
+      <Header activeView="account" />
 
       <main className="mx-auto max-w-[1100px] px-4 pb-20 pt-8 sm:px-6">
         <div className="rounded-[30px] border border-brand-200 bg-white/90 p-6 shadow-card sm:p-8">
@@ -191,7 +203,9 @@ export function MinDataPageClient() {
               Kontroll över sökhistorik och personalisering
             </h1>
             <p className="mt-3 text-sm leading-6 text-brand-700">
-              Här ser du vad som används för För dig, kan exportera dina data och rensa historik om du inte längre vill att systemet bygger rekommendationer på ditt beteende.
+              Här ser du vad som används för För dig, kan exportera dina data
+              och rensa historik om du inte längre vill att systemet bygger
+              rekommendationer på ditt beteende.
             </p>
           </div>
 
@@ -209,7 +223,10 @@ export function MinDataPageClient() {
           {loading ? (
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="h-40 animate-pulse rounded-3xl border border-brand-200 bg-brand-50" />
+                <div
+                  key={index}
+                  className="h-40 animate-pulse rounded-3xl border border-brand-200 bg-brand-50"
+                />
               ))}
             </div>
           ) : data ? (
@@ -222,7 +239,9 @@ export function MinDataPageClient() {
                   <div className="mt-3 text-3xl font-semibold text-brand-950">
                     {data.summary.searches.toLocaleString("sv-SE")}
                   </div>
-                  <p className="mt-2 text-sm text-brand-700">Meningsfulla sökningar sparade på kontot.</p>
+                  <p className="mt-2 text-sm text-brand-700">
+                    Meningsfulla sökningar sparade på kontot.
+                  </p>
                 </div>
                 <div className="rounded-3xl border border-brand-200 bg-brand-50 p-5">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-500">
@@ -231,7 +250,9 @@ export function MinDataPageClient() {
                   <div className="mt-3 text-3xl font-semibold text-brand-950">
                     {data.summary.favorites.toLocaleString("sv-SE")}
                   </div>
-                  <p className="mt-2 text-sm text-brand-700">Bevakningar som också kan användas i För dig.</p>
+                  <p className="mt-2 text-sm text-brand-700">
+                    Bevakningar som också kan användas i För dig.
+                  </p>
                 </div>
                 <div className="rounded-3xl border border-brand-200 bg-brand-50 p-5">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-500">
@@ -240,19 +261,26 @@ export function MinDataPageClient() {
                   <div className="mt-3 text-3xl font-semibold text-brand-950">
                     {data.summary.matches.toLocaleString("sv-SE")}
                   </div>
-                  <p className="mt-2 text-sm text-brand-700">Aktuella rekommendationer som väntar på att visas.</p>
+                  <p className="mt-2 text-sm text-brand-700">
+                    Aktuella rekommendationer som väntar på att visas.
+                  </p>
                 </div>
               </div>
 
               <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
                 <section className="rounded-3xl border border-brand-200 bg-white p-5 shadow-card">
-                  <h2 className="text-lg font-semibold text-brand-950">Inställningar</h2>
+                  <h2 className="text-lg font-semibold text-brand-950">
+                    Inställningar
+                  </h2>
                   <div className="mt-4 space-y-4">
                     <label className="flex items-start justify-between gap-4 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-4">
                       <div>
-                        <div className="text-sm font-medium text-brand-950">Personalisering</div>
+                        <div className="text-sm font-medium text-brand-950">
+                          Personalisering
+                        </div>
                         <p className="mt-1 text-sm leading-6 text-brand-700">
-                          Tillåt att favoriter och sökhistorik används för att bygga För dig.
+                          Tillåt att favoriter och sökhistorik används för att
+                          bygga För dig.
                         </p>
                       </div>
                       <input
@@ -270,9 +298,12 @@ export function MinDataPageClient() {
 
                     <label className="flex items-start justify-between gap-4 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-4">
                       <div>
-                        <div className="text-sm font-medium text-brand-950">Spara sökhistorik</div>
+                        <div className="text-sm font-medium text-brand-950">
+                          Spara sökhistorik
+                        </div>
                         <p className="mt-1 text-sm leading-6 text-brand-700">
-                          Behåll meningsfulla sökningar på kontot för bättre förståelse av dina intressen över tid.
+                          Behåll meningsfulla sökningar på kontot för bättre
+                          förståelse av dina intressen över tid.
                         </p>
                       </div>
                       <input
@@ -308,7 +339,9 @@ export function MinDataPageClient() {
                 </section>
 
                 <section className="rounded-3xl border border-brand-200 bg-white p-5 shadow-card">
-                  <h2 className="text-lg font-semibold text-brand-950">Profilsammanfattning</h2>
+                  <h2 className="text-lg font-semibold text-brand-950">
+                    Profilsammanfattning
+                  </h2>
                   <p className="mt-2 text-sm leading-6 text-brand-700">
                     Senast uppdaterad: {formatDateTime(data.profile.updatedAt)}
                   </p>
@@ -324,14 +357,21 @@ export function MinDataPageClient() {
                         </span>
                       ))
                     ) : (
-                      <p className="text-sm text-brand-500">Ingen profil har byggts ännu.</p>
+                      <p className="text-sm text-brand-500">
+                        Ingen profil har byggts ännu.
+                      </p>
                     )}
                   </div>
 
                   <div className="mt-5 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-700">
-                    <div className="font-medium text-brand-950">Så används datan</div>
+                    <div className="font-medium text-brand-950">
+                      Så används datan
+                    </div>
                     <p className="mt-2 leading-6">
-                      För dig prioriterar bevakningar högst och kombinerar dem med meningsfulla sökningar. Om du stänger av personalisering slutar nya signaler att användas och du kan rensa tidigare data härifrån.
+                      För dig prioriterar bevakningar högst och kombinerar dem
+                      med meningsfulla sökningar. Om du stänger av
+                      personalisering slutar nya signaler att användas och du
+                      kan rensa tidigare data härifrån.
                     </p>
                   </div>
 
@@ -347,31 +387,43 @@ export function MinDataPageClient() {
               </div>
 
               <section className="mt-6 rounded-3xl border border-brand-200 bg-white p-5 shadow-card">
-                <h2 className="text-lg font-semibold text-brand-950">Senaste sökningar</h2>
+                <h2 className="text-lg font-semibold text-brand-950">
+                  Senaste sökningar
+                </h2>
                 {data.recentSearches.length === 0 ? (
-                  <p className="mt-3 text-sm text-brand-600">Inga sökningar har sparats ännu.</p>
+                  <p className="mt-3 text-sm text-brand-600">
+                    Inga sökningar har sparats ännu.
+                  </p>
                 ) : (
                   <div className="mt-4 overflow-x-auto">
                     <table className="min-w-full text-left text-sm text-brand-700">
                       <thead>
                         <tr className="border-b border-brand-200 text-[11px] uppercase tracking-[0.12em] text-brand-500">
                           <th className="pb-2 pr-4 font-semibold">Sökning</th>
-                          <th className="pb-2 pr-4 font-semibold">Kategorier</th>
+                          <th className="pb-2 pr-4 font-semibold">
+                            Kategorier
+                          </th>
                           <th className="pb-2 font-semibold">Tid</th>
                         </tr>
                       </thead>
                       <tbody>
                         {data.recentSearches.map((search) => (
-                          <tr key={search.id} className="border-b border-brand-100 align-top last:border-b-0">
+                          <tr
+                            key={search.id}
+                            className="border-b border-brand-100 align-top last:border-b-0"
+                          >
                             <td className="py-3 pr-4 text-brand-950">
-                              {search.queryText?.trim() || "Kategorival utan text"}
+                              {search.queryText?.trim() ||
+                                "Kategorival utan text"}
                             </td>
                             <td className="py-3 pr-4">
                               {search.selectedCategories.length > 0
                                 ? search.selectedCategories.join(", ")
                                 : "-"}
                             </td>
-                            <td className="py-3">{formatDateTime(search.createdAt)}</td>
+                            <td className="py-3">
+                              {formatDateTime(search.createdAt)}
+                            </td>
                           </tr>
                         ))}
                       </tbody>

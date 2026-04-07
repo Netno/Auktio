@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -15,9 +15,19 @@ function getInitialMode(value: string | null): AuthMode {
 }
 
 export default function EmailAuthPage() {
+  return (
+    <Suspense fallback={null}>
+      <EmailAuthPageContent />
+    </Suspense>
+  );
+}
+
+function EmailAuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [mode, setMode] = useState<AuthMode>(getInitialMode(searchParams.get("mode")));
+  const [mode, setMode] = useState<AuthMode>(
+    getInitialMode(searchParams.get("mode")),
+  );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +59,7 @@ export default function EmailAuthPage() {
           throw new Error(
             result?.error === "CredentialsSignin"
               ? "Fel e-post, losenord eller overifierad e-post."
-              : result?.error ?? "Inloggning misslyckades.",
+              : (result?.error ?? "Inloggning misslyckades."),
           );
         }
 
@@ -93,7 +103,9 @@ export default function EmailAuthPage() {
         "Om adressen finns i systemet har en aterstallningslank skickats.",
       );
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Nagot gick fel.");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Nagot gick fel.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +116,8 @@ export default function EmailAuthPage() {
       <div className="mx-auto max-w-md rounded-[28px] border border-brand-200 bg-white p-6 shadow-card sm:p-8">
         <h1 className="font-serif text-3xl text-brand-900">E-postinloggning</h1>
         <p className="mt-3 text-sm leading-6 text-brand-700">
-          Logga in med e-post och lösenord, skapa konto eller be om en återställningslänk.
+          Logga in med e-post och lösenord, skapa konto eller be om en
+          återställningslänk.
         </p>
 
         <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl bg-brand-100 p-1">
@@ -131,7 +144,9 @@ export default function EmailAuthPage() {
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           {mode === "register" && (
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-brand-800">Namn</span>
+              <span className="mb-1.5 block text-sm font-medium text-brand-800">
+                Namn
+              </span>
               <input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
@@ -142,7 +157,9 @@ export default function EmailAuthPage() {
           )}
 
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-brand-800">E-post</span>
+            <span className="mb-1.5 block text-sm font-medium text-brand-800">
+              E-post
+            </span>
             <input
               type="email"
               value={email}
@@ -155,7 +172,9 @@ export default function EmailAuthPage() {
 
           {mode !== "forgot" && (
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-brand-800">Losenord</span>
+              <span className="mb-1.5 block text-sm font-medium text-brand-800">
+                Losenord
+              </span>
               <input
                 type="password"
                 value={password}
@@ -163,7 +182,9 @@ export default function EmailAuthPage() {
                 required
                 minLength={8}
                 className="h-11 w-full rounded-xl border border-brand-200 px-3 text-sm text-brand-900 outline-none transition focus:border-brand-400"
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                autoComplete={
+                  mode === "login" ? "current-password" : "new-password"
+                }
               />
             </label>
           )}
@@ -182,12 +203,17 @@ export default function EmailAuthPage() {
         </form>
 
         {message && <p className="mt-4 text-sm text-emerald-700">{message}</p>}
-        {errorMessage && <p className="mt-4 text-sm text-rose-700">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="mt-4 text-sm text-rose-700">{errorMessage}</p>
+        )}
 
         <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-700">
-          <div className="font-medium text-brand-900">Har du redan Google-login?</div>
+          <div className="font-medium text-brand-900">
+            Har du redan Google-login?
+          </div>
           <p className="mt-1 leading-6">
-            Om du registrerar samma e-post här länkas e-postinloggningen till samma konto istället för att skapa en ny användare.
+            Om du registrerar samma e-post här länkas e-postinloggningen till
+            samma konto istället för att skapa en ny användare.
           </p>
         </div>
       </div>

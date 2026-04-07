@@ -30,7 +30,10 @@ export async function listAnonymousFavoriteLotIds(sessionId: string) {
     .filter((lotId) => Number.isInteger(lotId) && lotId > 0);
 }
 
-export async function addAnonymousFavorites(sessionId: string, lotIds: number[]) {
+export async function addAnonymousFavorites(
+  sessionId: string,
+  lotIds: number[],
+) {
   if (sessionId.trim().length === 0) {
     throw new Error("Invalid sessionId");
   }
@@ -59,7 +62,10 @@ export async function addAnonymousFavorites(sessionId: string, lotIds: number[])
   return listAnonymousFavoriteLotIds(sessionId);
 }
 
-export async function removeAnonymousFavorite(sessionId: string, lotId: number) {
+export async function removeAnonymousFavorite(
+  sessionId: string,
+  lotId: number,
+) {
   if (sessionId.trim().length === 0) {
     throw new Error("Invalid sessionId");
   }

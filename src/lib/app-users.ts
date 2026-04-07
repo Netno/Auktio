@@ -50,7 +50,9 @@ export function mergeAuthProvider(
     existingParts.includes(provider),
   );
 
-  return orderedProviders.length > 0 ? orderedProviders.join("+") : nextProvider;
+  return orderedProviders.length > 0
+    ? orderedProviders.join("+")
+    : nextProvider;
 }
 
 function mapAppUser(row: AppUserRow): AppUser {

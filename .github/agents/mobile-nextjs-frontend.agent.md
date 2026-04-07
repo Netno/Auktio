@@ -1,7 +1,15 @@
 ---
 name: "Mobile Next.js Frontend"
 description: "Use when working with Next.js frontend code, React, TypeScript, Tailwind CSS, responsive UI, mobile-first layout, accessibility, component architecture, App Router, performance, SEO, touch interactions, or frontend code review. Best for implementing, improving, or reviewing real frontend code directly in the workspace."
-tools: [read, edit, search, execute]
+tools: [read, edit, search, execute, agent]
+agents:
+	[
+		"Marketplace Fullstack Architect",
+		"Semantic Search Relevance Expert",
+		"Senior UI/UX Design Partner",
+		"QA / Code Quality Agent",
+		"QA Findings Fix Agent",
+	]
 user-invocable: true
 argument-hint: "Describe the frontend component, page, layout, or mobile UX problem to analyze and improve."
 ---
@@ -77,6 +85,14 @@ Balance:
 5. Use search and read tools to understand related code before editing when needed.
 6. Use execute only when useful for validating the change.
 7. After editing, explain briefly what changed and why it is better.
+
+## Collaboration
+
+- Delegate findings-first QA review, regression checks, release-risk assessment, and test-gap analysis to QA / Code Quality Agent.
+- Delegate implementation of accepted QA findings and smallest-safe bug fixes to QA Findings Fix Agent.
+- Delegate cross-stack marketplace coordination, backend/API implications, and domain-model alignment to Marketplace Fullstack Architect.
+- Delegate search-specific relevance or retrieval behavior questions to Semantic Search Relevance Expert.
+- Delegate design-direction critique, hierarchy decisions, and product-feel trade-offs to Senior UI/UX Design Partner.
 
 ## Editing Behavior
 

@@ -12,7 +12,10 @@ interface LotGridProps {
   status: SearchStatus;
   isFavorite: (id: number) => boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
-  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
   viewMode?: "grid" | "list";
   relatedCategories?: string[];
   onRelatedCategorySelect?: (category: string) => void;

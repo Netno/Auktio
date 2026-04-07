@@ -6,6 +6,8 @@ export type ConsentPreferences = {
   personalization: boolean;
 };
 
+export type ConsentChoice = ConsentPreferences;
+
 export const CONSENT_PRESET_ALL: ConsentPreferences = {
   analytics: true,
   personalization: true,

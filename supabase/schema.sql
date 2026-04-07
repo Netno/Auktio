@@ -309,6 +309,92 @@ create table if not exists auc_user_preference_settings (
 );
 
 -- ============================================
+-- USER NOTIFICATION SETTINGS
+-- ============================================
+create table if not exists auc_user_notification_settings (
+  id                        bigserial primary key,
+  user_id                   text not null references auc_users(id) on delete cascade,
+  email_enabled             boolean not null default true,
+  digest_frequency          text not null default 'daily' check (digest_frequency in ('off', 'daily')),
+  instant_enabled           boolean not null default true,
+  quiet_hours_start         int check (quiet_hours_start is null or (quiet_hours_start >= 0 and quiet_hours_start <= 23)),
+  quiet_hours_end           int check (quiet_hours_end is null or (quiet_hours_end >= 0 and quiet_hours_end <= 23)),
+  max_notifications_per_day int not null default 6 check (max_notifications_per_day >= 0),
+  created_at                timestamptz default now(),
+  updated_at                timestamptz default now(),
+
+  unique(user_id)
+);
+
+-- ============================================
+-- USER RECOMMENDATION RULES
+-- ============================================
+create table if not exists auc_user_recommendation_rules (
+  id                  bigserial primary key,
+  user_id             text not null references auc_users(id) on delete cascade,
+  label               text not null,
+  surface             text not null default 'both' check (surface in ('home', 'notification', 'both')),
+  enabled             boolean not null default true,
+  strictness          text not null default 'blended' check (strictness in ('strict', 'blended')),
+  query_text          text,
+  categories          text[] not null default '{}',
+  excluded_categories text[] not null default '{}',
+  brands_or_makers    text[] not null default '{}',
+  house_ids           text[] not null default '{}',
+  min_price           numeric,
+  max_price           numeric,
+  notification_types  text[] not null default '{}',
+  cooldown_hours      int not null default 24 check (cooldown_hours >= 0),
+  priority            int not null default 0,
+  created_at          timestamptz default now(),
+  updated_at          timestamptz default now(),
+
+  check (
+    coalesce(nullif(btrim(query_text), ''), '') <> '' or
+    cardinality(categories) > 0 or
+    cardinality(brands_or_makers) > 0 or
+    cardinality(house_ids) > 0
+  ),
+  check (min_price is null or min_price >= 0),
+  check (max_price is null or max_price >= 0),
+  check (min_price is null or max_price is null or min_price <= max_price)
+);
+
+-- ============================================
+-- USER BEHAVIOR EVENTS
+-- ============================================
+create table if not exists auc_user_behavior_events (
+  id          bigserial primary key,
+  user_id     text not null references auc_users(id) on delete cascade,
+  lot_id      bigint references auc_lots(id) on delete cascade,
+  search_id   bigint references auc_user_search_log(id) on delete set null,
+  event_type  text not null check (event_type in ('favorite_add', 'search_click', 'search_repeat', 'lot_view', 'dismiss', 'hide', 'bid_placed')),
+  weight      double precision not null default 1,
+  metadata    jsonb not null default '{}'::jsonb,
+  occurred_at timestamptz default now()
+);
+
+-- ============================================
+-- USER ALERT MATCHES
+-- ============================================
+create table if not exists auc_user_alert_matches (
+  id              bigserial primary key,
+  user_id         text not null references auc_users(id) on delete cascade,
+  rule_id         bigint references auc_user_recommendation_rules(id) on delete cascade,
+  lot_id          bigint not null references auc_lots(id) on delete cascade,
+  match_kind      text not null check (match_kind in ('rule_direct', 'similar_to_saved', 'followed_house', 'price_fit', 'returned_unsold')),
+  reason_codes    text[] not null default '{}',
+  score           double precision not null default 0,
+  score_breakdown jsonb not null default '{}'::jsonb,
+  delivery_state  text not null default 'pending' check (delivery_state in ('pending', 'seen', 'dismissed', 'notified')),
+  first_seen_at   timestamptz default now(),
+  last_seen_at    timestamptz default now(),
+  notified_at     timestamptz,
+
+  unique(user_id, rule_id, lot_id, match_kind)
+);
+
+-- ============================================
 -- CATEGORY FEEDBACK (admin corrections for learning)
 -- ============================================
 create table if not exists auc_category_feedback (
@@ -389,6 +475,17 @@ create index if not exists idx_auc_user_interest_profiles_dirty on auc_user_inte
 create index if not exists idx_auc_user_matches_user on auc_user_matches(user_id, score desc, created_at desc);
 create index if not exists idx_auc_user_matches_lot on auc_user_matches(lot_id);
 create index if not exists idx_auc_user_preference_settings_user on auc_user_preference_settings(user_id);
+create index if not exists idx_auc_user_notification_settings_user on auc_user_notification_settings(user_id);
+create index if not exists idx_auc_user_recommendation_rules_user on auc_user_recommendation_rules(user_id, priority desc, updated_at desc);
+create index if not exists idx_auc_user_recommendation_rules_surface on auc_user_recommendation_rules(surface, enabled, updated_at desc);
+create index if not exists idx_auc_user_recommendation_rules_categories on auc_user_recommendation_rules using gin(categories);
+create index if not exists idx_auc_user_recommendation_rules_houses on auc_user_recommendation_rules using gin(house_ids);
+create index if not exists idx_auc_user_recommendation_rules_brands on auc_user_recommendation_rules using gin(brands_or_makers);
+create index if not exists idx_auc_user_behavior_events_user on auc_user_behavior_events(user_id, occurred_at desc);
+create index if not exists idx_auc_user_behavior_events_lot on auc_user_behavior_events(lot_id, occurred_at desc);
+create index if not exists idx_auc_user_alert_matches_user on auc_user_alert_matches(user_id, delivery_state, last_seen_at desc);
+create index if not exists idx_auc_user_alert_matches_rule on auc_user_alert_matches(rule_id, last_seen_at desc);
+create index if not exists idx_auc_user_alert_matches_lot on auc_user_alert_matches(lot_id, last_seen_at desc);
 create index if not exists idx_auc_category_feedback_lot on auc_category_feedback(lot_id, created_at desc);
 create index if not exists idx_auc_category_feedback_terms on auc_category_feedback using gin(normalized_terms);
 
@@ -537,6 +634,10 @@ alter table auc_anonymous_favorites enable row level security;
 alter table auc_user_interest_profiles enable row level security;
 alter table auc_user_matches enable row level security;
 alter table auc_user_preference_settings enable row level security;
+alter table auc_user_notification_settings enable row level security;
+alter table auc_user_recommendation_rules enable row level security;
+alter table auc_user_behavior_events enable row level security;
+alter table auc_user_alert_matches enable row level security;
 alter table auc_category_feedback enable row level security;
 alter table auc_sync_log enable row level security;
 alter table auc_settings enable row level security;

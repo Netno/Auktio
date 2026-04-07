@@ -11,7 +11,7 @@ interface HeaderProps {
   favoritesCount?: number;
   showFavsOnly?: boolean;
   onToggleFavs?: () => void;
-  activeView?: "lots" | "auctions" | "admin" | "ai-usage";
+  activeView?: "lots" | "auctions" | "admin" | "ai-usage" | "account";
 }
 
 type HeaderNavItem = {
@@ -77,6 +77,14 @@ export function Header({
       active: activeView === "auctions",
     },
   ];
+
+  if (session?.user) {
+    navItems.push({
+      href: "/mina-sidor",
+      label: "Mina Sidor",
+      active: activeView === "account",
+    });
+  }
 
   if (session?.user?.role === "admin" || session?.user?.role === "owner") {
     navItems.push(

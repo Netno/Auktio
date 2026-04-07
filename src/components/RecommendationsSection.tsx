@@ -92,7 +92,9 @@ export function RecommendationsSection({
             Personliga rekommendationer från ditt beteende
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-brand-700">
-            Den här ytan använder dina bevakningar och meningsfulla sökningar för att hitta aktiva objekt som liknar det du verkar vilja köpa eller följa.
+            Den här ytan använder dina bevakningar och meningsfulla sökningar
+            för att hitta aktiva objekt som liknar det du verkar vilja köpa
+            eller följa.
           </p>
         </div>
 
@@ -126,17 +128,24 @@ export function RecommendationsSection({
 
       <div className="mt-4 flex flex-wrap gap-2 text-[12px] text-brand-600">
         {activeFavoriteCount ? (
-          <span className="rounded-full bg-white px-3 py-1.5">Aktiva favoriter: {activeFavoriteCount}</span>
+          <span className="rounded-full bg-white px-3 py-1.5">
+            Aktiva favoriter: {activeFavoriteCount}
+          </span>
         ) : null}
         {soldFavoriteCount ? (
-          <span className="rounded-full bg-white px-3 py-1.5">Sålda favoriter: {soldFavoriteCount}</span>
+          <span className="rounded-full bg-white px-3 py-1.5">
+            Sålda favoriter: {soldFavoriteCount}
+          </span>
         ) : null}
         {searchCount ? (
-          <span className="rounded-full bg-white px-3 py-1.5">Sökningar i profilen: {searchCount}</span>
+          <span className="rounded-full bg-white px-3 py-1.5">
+            Sökningar i profilen: {searchCount}
+          </span>
         ) : null}
         {updatedAtLabel ? (
           <span className="rounded-full bg-white px-3 py-1.5">
-            {refreshed ? "Nyss uppdaterad" : "Senast beräknad"}: {updatedAtLabel}
+            {refreshed ? "Nyss uppdaterad" : "Senast beräknad"}:{" "}
+            {updatedAtLabel}
           </span>
         ) : null}
       </div>
@@ -158,7 +167,9 @@ export function RecommendationsSection({
           </div>
         ) : lots.length === 0 ? (
           <div className="rounded-2xl border border-brand-200 bg-white px-5 py-6 text-sm text-brand-700">
-            Vi har inte tillräckligt med signaler för att visa relevanta rekommendationer ännu. Fortsätt söka och bevaka några objekt så fylls ytan på.
+            Vi har inte tillräckligt med signaler för att visa relevanta
+            rekommendationer ännu. Fortsätt söka och bevaka några objekt så
+            fylls ytan på.
           </div>
         ) : (
           <LotGrid

@@ -15,7 +15,9 @@ function getTransport() {
   const pass = process.env.AUTH_SMTP_PASS;
 
   if (!host || !Number.isFinite(port)) {
-    throw new Error("SMTP is not configured. Missing AUTH_SMTP_HOST or AUTH_SMTP_PORT.");
+    throw new Error(
+      "SMTP is not configured. Missing AUTH_SMTP_HOST or AUTH_SMTP_PORT.",
+    );
   }
 
   return nodemailer.createTransport({

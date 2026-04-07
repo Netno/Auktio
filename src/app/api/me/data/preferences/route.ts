@@ -47,7 +47,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : "Failed to update preferences",
+          error instanceof Error
+            ? error.message
+            : "Failed to update preferences",
       },
       { status: 500 },
     );

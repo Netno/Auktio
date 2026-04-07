@@ -18,7 +18,10 @@ interface MobileLotCardProps {
   lot: Lot;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
-  onResultClick?: (lotId: number, positionInResults: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
   resultPosition?: number;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
@@ -90,7 +93,9 @@ export function MobileLotCard({
   const categoryLabel = lot.categories?.[0] ?? lot.aiCategories?.[0] ?? null;
   const houseLabel = lot.houseName ?? null;
   const hasLocationHint = Boolean(lot.city || lot.country);
-  const mapQuery = [lot.city, lot.country, lot.houseName].filter(Boolean).join(", ");
+  const mapQuery = [lot.city, lot.country, lot.houseName]
+    .filter(Boolean)
+    .join(", ");
   const eyebrowLabel = categoryLabel ?? houseLabel;
   const secondaryLabel =
     houseLabel && houseLabel !== eyebrowLabel ? houseLabel : null;
@@ -144,9 +149,7 @@ export function MobileLotCard({
 
     const updateOverflowState = () => {
       const elements = [titleRef.current, descriptionRef.current].filter(
-        (
-          element,
-        ): element is HTMLHeadingElement | HTMLParagraphElement =>
+        (element): element is HTMLHeadingElement | HTMLParagraphElement =>
           element != null,
       );
 

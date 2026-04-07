@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { isMissingSupabaseTableError } from "@/lib/supabase-table-errors";
 import { refreshUserRecommendationMatches } from "@/lib/user-recommendation-matches";
 
 type DirtyProfileRow = {
@@ -23,7 +24,9 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServerClient();
   const nowIso = new Date().toISOString();
-  const staleCutoffIso = new Date(Date.now() - 1000 * 60 * 60 * 24 * 45).toISOString();
+  const staleCutoffIso = new Date(
+    Date.now() - 1000 * 60 * 60 * 24 * 45,
+  ).toISOString();
 
   const { data: dirtyProfiles, error: dirtyProfilesError } = await supabase
     .from("auc_user_interest_profiles")
@@ -84,7 +87,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const cleanupOperations = await Promise.all([
+  const [
+    searchCleanup,
+    rateLimitCleanup,
+    verificationCleanup,
+    passwordCleanup,
+  ] = await Promise.all([
     supabase
       .from("auc_user_search_log")
       .delete()
@@ -104,9 +112,28 @@ export async function POST(request: NextRequest) {
       .or(`expires_at.lt.${nowIso},consumed_at.not.is.null`),
   ]);
 
-  for (const result of cleanupOperations) {
+  const cleanupResults = [
+    rateLimitCleanup,
+    verificationCleanup,
+    passwordCleanup,
+  ];
+
+  if (
+    searchCleanup.error &&
+    !isMissingSupabaseTableError(searchCleanup.error, "auc_user_search_log")
+  ) {
+    return NextResponse.json(
+      { error: searchCleanup.error.message },
+      { status: 500 },
+    );
+  }
+
+  for (const result of cleanupResults) {
     if (result.error) {
-      return NextResponse.json({ error: result.error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: result.error.message },
+        { status: 500 },
+      );
     }
   }
 

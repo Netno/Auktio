@@ -321,9 +321,9 @@ export function HomePageClient({
   const [recommendationsLoading, setRecommendationsLoading] = useState(false);
   const [recommendationsRefreshed, setRecommendationsRefreshed] =
     useState(false);
-  const [recommendationsError, setRecommendationsError] = useState<string | null>(
-    null,
-  );
+  const [recommendationsError, setRecommendationsError] = useState<
+    string | null
+  >(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement | null>(null);
   const lastScrollYRef = useRef(0);
@@ -542,7 +542,7 @@ export function HomePageClient({
     ];
 
     if (session?.user) {
-      items.push({ href: "/min-data", label: "Min data" });
+      items.push({ href: "/mina-sidor", label: "Mina Sidor" });
     }
 
     if (session?.user?.role === "admin" || session?.user?.role === "owner") {
@@ -1885,14 +1885,16 @@ export function HomePageClient({
                 För dig är pausad
               </p>
               <p className="mt-2 max-w-2xl leading-6 text-amber-900/85">
-                Personalisering är inte aktiv i den här webbläsaren. Aktivera den i banner-valet eller via Min data för att visa rekommendationer igen.
+                Personalisering är inte aktiv i den här webbläsaren. Aktivera
+                den i banner-valet eller via Mina Sidor för att visa
+                rekommendationer igen.
               </p>
               <div className="mt-4">
                 <Link
-                  href="/min-data"
+                  href="/mina-sidor"
                   className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 text-[13px] font-medium text-amber-950 transition hover:bg-amber-100"
                 >
-                  Öppna Min data
+                  Öppna Mina Sidor
                 </Link>
               </div>
             </div>

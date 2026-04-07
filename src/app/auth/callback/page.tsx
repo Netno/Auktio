@@ -28,7 +28,9 @@ function getCopy(mode?: string, status?: string) {
   };
 }
 
-export default function AuthCallbackPage({ searchParams }: AuthCallbackPageProps) {
+export default function AuthCallbackPage({
+  searchParams,
+}: AuthCallbackPageProps) {
   const copy = getCopy(searchParams?.mode, searchParams?.status);
 
   return (

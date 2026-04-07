@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { isMissingSupabaseTableError } from "@/lib/supabase-table-errors";
 
 type FavoriteSignalRow = {
   embedding: unknown;
@@ -20,7 +21,8 @@ type SearchSignalRow = {
 function parseEmbedding(value: unknown) {
   if (Array.isArray(value)) {
     const vector = value.filter(
-      (item): item is number => typeof item === "number" && Number.isFinite(item),
+      (item): item is number =>
+        typeof item === "number" && Number.isFinite(item),
     );
 
     return vector.length > 0 ? vector : null;
@@ -100,7 +102,10 @@ function getSearchWeight(createdAt: string) {
     return 1;
   }
 
-  const ageInDays = Math.max(0, (Date.now() - createdAtMs) / (1000 * 60 * 60 * 24));
+  const ageInDays = Math.max(
+    0,
+    (Date.now() - createdAtMs) / (1000 * 60 * 60 * 24),
+  );
   return Math.max(0.35, 1.5 - ageInDays / 45);
 }
 
@@ -118,7 +123,9 @@ function buildTopCategories(categoryWeights: Map<string, number>) {
 }
 
 function buildPriceRange(prices: number[]) {
-  const validPrices = prices.filter((price) => Number.isFinite(price) && price > 0);
+  const validPrices = prices.filter(
+    (price) => Number.isFinite(price) && price > 0,
+  );
 
   if (validPrices.length === 0) {
     return {};
@@ -139,23 +146,27 @@ function buildPriceRange(prices: number[]) {
 export async function computeAndStoreUserInterestProfile(userId: string) {
   const supabase = createServerClient();
 
-  const [{ data: favorites, error: favoritesError }, { data: searches, error: searchesError }] =
-    await Promise.all([
-      supabase
-        .from("auc_user_favorites")
-        .select(
-          "auc_lots(embedding, categories, ai_categories, availability, current_bid, sold_price, estimate)",
-        )
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(80),
-      supabase
-        .from("auc_user_search_log")
-        .select("query_embedding, selected_categories, filters_applied, created_at")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(80),
-    ]);
+  const [
+    { data: favorites, error: favoritesError },
+    { data: searches, error: searchesError },
+  ] = await Promise.all([
+    supabase
+      .from("auc_user_favorites")
+      .select(
+        "auc_lots(embedding, categories, ai_categories, availability, current_bid, sold_price, estimate)",
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(80),
+    supabase
+      .from("auc_user_search_log")
+      .select(
+        "query_embedding, selected_categories, filters_applied, created_at",
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(80),
+  ]);
 
   if (favoritesError) {
     throw new Error(
@@ -163,16 +174,31 @@ export async function computeAndStoreUserInterestProfile(userId: string) {
     );
   }
 
-  if (searchesError) {
+  const shouldIgnoreMissingSearchLogTable = isMissingSupabaseTableError(
+    searchesError,
+    "auc_user_search_log",
+  );
+
+  if (searchesError && !shouldIgnoreMissingSearchLogTable) {
     throw new Error(
       `[interest-profile] Failed to load search signals: ${searchesError.message}`,
     );
   }
 
+  if (shouldIgnoreMissingSearchLogTable) {
+    console.warn(
+      "[interest-profile] Search log table is missing; building profile from favorites only.",
+    );
+  }
+
   const favoriteRows = (favorites ?? [])
-    .map((row) => row.auc_lots)
+    .flatMap((row) =>
+      Array.isArray(row.auc_lots) ? row.auc_lots : [row.auc_lots],
+    )
     .filter((row): row is FavoriteSignalRow => Boolean(row));
-  const searchRows = (searches ?? []) as SearchSignalRow[];
+  const searchRows = shouldIgnoreMissingSearchLogTable
+    ? []
+    : ((searches ?? []) as SearchSignalRow[]);
   const vectorSignals: Array<{ embedding: number[]; weight: number }> = [];
   const categoryWeights = new Map<string, number>();
   const prices: number[] = [];
@@ -193,7 +219,10 @@ export async function computeAndStoreUserInterestProfile(userId: string) {
       activeFavoriteCount += 1;
     }
 
-    for (const category of [...(row.ai_categories ?? []), ...(row.categories ?? [])]) {
+    for (const category of [
+      ...(row.ai_categories ?? []),
+      ...(row.categories ?? []),
+    ]) {
       const normalizedCategory = category.trim();
 
       if (!normalizedCategory) {
@@ -206,7 +235,11 @@ export async function computeAndStoreUserInterestProfile(userId: string) {
       );
     }
 
-    for (const priceCandidate of [row.current_bid, row.sold_price, row.estimate]) {
+    for (const priceCandidate of [
+      row.current_bid,
+      row.sold_price,
+      row.estimate,
+    ]) {
       const price = toPositiveNumber(priceCandidate);
 
       if (price != null) {
