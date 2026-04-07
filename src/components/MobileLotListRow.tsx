@@ -307,7 +307,7 @@ export function MobileLotListRow({
                   countdownLabel.ended
                     ? "bg-brand-700"
                     : countdownLabel.urgent
-                      ? "bg-accent-600"
+                      ? "bg-accent-700"
                       : "bg-brand-900"
                 }`}
               >

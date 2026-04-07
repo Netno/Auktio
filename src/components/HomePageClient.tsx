@@ -1060,12 +1060,12 @@ export function HomePageClient() {
               onClick={() => setMobileMenuOpen(false)}
             />
 
-            <div className="absolute right-0 top-0 h-full w-[min(84vw,320px)] border-l border-brand-200 bg-white px-4 pb-6 pt-16 shadow-2xl">
+            <div className="absolute left-0 top-0 h-full w-[min(84vw,320px)] border-r border-brand-200 bg-white px-4 pb-6 pt-16 shadow-2xl">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Stäng meny"
-                className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-500 transition-colors hover:border-brand-300 hover:text-brand-900"
+                className="absolute left-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-500 transition-colors hover:border-brand-300 hover:text-brand-900"
               >
                 <X size={18} />
               </button>

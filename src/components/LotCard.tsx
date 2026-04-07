@@ -955,7 +955,7 @@ export function LotCard({
                       tl.ended
                         ? "border-white/16 bg-brand-800/90"
                         : tl.urgent
-                          ? "border-accent-300/28 bg-accent-500/96"
+                          ? "border-accent-400/40 bg-accent-700/96"
                           : "border-white/16 bg-brand-800/90"
                     }`}
                   >

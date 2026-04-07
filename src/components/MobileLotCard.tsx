@@ -86,7 +86,9 @@ export function MobileLotCard({
   const categoryLabel = lot.categories?.[0] ?? lot.aiCategories?.[0] ?? null;
   const houseLabel = lot.houseName ?? null;
   const hasLocationHint = Boolean(lot.city || lot.country);
-  const mapQuery = [lot.city, lot.country, lot.houseName].filter(Boolean).join(", ");
+  const mapQuery = [lot.city, lot.country, lot.houseName]
+    .filter(Boolean)
+    .join(", ");
   const eyebrowLabel = categoryLabel ?? houseLabel;
   const secondaryLabel =
     houseLabel && houseLabel !== eyebrowLabel ? houseLabel : null;
@@ -140,9 +142,7 @@ export function MobileLotCard({
 
     const updateOverflowState = () => {
       const elements = [titleRef.current, descriptionRef.current].filter(
-        (
-          element,
-        ): element is HTMLHeadingElement | HTMLParagraphElement =>
+        (element): element is HTMLHeadingElement | HTMLParagraphElement =>
           element != null,
       );
 
@@ -259,7 +259,7 @@ export function MobileLotCard({
                       countdownLabel.ended
                         ? "border-white/16 bg-brand-800/87"
                         : countdownLabel.urgent
-                          ? "border-accent-300/28 bg-accent-600/97"
+                          ? "border-accent-400/40 bg-accent-700/96"
                           : "border-white/16 bg-brand-800/87"
                     }`}
                   >
