@@ -14,6 +14,11 @@ const PRICE_BANK_LOOKBACK_DAYS = 365;
 const SOLD_PRICE_SITE_LOOKBACK_DAYS = 30;
 const SOLD_PRICE_SITE_BATCH_LIMIT = 250;
 const SOLD_PRICE_READY_DELAY_HOURS = 24;
+const DEFAULT_FETCH_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (compatible; AuktioIngest/1.0; +https://www.auktio.se)",
+  "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.8",
+} as const;
 
 type IngestRunOptions = {
   syncFeed?: boolean;
@@ -55,6 +60,27 @@ export async function refreshAllSoldPrices(): Promise<IngestResult[]> {
   return runIngestAcrossSources({ syncFeed: false, refreshSoldPrices: true });
 }
 
+export async function ingestSourceById(
+  houseId: string,
+  options: IngestRunOptions = DEFAULT_INGEST_RUN_OPTIONS,
+): Promise<IngestResult> {
+  const source = FEED_SOURCES.find((candidate) => candidate.id === houseId);
+
+  if (!source) {
+    throw new Error(`Unknown feed source: ${houseId}`);
+  }
+
+  const resolvedOptions = { ...DEFAULT_INGEST_RUN_OPTIONS, ...options };
+
+  console.log(`[ingest] Starting: ${source.name} (${source.id})`);
+  const result = await ingestFeed(source.id, source.feedUrl, resolvedOptions);
+  console.log(
+    `[ingest] ${source.name}: +${result.lotsAdded} added, ~${result.lotsUpdated} updated, =${result.lotsSkipped ?? 0} skipped, ${result.soldPricesUpdated ?? 0} sold prices refreshed (${result.durationMs}ms)`,
+  );
+
+  return result;
+}
+
 async function runIngestAcrossSources(
   options: IngestRunOptions,
 ): Promise<IngestResult[]> {
@@ -83,7 +109,18 @@ async function fetchWithRetry(
 ): Promise<Response> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await fetch(url, options);
+      const headers = new Headers(options.headers);
+
+      for (const [key, value] of Object.entries(DEFAULT_FETCH_HEADERS)) {
+        if (!headers.has(key)) {
+          headers.set(key, value);
+        }
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
       // Retry on 5xx or 429
       if (
@@ -744,7 +781,11 @@ function chunkArray<T>(array: T[], size: number): T[][] {
 
 // CLI entry point: `npm run ingest`
 if (require.main === module) {
-  ingestAllFeeds()
+  const houseIdArg = process.argv[2];
+
+  const runner = houseIdArg ? ingestSourceById(houseIdArg) : ingestAllFeeds();
+
+  runner
     .then((results) => {
       console.log("[ingest] Done:", JSON.stringify(results, null, 2));
       process.exit(0);

@@ -208,6 +208,14 @@ export const FEED_SOURCES: Omit<AuctionHouse, "active" | "lastSynced">[] = [
     country: "SE",
   },
   {
+    id: "probus-auktioner",
+    name: "Probus Auktioner",
+    feedUrl: "https://www.probusauktioner.se/api/feed?apiVersion=2.0",
+    websiteUrl: "https://www.probusauktioner.se",
+    city: "Stockholm",
+    country: "SE",
+  },
+  {
     id: "haderslev-auktion",
     name: "Haderslev Auktion",
     feedUrl: "https://auktion.haderslevauktion.dk/api/feed?apiVersion=2.0",
