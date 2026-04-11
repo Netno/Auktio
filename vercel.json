@@ -18,6 +18,14 @@
       "schedule": "15 19 * * *"
     },
     {
+      "path": "/api/ingest/subjects",
+      "schedule": "20 19 * * *"
+    },
+    {
+      "path": "/api/ingest/embeddings",
+      "schedule": "30 19 * * *"
+    },
+    {
       "path": "/api/ingest/sold-prices",
       "schedule": "0 23 * * *"
     }

@@ -4,6 +4,17 @@ import {
   type IngestPipelineOptions,
 } from "@/lib/ingest-pipeline";
 
+export function verifyIngestAuthorization(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  return null;
+}
+
 /**
  * Shared handler for manual ingest runs and cron-triggered batch routes.
  */
@@ -11,11 +22,10 @@ export async function handleIngestRoute(
   request: NextRequest,
   options: IngestPipelineOptions = {},
 ) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
+  const unauthorizedResponse = verifyIngestAuthorization(request);
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (unauthorizedResponse) {
+    return unauthorizedResponse;
   }
 
   try {

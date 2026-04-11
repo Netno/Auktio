@@ -8,6 +8,7 @@ const BATCH_4_RANGE = {
 export async function POST(request: NextRequest) {
   return handleIngestRoute(request, {
     sourceRange: BATCH_4_RANGE,
+    runPostProcessing: false,
   });
 }
 
