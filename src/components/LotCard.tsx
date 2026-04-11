@@ -6,6 +6,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  type SyntheticEvent,
 } from "react";
 import Image from "next/image";
 import {
@@ -344,6 +345,24 @@ export function LotCard({
   const isTallPortraitImage =
     currentImageFit === "contain" &&
     currentImageAspectRatio < TALL_IMAGE_CONTAIN_THRESHOLD;
+
+  const handleImageReady = useCallback((image: HTMLImageElement) => {
+    const aspectRatio =
+      image.naturalHeight > 0 ? image.naturalWidth / image.naturalHeight : 1;
+
+    setCurrentImageAspectRatio(aspectRatio);
+    setCurrentImageFit(
+      aspectRatio < TALL_IMAGE_CONTAIN_THRESHOLD ? "contain" : "cover",
+    );
+    setImgLoaded(true);
+  }, []);
+
+  const handleImageLoad = useCallback(
+    (event: SyntheticEvent<HTMLImageElement>) => {
+      handleImageReady(event.currentTarget);
+    },
+    [handleImageReady],
+  );
 
   const prevImage = useCallback(
     (e: React.MouseEvent) => {
@@ -862,20 +881,8 @@ export function LotCard({
                 setImgLoaded(false);
                 setImageVariantIndex((currentIndex) => currentIndex + 1);
               }}
-              onLoad={(event) => {
-                const image = event.currentTarget;
-                const aspectRatio =
-                  image.naturalHeight > 0
-                    ? image.naturalWidth / image.naturalHeight
-                    : 1;
-                setCurrentImageAspectRatio(aspectRatio);
-                setCurrentImageFit(
-                  aspectRatio < TALL_IMAGE_CONTAIN_THRESHOLD
-                    ? "contain"
-                    : "cover",
-                );
-                setImgLoaded(true);
-              }}
+              onLoad={handleImageLoad}
+              onLoadingComplete={handleImageReady}
             />
           )}
 
