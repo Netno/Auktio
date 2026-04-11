@@ -37,9 +37,7 @@ function HeaderMenu({ items, className, buttonClassName }: HeaderMenuProps) {
 
   return (
     <div
-      className={
-        className ?? "relative col-span-2 sm:col-span-1 lg:col-span-auto"
-      }
+      className={`relative ${className ?? "col-span-2 sm:col-span-1 lg:col-span-auto"}`}
     >
       <button
         type="button"
