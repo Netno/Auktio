@@ -122,6 +122,7 @@ type GeminiUsageMetadata = {
 
 const AI_USAGE_STATUSES = ["ai-success", "ai-error", "ai-cache-hit"];
 const REPORT_TIME_ZONE = "Europe/Stockholm";
+const AI_USAGE_FETCH_BATCH_SIZE = 1000;
 
 function statusToSyncLogStatus(status: AiUsageStatus) {
   return `ai-${status}`;
@@ -295,18 +296,34 @@ export async function getAiUsageDashboardData(
   const fromDate = new Date(Date.now() - days * 86_400_000).toISOString();
   const pricing = await getAiPricingConfig();
 
-  const { data, error } = await supabase
-    .from("auc_sync_log")
-    .select("id, status, duration_ms, error_message, started_at")
-    .gte("started_at", fromDate)
-    .in("status", AI_USAGE_STATUSES)
-    .order("started_at", { ascending: true });
+  const rawRows: SyncLogRow[] = [];
+  let from = 0;
 
-  if (error) {
-    throw new Error(`[ai-usage] Failed to load usage data: ${error.message}`);
+  while (true) {
+    const to = from + AI_USAGE_FETCH_BATCH_SIZE - 1;
+    const { data, error } = await supabase
+      .from("auc_sync_log")
+      .select("id, status, duration_ms, error_message, started_at")
+      .gte("started_at", fromDate)
+      .in("status", AI_USAGE_STATUSES)
+      .order("started_at", { ascending: true })
+      .range(from, to);
+
+    if (error) {
+      throw new Error(`[ai-usage] Failed to load usage data: ${error.message}`);
+    }
+
+    const batch = (data ?? []) as SyncLogRow[];
+    rawRows.push(...batch);
+
+    if (batch.length < AI_USAGE_FETCH_BATCH_SIZE) {
+      break;
+    }
+
+    from += AI_USAGE_FETCH_BATCH_SIZE;
   }
 
-  const rows = ((data ?? []) as SyncLogRow[])
+  const rows = rawRows
     .map(parseAiUsagePayload)
     .filter((row): row is ParsedAiUsageRow => row != null);
 

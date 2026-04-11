@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { Header } from "@/components/Header";
-import { getAiUsageDashboardData } from "@/lib/ai-usage-log";
+import {
+  getAiUsageDashboardData,
+  type AiUsageDailySummary,
+  type AiUsageHourlySummary,
+} from "@/lib/ai-usage-log";
 import { canAccessAdmin } from "@/lib/app-users";
 import { authOptions } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 const REPORT_TIME_ZONE = "Europe/Stockholm";
+const DAILY_SERIES_LENGTH = 30;
+const HOURLY_SERIES_LENGTH = 24;
 const LOCAL_DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const LOCAL_HOUR_KEY_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
@@ -102,6 +108,83 @@ function formatOperationLabel(value: string) {
   }
 }
 
+function formatSeriesDayKey(date: Date) {
+  return new Intl.DateTimeFormat("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+function formatSeriesHourKey(date: Date) {
+  return `${new Intl.DateTimeFormat("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  }).format(date)}:00`;
+}
+
+function createEmptyDailySummary(date: string): AiUsageDailySummary {
+  return {
+    date,
+    requests: 0,
+    success: 0,
+    errors: 0,
+    cacheHits: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    totalTokens: 0,
+    hasUnreportedTokenMetrics: false,
+    totalLatencyMs: 0,
+    estimatedCostSek: 0,
+  };
+}
+
+function createEmptyHourlySummary(hour: string): AiUsageHourlySummary {
+  return {
+    hour,
+    requests: 0,
+    success: 0,
+    errors: 0,
+    cacheHits: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    totalTokens: 0,
+    hasUnreportedTokenMetrics: false,
+    totalLatencyMs: 0,
+    estimatedCostSek: 0,
+  };
+}
+
+function buildDailySeries(rows: AiUsageDailySummary[], days: number) {
+  const rowsByDate = new Map(rows.map((row) => [row.date, row]));
+  const anchor = new Date();
+  anchor.setUTCHours(12, 0, 0, 0);
+
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(anchor);
+    date.setUTCDate(anchor.getUTCDate() - (days - 1 - index));
+    const key = formatSeriesDayKey(date);
+    return rowsByDate.get(key) ?? createEmptyDailySummary(key);
+  });
+}
+
+function buildHourlySeries(rows: AiUsageHourlySummary[], hours: number) {
+  const rowsByHour = new Map(rows.map((row) => [row.hour, row]));
+  const anchor = new Date();
+  anchor.setUTCMinutes(0, 0, 0);
+
+  return Array.from({ length: hours }, (_, index) => {
+    const date = new Date(anchor.getTime() - (hours - 1 - index) * 3_600_000);
+    const key = formatSeriesHourKey(date);
+    return rowsByHour.get(key) ?? createEmptyHourlySummary(key);
+  });
+}
+
 export default async function AiUsagePage() {
   const session = await getServerSession(authOptions);
 
@@ -144,23 +227,20 @@ export default async function AiUsagePage() {
   }
 
   const report = await getAiUsageDashboardData(30);
-  const chartDays =
-    report.daily.filter((row) => (row.estimatedCostSek ?? 0) > 0).length > 0
-      ? report.daily.filter((row) => (row.estimatedCostSek ?? 0) > 0)
-      : report.daily;
-  const maxDailyCost = chartDays.reduce(
+  const dailySeries = buildDailySeries(report.daily, DAILY_SERIES_LENGTH);
+  const hourlySeries = buildHourlySeries(report.hourly, HOURLY_SERIES_LENGTH);
+  const maxDailyCost = dailySeries.reduce(
     (currentMax, row) => Math.max(currentMax, row.estimatedCostSek ?? 0),
     0,
   );
-  const last24Hours = report.hourly.slice(-24);
-  const maxHourlyCost = last24Hours.reduce(
+  const maxHourlyCost = hourlySeries.reduce(
     (currentMax, row) => Math.max(currentMax, row.estimatedCostSek ?? 0),
     0,
   );
-  const latestDaily = report.daily[report.daily.length - 1] ?? null;
+  const latestDaily = dailySeries[dailySeries.length - 1] ?? null;
   const currentDayCost = latestDaily?.estimatedCostSek ?? null;
   const rolling24HourCost =
-    last24Hours.reduce((sum, row) => sum + (row.estimatedCostSek ?? 0), 0) ||
+    hourlySeries.reduce((sum, row) => sum + (row.estimatedCostSek ?? 0), 0) ||
     null;
 
   return (
@@ -298,7 +378,7 @@ export default async function AiUsagePage() {
           </div>
           <div className="mt-6 overflow-x-auto">
             <div className="flex min-w-[720px] items-end gap-3">
-              {chartDays.map((row) => (
+              {dailySeries.map((row) => (
                 <div
                   key={row.date}
                   className="flex w-10 flex-col items-center gap-2"
@@ -335,7 +415,7 @@ export default async function AiUsagePage() {
           </div>
           <div className="mt-6 overflow-x-auto">
             <div className="flex min-w-[960px] items-end gap-3">
-              {last24Hours.map((row) => (
+              {hourlySeries.map((row) => (
                 <div
                   key={row.hour}
                   className="flex w-12 flex-col items-center gap-2"
@@ -476,7 +556,7 @@ export default async function AiUsagePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800 bg-slate-900/30 text-slate-200">
-                  {report.daily
+                  {dailySeries
                     .slice()
                     .reverse()
                     .map((row) => (
