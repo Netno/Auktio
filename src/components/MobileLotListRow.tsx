@@ -3,13 +3,24 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Gavel, Heart, MapPin } from "lucide-react";
-import { formatBidAmount, imgSize, timeLeft } from "@/lib/utils";
+import {
+  formatBidAmount,
+  getLotImageSources,
+  imgSize,
+  timeLeft,
+} from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
 interface MobileLotListRowProps {
   lot: Lot;
+  showFavoriteButton?: boolean;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
+  resultPosition?: number;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
 }
@@ -48,16 +59,15 @@ function getPrimaryAmount(lot: Lot) {
 
 export function MobileLotListRow({
   lot,
+  showFavoriteButton = true,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
+  resultPosition = 0,
   onCategorySelect,
   onHouseSelect,
 }: MobileLotListRowProps) {
-  const images = lot.images?.length
-    ? lot.images
-    : lot.thumbnailUrl
-      ? [lot.thumbnailUrl]
-      : [];
+  const images = getLotImageSources(lot.images, lot.thumbnailUrl);
   const [imageIndex, setImageIndex] = useState(0);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [hasOverflowingText, setHasOverflowingText] = useState(false);
@@ -125,6 +135,11 @@ export function MobileLotListRow({
       href={lot.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => {
+        if (resultPosition > 0) {
+          void onResultClick?.(lot.id, resultPosition);
+        }
+      }}
       className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-[20px] border border-brand-200/80 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf8_100%)] p-3 shadow-[0_10px_24px_rgba(26,26,24,0.06)]"
     >
       <div
@@ -184,27 +199,29 @@ export function MobileLotListRow({
       </div>
 
       <div className="relative min-w-0 flex flex-col">
-        <button
-          type="button"
-          aria-label={isFavorite ? "Ta bort bevakning" : "Bevaka objekt"}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            void onToggleFavorite(lot.id);
-          }}
-          className={`absolute right-0 top-0 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border shadow-[0_4px_12px_rgba(13,13,12,0.1)] transition-colors ${
-            isFavorite
-              ? "border-accent-300/28 bg-accent-500 text-white"
-              : "border-brand-200/80 bg-white/95 text-brand-500 hover:border-brand-300 hover:bg-brand-50"
-          }`}
-        >
-          <Heart size={15} fill={isFavorite ? "currentColor" : "none"} />
-        </button>
+        {showFavoriteButton ? (
+          <button
+            type="button"
+            aria-label={isFavorite ? "Ta bort bevakning" : "Bevaka objekt"}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              void onToggleFavorite(lot.id);
+            }}
+            className={`absolute right-0 top-0 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border shadow-[0_4px_12px_rgba(13,13,12,0.1)] transition-colors ${
+              isFavorite
+                ? "border-accent-300/28 bg-accent-500 text-white"
+                : "border-brand-200/80 bg-white/95 text-brand-500 hover:border-brand-300 hover:bg-brand-50"
+            }`}
+          >
+            <Heart size={15} fill={isFavorite ? "currentColor" : "none"} />
+          </button>
+        ) : null}
 
         <div className="min-w-0 flex-1 pt-0.5">
           <h3
             ref={titleRef}
-            className={`pr-10 text-[14px] font-medium leading-[1.3] text-brand-950 ${
+            className={`${showFavoriteButton ? "pr-10" : "pr-0"} text-[14px] font-medium leading-[1.3] text-brand-950 ${
               isTextExpanded ? "line-clamp-none" : "line-clamp-2"
             }`}
           >
@@ -303,12 +320,12 @@ export function MobileLotListRow({
 
             {countdownLabel ? (
               <span
-                className={`${badgeClass} w-full justify-center whitespace-nowrap text-white ${
+                className={`${badgeClass} w-full justify-center whitespace-nowrap ${
                   countdownLabel.ended
-                    ? "bg-brand-700"
+                    ? "bg-brand-700 text-white"
                     : countdownLabel.urgent
-                      ? "bg-accent-700"
-                      : "bg-brand-900"
+                      ? "border border-[#efb1ab]/85 bg-[#ffe2df]/95 text-[#7a1f1b]"
+                      : "bg-brand-900 text-white"
                 }`}
               >
                 {countdownLabel.text}

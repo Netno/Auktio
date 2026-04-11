@@ -1,0 +1,25 @@
+name: Recommendations Maintenance
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-maintenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger recommendations maintenance route
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+          RECOMMENDATIONS_MAINTENANCE_SECRET: ${{ secrets.RECOMMENDATIONS_MAINTENANCE_SECRET }}
+        run: |
+          if [ -z "$APP_BASE_URL" ] || [ -z "$RECOMMENDATIONS_MAINTENANCE_SECRET" ]; then
+            echo "Missing APP_BASE_URL or RECOMMENDATIONS_MAINTENANCE_SECRET secret"
+            exit 1
+          fi
+
+          curl --fail --show-error --silent \
+            -X POST \
+            -H "Authorization: Bearer $RECOMMENDATIONS_MAINTENANCE_SECRET" \
+            "$APP_BASE_URL/api/recommendations/maintenance"

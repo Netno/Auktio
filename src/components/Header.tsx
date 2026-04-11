@@ -6,12 +6,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AuthControls } from "@/components/AuthControls";
+import { canAccessPersonalization } from "@/lib/recommendations-access";
 
 interface HeaderProps {
   favoritesCount?: number;
   showFavsOnly?: boolean;
   onToggleFavs?: () => void;
-  activeView?: "lots" | "auctions" | "admin" | "ai-usage";
+  activeView?: "lots" | "auctions" | "admin" | "ai-usage" | "account";
+}
+
+interface HeaderMenuProps {
+  items: HeaderNavItem[];
+  className?: string;
+  buttonClassName?: string;
 }
 
 type HeaderNavItem = {
@@ -20,7 +27,7 @@ type HeaderNavItem = {
   active: boolean;
 };
 
-function HeaderMenu({ items }: { items: HeaderNavItem[] }) {
+function HeaderMenu({ items, className, buttonClassName }: HeaderMenuProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -29,13 +36,20 @@ function HeaderMenu({ items }: { items: HeaderNavItem[] }) {
   }, [pathname]);
 
   return (
-    <div className="relative col-span-2 sm:col-span-1 lg:col-span-auto">
+    <div
+      className={
+        className ?? "relative col-span-2 sm:col-span-1 lg:col-span-auto"
+      }
+    >
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
         aria-label="Öppna meny"
-        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.06] px-3 py-2 text-[13px] font-medium text-white/80 transition-all hover:bg-white/[0.12] hover:text-white sm:min-h-9 sm:w-auto sm:rounded-lg sm:px-4 sm:py-1.5"
+        className={
+          buttonClassName ??
+          "inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.06] px-3 py-2 text-[13px] font-medium text-white/80 transition-all hover:bg-white/[0.12] hover:text-white sm:min-h-9 sm:w-auto sm:rounded-lg sm:px-4 sm:py-1.5"
+        }
       >
         {open ? <X size={16} /> : <Menu size={16} />}
         <span>Meny</span>
@@ -69,6 +83,9 @@ export function Header({
   activeView = "lots",
 }: HeaderProps) {
   const { data: session } = useSession();
+  const canAccessPersonalizedFeatures = canAccessPersonalization(
+    session?.user?.role,
+  );
   const navItems: HeaderNavItem[] = [
     { href: "/", label: "Föremål", active: activeView === "lots" },
     {
@@ -77,6 +94,14 @@ export function Header({
       active: activeView === "auctions",
     },
   ];
+
+  if (session?.user && canAccessPersonalizedFeatures) {
+    navItems.push({
+      href: "/mina-sidor",
+      label: "Mina Sidor",
+      active: activeView === "account",
+    });
+  }
 
   if (session?.user?.role === "admin" || session?.user?.role === "owner") {
     navItems.push(
@@ -100,27 +125,38 @@ export function Header({
             </span>
           </Link>
 
-          {onToggleFavs && (
-            <button
-              onClick={onToggleFavs}
-              className={`inline-flex min-h-9 items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium transition-all sm:hidden ${
-                showFavsOnly
-                  ? "bg-accent-500 text-white"
-                  : "border border-white/[0.08] bg-white/[0.06] text-white/75"
-              }`}
-            >
-              <Heart size={14} fill={showFavsOnly ? "currentColor" : "none"} />
-              <span>Bevakade</span>
-              {(favoritesCount ?? 0) > 0 && (
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">
-                  {favoritesCount}
-                </span>
-              )}
-            </button>
-          )}
+          <div className="flex items-center gap-2 sm:hidden">
+            {onToggleFavs && canAccessPersonalizedFeatures && (
+              <button
+                onClick={onToggleFavs}
+                className={`inline-flex min-h-9 items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium transition-all ${
+                  showFavsOnly
+                    ? "bg-accent-500 text-white"
+                    : "border border-white/[0.08] bg-white/[0.06] text-white/75"
+                }`}
+              >
+                <Heart
+                  size={14}
+                  fill={showFavsOnly ? "currentColor" : "none"}
+                />
+                <span>Bevakade</span>
+                {(favoritesCount ?? 0) > 0 && (
+                  <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">
+                    {favoritesCount}
+                  </span>
+                )}
+              </button>
+            )}
+
+            <HeaderMenu
+              items={navItems}
+              className="relative"
+              buttonClassName="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-white/80 transition-all hover:bg-white/[0.12] hover:text-white"
+            />
+          </div>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:mt-0 sm:flex sm:items-center sm:gap-2">
+        <div className="mt-2 grid grid-cols-1 gap-2 sm:mt-0 sm:flex sm:items-center sm:gap-2">
           <Suspense
             fallback={
               <div className="hidden h-9 w-28 animate-pulse rounded-lg bg-white/[0.08] lg:block" />
@@ -129,7 +165,7 @@ export function Header({
             <AuthControls />
           </Suspense>
 
-          {onToggleFavs && (
+          {onToggleFavs && canAccessPersonalizedFeatures && (
             <button
               onClick={onToggleFavs}
               className={`hidden sm:inline-flex sm:min-h-9 sm:items-center sm:gap-2 sm:rounded-lg sm:px-4 sm:py-1.5 sm:text-[13px] sm:font-medium sm:transition-all ${
@@ -147,8 +183,7 @@ export function Header({
               )}
             </button>
           )}
-
-          <HeaderMenu items={navItems} />
+          <HeaderMenu items={navItems} className="hidden sm:block" />
         </div>
       </div>
     </header>

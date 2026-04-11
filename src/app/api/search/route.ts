@@ -5,9 +5,9 @@ import { generateQueryEmbedding } from "@/lib/embeddings";
 import {
   expandSwedishSemanticQueryTerms as expandSemanticTerms,
   extractSwedishQueryTerms as extractQueryTerms,
-  normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
+import { resolveSearchIntent } from "@/lib/search-intent";
 import { buildQueryTextMatchClauses } from "@/lib/search-text-match";
 import { detectCategoryIntent } from "@/lib/search-category-intent";
 import { getDidYouMeanQuery } from "@/lib/search-spelling";
@@ -16,7 +16,6 @@ import {
   getQueryUnderstandingTerms,
 } from "@/lib/search-query-understanding";
 import { rankLotsByRelevance } from "@/lib/search-relevance";
-import { FEED_SOURCES } from "@/config/sources";
 import type {
   SearchParams,
   SortOption,
@@ -136,6 +135,8 @@ function getSearchResponseCacheKey(params: SearchParams) {
     categories: params.categories ?? [],
     city: params.city ?? null,
     houseId: params.houseId ?? null,
+    endTimeFrom: params.endTimeFrom ?? null,
+    endTimeTo: params.endTimeTo ?? null,
     hasBids: Boolean(params.hasBids),
     soldOnly: Boolean(params.soldOnly),
     minPrice: params.minPrice ?? null,
@@ -160,6 +161,8 @@ function getSearchStatsCacheKey(
     categories: params.categories ?? [],
     city: params.city ?? null,
     houseId: params.houseId ?? null,
+    endTimeFrom: params.endTimeFrom ?? null,
+    endTimeTo: params.endTimeTo ?? null,
     hasBids: Boolean(params.hasBids),
     soldOnly: Boolean(params.soldOnly),
     minPrice: params.minPrice ?? null,
@@ -227,65 +230,6 @@ type NormalizedLot = {
   houseLogoUrl: string | undefined;
   isActive: boolean;
 };
-
-type DetectedAuctionHouse = {
-  id: string;
-  name: string;
-  aliases: string[];
-};
-
-const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
-  const aliases = new Set<string>();
-  const normalizedName = normalizeText(source.name);
-  const normalizedId = normalizeText(source.id.replace(/-/g, " "));
-  const nameWithoutSuffix = normalizedName
-    .replace(/\s+auktioner?$/u, "")
-    .trim();
-
-  aliases.add(normalizedName);
-  aliases.add(normalizedId);
-
-  if (nameWithoutSuffix.length >= 3) {
-    aliases.add(nameWithoutSuffix);
-  }
-
-  const firstToken = nameWithoutSuffix.split(" ")[0];
-  if (firstToken && firstToken.length >= 4) {
-    aliases.add(firstToken);
-  }
-
-  return {
-    id: source.id,
-    name: source.name,
-    aliases: Array.from(aliases).sort((a, b) => b.length - a.length),
-  };
-});
-
-function detectAuctionHouseInQuery(query: string) {
-  const normalizedQuery = ` ${normalizeText(query)} `;
-
-  for (const house of HOUSE_MATCHERS) {
-    const matchedAlias = house.aliases.find((alias) =>
-      normalizedQuery.includes(` ${alias} `),
-    );
-
-    if (matchedAlias) {
-      return { house, matchedAlias };
-    }
-  }
-
-  return null;
-}
-
-function stripAuctionHouseFromQuery(query: string, alias: string) {
-  const normalizedQuery = normalizeText(query);
-  const stripped = normalizedQuery
-    .replace(new RegExp(`(^| )${alias}(?= |$)`, "g"), " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  return stripped;
-}
 
 function applyStatusFilter(query: any, status: SearchStatus, nowIso: string) {
   switch (status) {
@@ -557,6 +501,14 @@ function applyNonQueryCriteria(
     query = query.eq("house_id", params.houseId);
   }
 
+  if (params.endTimeFrom) {
+    query = query.gte("end_time", params.endTimeFrom);
+  }
+
+  if (params.endTimeTo) {
+    query = query.lt("end_time", params.endTimeTo);
+  }
+
   if (params.hasBids) {
     query = query.or("current_bid.gt.0,sold_price.gt.0");
   }
@@ -825,6 +777,8 @@ function isDefaultLandingSearch(params: SearchParams) {
     !params.categories?.length &&
     !params.city &&
     !params.houseId &&
+    !params.endTimeFrom &&
+    !params.endTimeTo &&
     !params.hasBids &&
     params.minPrice == null &&
     params.maxPrice == null &&
@@ -855,17 +809,22 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const supabase = createServerClient();
   const favoritesMode = searchParams.get("favoritesMode") === "true";
+  const rawQuery = searchParams.get("q") ?? undefined;
+  const queryIntent = rawQuery ? await resolveSearchIntent(rawQuery) : null;
 
   // Parse params
   const statusParam = searchParams.get("status");
-  const status: SearchStatus =
+  const explicitStatus: SearchStatus | undefined =
     statusParam === "ended" || statusParam === "all" || statusParam === "active"
       ? statusParam
       : searchParams.get("activeOnly") === "false"
         ? "all"
-        : "active";
+        : undefined;
+  const status: SearchStatus =
+    explicitStatus ?? (queryIntent?.includeEnded ? "ended" : "active");
+  const explicitSort = searchParams.get("sort") as SortOption | null;
   const params: SearchParams = {
-    query: searchParams.get("q") ?? undefined,
+    query: rawQuery,
     searchMode: (searchParams.get("mode") as SearchMode) ?? DEFAULT_SEARCH_MODE,
     status,
     auctionIds: searchParams
@@ -891,11 +850,9 @@ export async function GET(request: NextRequest) {
     maxPrice: searchParams.get("maxPrice")
       ? Number(searchParams.get("maxPrice"))
       : undefined,
-    sortBy: normalizeSortForStatus(
-      status,
-      (searchParams.get("sort") as SortOption) ??
-        getDefaultSort(status, searchParams.get("q") ?? undefined),
-    ),
+    sortBy: explicitSort
+      ? normalizeSortForStatus(status, explicitSort)
+      : undefined,
     activeOnly: status === "active",
     page: Math.max(1, Number(searchParams.get("page")) || 1),
     pageSize: Math.min(
@@ -904,29 +861,26 @@ export async function GET(request: NextRequest) {
     ),
   };
 
-  const detectedHouseMatch = params.query
-    ? detectAuctionHouseInQuery(params.query)
-    : null;
-  const effectiveQuery = detectedHouseMatch
-    ? stripAuctionHouseFromQuery(
-        params.query ?? "",
-        detectedHouseMatch.matchedAlias,
-      )
-    : params.query?.trim();
-  const detectedCategory = detectCategoryIntent(effectiveQuery);
+  const intentQuery = queryIntent?.retrievalQuery.trim() || undefined;
+  const detectedCategory = detectCategoryIntent(intentQuery);
   const shouldTreatAsCategoryBrowse = Boolean(
-    detectedCategory && effectiveQuery && normalizeSearchQuery(effectiveQuery),
+    detectedCategory && intentQuery && normalizeSearchQuery(intentQuery),
   );
+  const effectiveQuery = shouldTreatAsCategoryBrowse ? undefined : intentQuery;
   const effectiveParams: SearchParams = {
     ...params,
-    query: shouldTreatAsCategoryBrowse
-      ? undefined
-      : effectiveQuery?.trim() || undefined,
+    query: effectiveQuery,
     categories:
       params.categories?.length || !detectedCategory
         ? params.categories
         : [detectedCategory],
-    houseId: params.houseId ?? detectedHouseMatch?.house.id,
+    houseId: params.houseId ?? queryIntent?.matchedAuctionHouse?.id,
+    endTimeFrom: queryIntent?.endTimeFrom,
+    endTimeTo: queryIntent?.endTimeTo,
+    sortBy: normalizeSortForStatus(
+      status,
+      params.sortBy ?? getDefaultSort(status, effectiveQuery),
+    ),
   };
 
   const defaultLandingSearch = isDefaultLandingSearch(effectiveParams);
@@ -1015,7 +969,7 @@ export async function GET(request: NextRequest) {
 
     if (!useClientSideSort) {
       // DB-level sorting
-      switch (params.sortBy) {
+      switch (effectiveParams.sortBy) {
         case "ending-soon":
           query = query.order("end_time", { ascending: true });
           break;
@@ -1114,7 +1068,7 @@ export async function GET(request: NextRequest) {
       const finalRankedRows = rankLotsByRelevance(
         allRows,
         effectiveParams.query ?? "",
-        params.sortBy ?? "relevance",
+        effectiveParams.sortBy ?? "relevance",
         { vectorOrder },
       );
       resultTotal = finalRankedRows.length;

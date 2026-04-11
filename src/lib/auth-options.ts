@@ -1,17 +1,37 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import {
   getBootstrapRoleForEmail,
   getAppUserByEmail,
   isAppUserRole,
   syncGoogleUser,
 } from "@/lib/app-users";
+import { authenticateEmailUser } from "@/lib/email-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID ?? "",
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
+    }),
+    CredentialsProvider({
+      id: "credentials",
+      name: "E-post",
+      credentials: {
+        email: { label: "E-post", type: "email" },
+        password: { label: "Losenord", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email?.trim();
+        const password = credentials?.password;
+
+        if (!email || !password) {
+          return null;
+        }
+
+        return authenticateEmailUser(email, password);
+      },
     }),
   ],
   secret: process.env.AUTH_SECRET,
@@ -20,6 +40,10 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        return Boolean(user.email);
+      }
+
       if (
         account?.provider !== "google" ||
         !user.email ||

@@ -11,6 +11,22 @@ const GEMINI_GENERATE_URL =
 const BATCH_SIZE = 25;
 const DELAY_BETWEEN_BATCHES_MS = 400;
 const MAX_TAGS_PER_LOT = 8;
+const PROBUS_SOURCE_ID = "probus-auktioner";
+const WEAPON_DOMAIN_SOURCE_IDS = new Set([PROBUS_SOURCE_ID]);
+const DISALLOWED_WEAPON_DOMAIN_TAG_FRAGMENTS = [
+  "servering",
+  "snapses",
+  "dukade bordet",
+  "servis",
+  "bestick",
+  "porslin",
+  "karaff",
+  "tallrik",
+  "glas",
+  "skal",
+  "skål",
+  "fat",
+] as const;
 
 export interface SubjectEnrichmentResult {
   processed: number;
@@ -19,8 +35,13 @@ export interface SubjectEnrichmentResult {
   durationMs: number;
 }
 
+type SubjectEnrichmentRunOptions = {
+  forceRefresh?: boolean;
+};
+
 interface LotForSubjectEnrichment {
   id: number;
+  house_id: string;
   title: string;
   description: string | null;
   categories: string[] | null;
@@ -72,6 +93,11 @@ REGLER:
 - Om råkategorin är generisk som Alla/Alle ska du klassificera utifrån titel och beskrivning
 - Om texten är på danska, norska eller tyska ska du ändå välja svenska kategorier från listan`;
 
+const PROBUS_SUBJECT_PROMPT_NOTE = `
+- Om sourceId är "probus-auktioner": auktionshuset är specialiserat på historiska vapen, blankvapen, militaria, ordnar och närliggande samlarobjekt.
+- För objekt från "probus-auktioner" ska råkategorin väga tungt.
+- För objekt från "probus-auktioner" får du inte föreslå taggar eller kategorier relaterade till servering, glas, servis, bestick, porslin eller "Det dukade bordet" om texten inte uttryckligen beskriver just sådana föremål.`;
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -115,6 +141,122 @@ function sanitizeCanonicalCategories(categories: string[] | undefined) {
   return Array.from(new Set(normalized));
 }
 
+function buildSubjectPrompt(lots: LotForSubjectEnrichment[]) {
+  if (lots.some((lot) => lot.house_id === PROBUS_SOURCE_ID)) {
+    return `${SUBJECT_PROMPT}\n${PROBUS_SUBJECT_PROMPT_NOTE}`;
+  }
+
+  return SUBJECT_PROMPT;
+}
+
+function isWeaponDomainSourceLot(lot: LotForSubjectEnrichment) {
+  return WEAPON_DOMAIN_SOURCE_IDS.has(lot.house_id);
+}
+
+function hasDisallowedWeaponDomainTag(tag: string) {
+  const normalizedTag = normalizeSearchText(tag);
+
+  return DISALLOWED_WEAPON_DOMAIN_TAG_FRAGMENTS.some((fragment) =>
+    normalizedTag.includes(fragment),
+  );
+}
+
+function buildWeaponDomainFallbackTags(lot: LotForSubjectEnrichment) {
+  const fallbackTags = new Set<string>();
+  const normalizedTitle = normalizeSearchText(lot.title);
+  const rawCategories = (lot.raw_data?.category ?? []).map((category) =>
+    normalizeSearchText(String(category)),
+  );
+
+  if (lot.categories?.includes("Vapen")) {
+    fallbackTags.add("vapen");
+  }
+
+  if (lot.categories?.includes("Militaria")) {
+    fallbackTags.add("militaria");
+  }
+
+  if (rawCategories.some((category) => category.includes("ordnar"))) {
+    fallbackTags.add("ordnar");
+  }
+
+  if (/(^|\s)(gevar|gevär|rifle|gewehr)(\s|$)/u.test(normalizedTitle)) {
+    fallbackTags.add("gevär");
+  }
+
+  if (/(^|\s)(pistol|pistole|revolver)(\s|$)/u.test(normalizedTitle)) {
+    fallbackTags.add("pistol");
+  }
+
+  if (/(^|\s)(flintlas|flintlås|flintlock)(\s|$)/u.test(normalizedTitle)) {
+    fallbackTags.add("flintlås");
+  }
+
+  if (/(^|\s)(sabel|sabre)(\s|$)/u.test(normalizedTitle)) {
+    fallbackTags.add("sabel");
+  }
+
+  if (/(^|\s)(svard|svärd|sword)(\s|$)/u.test(normalizedTitle)) {
+    fallbackTags.add("svärd");
+  }
+
+  if (
+    /(^|\s)(dolk|dagger|bajonett|bayonet|blankvapen)(\s|$)/u.test(
+      normalizedTitle,
+    ) ||
+    rawCategories.some((category) => category.includes("blankvapen"))
+  ) {
+    fallbackTags.add("blankvapen");
+  }
+
+  return Array.from(fallbackTags).slice(0, MAX_TAGS_PER_LOT);
+}
+
+function sanitizeTagsForLot(
+  lot: LotForSubjectEnrichment,
+  tags: string[] | undefined,
+) {
+  const resolved = new Set(sanitizeTags(tags));
+
+  if (isWeaponDomainSourceLot(lot)) {
+    for (const tag of Array.from(resolved)) {
+      if (hasDisallowedWeaponDomainTag(tag)) {
+        resolved.delete(tag);
+      }
+    }
+
+    for (const tag of buildWeaponDomainFallbackTags(lot)) {
+      resolved.add(tag);
+    }
+  }
+
+  return Array.from(resolved).slice(0, MAX_TAGS_PER_LOT);
+}
+
+function hasSourceAwareSubjectRepairNeed(lot: LotForSubjectEnrichment) {
+  if (!isWeaponDomainSourceLot(lot) || !lot.ai_categories?.length) {
+    return false;
+  }
+
+  return lot.ai_categories.some((tag) => hasDisallowedWeaponDomainTag(tag));
+}
+
+function shouldRefreshSubjectTags(
+  lot: LotForSubjectEnrichment,
+  options: SubjectEnrichmentRunOptions = {},
+) {
+  return (
+    options.forceRefresh === true ||
+    !lot.ai_categories ||
+    lot.ai_categories.length === 0 ||
+    needsCanonicalCategoryReview({
+      categories: lot.categories,
+      rawCategories: lot.raw_data?.category,
+    }) ||
+    hasSourceAwareSubjectRepairNeed(lot)
+  );
+}
+
 async function generateSubjectTagsForBatch(
   lots: LotForSubjectEnrichment[],
 ): Promise<Map<number, EnrichmentPayload>> {
@@ -131,9 +273,10 @@ async function generateSubjectTagsForBatch(
           role: "user",
           parts: [
             {
-              text: `${SUBJECT_PROMPT}\n\nOBJEKT:\n${JSON.stringify(
+              text: `${buildSubjectPrompt(lots)}\n\nOBJEKT:\n${JSON.stringify(
                 lots.map((lot) => ({
                   id: lot.id,
+                  sourceId: lot.house_id,
                   title: lot.title,
                   description: lot.description,
                   categories: lot.categories ?? [],
@@ -201,8 +344,103 @@ async function generateSubjectTagsForBatch(
   return result;
 }
 
+async function processSubjectEnrichmentBatch(
+  supabase: ReturnType<typeof createServerClient>,
+  lots: LotForSubjectEnrichment[],
+  options: SubjectEnrichmentRunOptions = {},
+) {
+  const pendingLots = lots.filter((lot) =>
+    shouldRefreshSubjectTags(lot, options),
+  );
+
+  if (!pendingLots.length) {
+    return {
+      processed: 0,
+      errors: 0,
+      embedded: 0,
+    };
+  }
+
+  let processed = 0;
+  let errors = 0;
+  let embedded = 0;
+
+  try {
+    const generatedTags = await generateSubjectTagsForBatch(pendingLots);
+    const updatedIds: number[] = [];
+
+    for (const lot of pendingLots) {
+      const enrichment = generatedTags.get(lot.id) ?? {
+        tags: [],
+        categories: [],
+      };
+      const nextTags = sanitizeTagsForLot(lot, enrichment.tags);
+      const nextUpdate: Record<string, unknown> = {};
+
+      if (
+        options.forceRefresh === true ||
+        !lot.ai_categories ||
+        lot.ai_categories.length === 0 ||
+        nextTags.length > 0 ||
+        hasSourceAwareSubjectRepairNeed(lot)
+      ) {
+        nextUpdate.ai_categories = nextTags;
+        nextUpdate.embedding = null;
+      }
+
+      if (
+        needsCanonicalCategoryReview({
+          categories: lot.categories,
+          rawCategories: lot.raw_data?.category,
+        }) &&
+        enrichment.categories.length > 0
+      ) {
+        nextUpdate.categories = enrichment.categories;
+        nextUpdate.embedding = null;
+      }
+
+      if (Object.keys(nextUpdate).length === 0) {
+        continue;
+      }
+
+      const { error: updateError } = await supabase
+        .from("auc_lots")
+        .update(nextUpdate)
+        .eq("id", lot.id);
+
+      if (updateError) {
+        console.error(
+          `[subjects] Update error for lot ${lot.id}:`,
+          updateError.message,
+        );
+        errors++;
+        continue;
+      }
+
+      processed++;
+      updatedIds.push(lot.id);
+    }
+
+    if (updatedIds.length) {
+      const embeddingResult = await regenerateEmbeddings(updatedIds);
+      embedded += embeddingResult.processed;
+      errors += embeddingResult.errors;
+    }
+  } catch (batchError) {
+    console.error("[subjects] Batch error:", batchError);
+    errors += pendingLots.length;
+  }
+
+  return {
+    processed,
+    errors,
+    embedded,
+  };
+}
+
 export async function enrichSubjectTagsForLotIds(
   lotIds: number[],
+  options: SubjectEnrichmentRunOptions = {},
 ): Promise<SubjectEnrichmentResult> {
   const startTime = Date.now();
   const supabase = createServerClient();
@@ -213,7 +451,7 @@ export async function enrichSubjectTagsForLotIds(
   const { data, error } = await supabase
     .from("auc_lots")
     .select(
-      "id, title, description, categories, ai_categories, end_time, availability, raw_data",
+      "id, house_id, title, description, categories, ai_categories, end_time, availability, raw_data",
     )
     .in("id", lotIds)
     .order("id", { ascending: true });
@@ -230,80 +468,15 @@ export async function enrichSubjectTagsForLotIds(
   }
 
   for (const batch of batches) {
-    const pendingLots = batch.filter(
-      (lot) =>
-        !lot.ai_categories ||
-        lot.ai_categories.length === 0 ||
-        needsCanonicalCategoryReview({
-          categories: lot.categories,
-          rawCategories: lot.raw_data?.category,
-        }),
+    const batchResult = await processSubjectEnrichmentBatch(
+      supabase,
+      batch,
+      options,
     );
-
-    if (!pendingLots.length) {
-      continue;
-    }
-
-    try {
-      const generatedTags = await generateSubjectTagsForBatch(pendingLots);
-      const updatedIds: number[] = [];
-
-      for (const lot of pendingLots) {
-        const enrichment = generatedTags.get(lot.id) ?? {
-          tags: [],
-          categories: [],
-        };
-        const nextUpdate: Record<string, unknown> = {};
-
-        if (
-          !lot.ai_categories ||
-          lot.ai_categories.length === 0 ||
-          enrichment.tags.length > 0
-        ) {
-          nextUpdate.ai_categories = enrichment.tags;
-          nextUpdate.embedding = null;
-        }
-
-        if (
-          needsCanonicalCategoryReview({
-            categories: lot.categories,
-            rawCategories: lot.raw_data?.category,
-          }) &&
-          enrichment.categories.length > 0
-        ) {
-          nextUpdate.categories = enrichment.categories;
-          nextUpdate.embedding = null;
-        }
-
-        if (Object.keys(nextUpdate).length === 0) {
-          continue;
-        }
-
-        const { error: updateError } = await supabase
-          .from("auc_lots")
-          .update(nextUpdate)
-          .eq("id", lot.id);
-
-        if (updateError) {
-          errors++;
-          continue;
-        }
-
-        processed++;
-        updatedIds.push(lot.id);
-      }
-
-      if (updatedIds.length) {
-        const embeddingResult = await regenerateEmbeddings(updatedIds);
-        embedded += embeddingResult.processed;
-        errors += embeddingResult.errors;
-      }
-
-      await sleep(DELAY_BETWEEN_BATCHES_MS);
-    } catch {
-      errors += pendingLots.length;
-      await sleep(DELAY_BETWEEN_BATCHES_MS);
-    }
+    processed += batchResult.processed;
+    errors += batchResult.errors;
+    embedded += batchResult.embedded;
+    await sleep(DELAY_BETWEEN_BATCHES_MS);
   }
 
   return {
@@ -312,6 +485,68 @@ export async function enrichSubjectTagsForLotIds(
     embedded,
     durationMs: Date.now() - startTime,
   };
+}
+
+export async function generateSubjectTagsForHouseId(
+  houseId: string,
+  options: SubjectEnrichmentRunOptions = {},
+): Promise<SubjectEnrichmentResult> {
+  const startTime = Date.now();
+  const supabase = createServerClient();
+  let processed = 0;
+  let errors = 0;
+  let embedded = 0;
+  let lastId = 0;
+  const nowIso = new Date().toISOString();
+
+  console.log(`[subjects] Starting source repair for ${houseId}...`);
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("auc_lots")
+      .select(
+        "id, house_id, title, description, categories, ai_categories, end_time, availability, raw_data",
+      )
+      .eq("house_id", houseId)
+      .gt("id", lastId)
+      .gt("end_time", nowIso)
+      .is("availability", null)
+      .order("id", { ascending: true })
+      .limit(BATCH_SIZE);
+
+    if (error) {
+      throw new Error(`[subjects] Fetch error: ${error.message}`);
+    }
+
+    const lots = (data ?? []) as LotForSubjectEnrichment[];
+    if (!lots.length) {
+      break;
+    }
+
+    const batchResult = await processSubjectEnrichmentBatch(
+      supabase,
+      lots,
+      options,
+    );
+    processed += batchResult.processed;
+    errors += batchResult.errors;
+    embedded += batchResult.embedded;
+    lastId = lots[lots.length - 1].id;
+    await sleep(DELAY_BETWEEN_BATCHES_MS);
+  }
+
+  const result: SubjectEnrichmentResult = {
+    processed,
+    errors,
+    embedded,
+    durationMs: Date.now() - startTime,
+  };
+
+  console.log(
+    "[subjects] Source repair done:",
+    JSON.stringify(result, null, 2),
+  );
+  return result;
 }
 
 export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentResult> {
@@ -331,7 +566,7 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
     const { data, error } = await supabase
       .from("auc_lots")
       .select(
-        "id, title, description, categories, ai_categories, end_time, availability, raw_data",
+        "id, house_id, title, description, categories, ai_categories, end_time, availability, raw_data",
       )
       .gt("id", lastId)
       .gt("end_time", nowIso)
@@ -346,91 +581,16 @@ export async function generateMissingSubjectTags(): Promise<SubjectEnrichmentRes
     const lots = (data ?? []) as LotForSubjectEnrichment[];
     if (!lots.length) break;
 
-    const pendingLots = lots.filter(
-      (lot) =>
-        !lot.ai_categories ||
-        lot.ai_categories.length === 0 ||
-        needsCanonicalCategoryReview({
-          categories: lot.categories,
-          rawCategories: lot.raw_data?.category,
-        }),
+    const batchResult = await processSubjectEnrichmentBatch(supabase, lots);
+    processed += batchResult.processed;
+    errors += batchResult.errors;
+    embedded += batchResult.embedded;
+
+    lastId = lots[lots.length - 1].id;
+    console.log(
+      `[subjects] Progress: ${processed} enriched, ${embedded} embeddings refreshed, ${errors} errors, last ID ${lastId}`,
     );
-
-    if (!pendingLots.length) {
-      lastId = lots[lots.length - 1].id;
-      continue;
-    }
-
-    try {
-      const generatedTags = await generateSubjectTagsForBatch(pendingLots);
-      const updatedIds: number[] = [];
-
-      for (const lot of pendingLots) {
-        const enrichment = generatedTags.get(lot.id) ?? {
-          tags: [],
-          categories: [],
-        };
-        const nextUpdate: Record<string, unknown> = {};
-
-        if (
-          !lot.ai_categories ||
-          lot.ai_categories.length === 0 ||
-          enrichment.tags.length > 0
-        ) {
-          nextUpdate.ai_categories = enrichment.tags;
-          nextUpdate.embedding = null;
-        }
-
-        if (
-          needsCanonicalCategoryReview({
-            categories: lot.categories,
-            rawCategories: lot.raw_data?.category,
-          }) &&
-          enrichment.categories.length > 0
-        ) {
-          nextUpdate.categories = enrichment.categories;
-          nextUpdate.embedding = null;
-        }
-
-        if (Object.keys(nextUpdate).length === 0) {
-          continue;
-        }
-
-        const { error: updateError } = await supabase
-          .from("auc_lots")
-          .update(nextUpdate)
-          .eq("id", lot.id);
-
-        if (updateError) {
-          console.error(
-            `[subjects] Update error for lot ${lot.id}:`,
-            updateError.message,
-          );
-          errors++;
-          continue;
-        }
-
-        processed++;
-        updatedIds.push(lot.id);
-      }
-
-      if (updatedIds.length) {
-        const embeddingResult = await regenerateEmbeddings(updatedIds);
-        embedded += embeddingResult.processed;
-        errors += embeddingResult.errors;
-      }
-
-      lastId = lots[lots.length - 1].id;
-      console.log(
-        `[subjects] Progress: ${processed} enriched, ${embedded} embeddings refreshed, ${errors} errors, last ID ${lastId}`,
-      );
-      await sleep(DELAY_BETWEEN_BATCHES_MS);
-    } catch (batchError) {
-      console.error("[subjects] Batch error:", batchError);
-      errors += pendingLots.length;
-      lastId = lots[lots.length - 1].id;
-      await sleep(DELAY_BETWEEN_BATCHES_MS);
-    }
+    await sleep(DELAY_BETWEEN_BATCHES_MS);
   }
 
   const result: SubjectEnrichmentResult = {

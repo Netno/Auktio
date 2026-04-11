@@ -10,8 +10,13 @@ interface LotGridProps {
   loading: boolean;
   loadingMore?: boolean;
   status: SearchStatus;
+  showFavoriteButton?: boolean;
   isFavorite: (id: number) => boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
   viewMode?: "grid" | "list";
   relatedCategories?: string[];
   onRelatedCategorySelect?: (category: string) => void;
@@ -24,8 +29,10 @@ export function LotGrid({
   loading,
   loadingMore = false,
   status,
+  showFavoriteButton = true,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
   viewMode = "grid",
   relatedCategories = [],
   onRelatedCategorySelect,
@@ -129,13 +136,16 @@ export function LotGrid({
           viewMode === "list" ? "space-y-3" : "grid grid-cols-2 gap-2"
         }`}
       >
-        {lots.map((lot) =>
+        {lots.map((lot, index) =>
           viewMode === "list" ? (
             <MobileLotListRow
               key={lot.id}
               lot={lot}
+              showFavoriteButton={showFavoriteButton}
               isFavorite={isFavorite(lot.id)}
               onToggleFavorite={onToggleFavorite}
+              onResultClick={onResultClick}
+              resultPosition={index + 1}
               onCategorySelect={onCategorySelect}
               onHouseSelect={onHouseSelect}
             />
@@ -143,8 +153,11 @@ export function LotGrid({
             <MobileLotCard
               key={lot.id}
               lot={lot}
+              showFavoriteButton={showFavoriteButton}
               isFavorite={isFavorite(lot.id)}
               onToggleFavorite={onToggleFavorite}
+              onResultClick={onResultClick}
+              resultPosition={index + 1}
               onCategorySelect={onCategorySelect}
               onHouseSelect={onHouseSelect}
             />
@@ -157,8 +170,11 @@ export function LotGrid({
           <LotCard
             key={lot.id}
             lot={lot}
+            showFavoriteButton={showFavoriteButton}
             isFavorite={isFavorite(lot.id)}
             onToggleFavorite={onToggleFavorite}
+            onResultClick={onResultClick}
+            resultPosition={index + 1}
             imagePriority={index < 4}
             onCategorySelect={onCategorySelect}
             onHouseSelect={onHouseSelect}

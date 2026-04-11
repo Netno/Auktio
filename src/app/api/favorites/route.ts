@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { ANONYMOUS_SESSION_COOKIE_NAME } from "@/lib/anonymous-session";
+import {
+  addAnonymousFavorites,
+  consumeAnonymousFavoritesIntoUser,
+  listAnonymousFavoriteLotIds,
+  removeAnonymousFavorite,
+} from "@/lib/anonymous-favorites";
 import {
   addUserFavorites,
   listUserFavoriteLotIds,
   removeUserFavorite,
 } from "@/lib/user-favorites";
+import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 function getSessionUserId(
   session:
@@ -21,25 +30,39 @@ function getSessionUserId(
   return typeof userId === "string" && userId.trim().length > 0 ? userId : null;
 }
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  const userId = getSessionUserId(session);
+function getAnonymousSessionId(request: NextRequest) {
+  const sessionId = request.cookies.get(ANONYMOUS_SESSION_COOKIE_NAME)?.value;
+  return typeof sessionId === "string" && sessionId.trim().length > 0
+    ? sessionId
+    : null;
+}
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const lotIds = await listUserFavoriteLotIds(userId);
-  return NextResponse.json({ ok: true, lotIds });
+  const userId = getSessionUserId(session);
+
+  if (userId) {
+    const lotIds = await listUserFavoriteLotIds(userId);
+    return NextResponse.json({ ok: true, lotIds });
+  }
+
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  const userId = getSessionUserId(session);
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const userId = getSessionUserId(session);
+  const anonymousSessionId = getAnonymousSessionId(request);
 
   const body = (await request.json()) as {
     lotId?: unknown;
@@ -60,17 +83,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing lotId" }, { status: 400 });
   }
 
-  const nextLotIds = await addUserFavorites(userId, lotIds);
+  if (userId) {
+    if (anonymousSessionId) {
+      const anonymousLotIds = await consumeAnonymousFavoritesIntoUser(
+        userId,
+        anonymousSessionId,
+      );
+
+      const nextLotIds = await addUserFavorites(userId, [
+        ...anonymousLotIds,
+        ...lotIds,
+      ]);
+
+      await markUserInterestProfileDirty(userId);
+
+      return NextResponse.json({ ok: true, lotIds: nextLotIds });
+    }
+
+    const nextLotIds = await addUserFavorites(userId, lotIds);
+    await markUserInterestProfileDirty(userId);
+    return NextResponse.json({ ok: true, lotIds: nextLotIds });
+  }
+
+  if (!anonymousSessionId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const nextLotIds = await addAnonymousFavorites(anonymousSessionId, lotIds);
   return NextResponse.json({ ok: true, lotIds: nextLotIds });
 }
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  const userId = getSessionUserId(session);
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const userId = getSessionUserId(session);
+  const anonymousSessionId = getAnonymousSessionId(request);
 
   const lotIdValue = request.nextUrl.searchParams.get("lotId");
   const lotId = Number(lotIdValue);
@@ -79,6 +130,16 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Invalid lotId" }, { status: 400 });
   }
 
-  const nextLotIds = await removeUserFavorite(userId, lotId);
+  if (userId) {
+    const nextLotIds = await removeUserFavorite(userId, lotId);
+    await markUserInterestProfileDirty(userId);
+    return NextResponse.json({ ok: true, lotIds: nextLotIds });
+  }
+
+  if (!anonymousSessionId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const nextLotIds = await removeAnonymousFavorite(anonymousSessionId, lotId);
   return NextResponse.json({ ok: true, lotIds: nextLotIds });
 }

@@ -2,32 +2,37 @@
 
 import { useEffect, useState } from "react";
 import {
-  applyConsentChoice,
-  readConsentChoice,
-  type ConsentChoice,
-  writeConsentChoice,
+  applyConsentPreferences,
+  CONSENT_PRESET_ALL,
+  CONSENT_PRESET_ANALYTICS_ONLY,
+  CONSENT_PRESET_ESSENTIAL_ONLY,
+  readConsentPreferences,
+  type ConsentPreferences,
+  writeConsentPreferences,
 } from "@/lib/consent";
 
 export function ConsentBanner() {
-  const [choice, setChoice] = useState<ConsentChoice | null>(null);
+  const [preferences, setPreferences] = useState<ConsentPreferences | null>(
+    null,
+  );
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const storedChoice = readConsentChoice();
-    setChoice(storedChoice);
-    if (storedChoice) {
-      applyConsentChoice(storedChoice);
+    const storedPreferences = readConsentPreferences();
+    setPreferences(storedPreferences);
+    if (storedPreferences) {
+      applyConsentPreferences(storedPreferences);
     }
     setReady(true);
   }, []);
 
-  const handleChoice = (nextChoice: ConsentChoice) => {
-    writeConsentChoice(nextChoice);
-    applyConsentChoice(nextChoice);
-    setChoice(nextChoice);
+  const handleChoice = (nextPreferences: ConsentPreferences) => {
+    writeConsentPreferences(nextPreferences);
+    applyConsentPreferences(nextPreferences);
+    setPreferences(nextPreferences);
   };
 
-  if (!ready || choice) {
+  if (!ready || preferences) {
     return null;
   }
 
@@ -40,28 +45,36 @@ export function ConsentBanner() {
               Integritet
             </p>
             <h2 className="mt-1 text-[1.7rem] font-semibold leading-none text-brand-950 sm:text-[1.85rem]">
-              Får vi använda statistikcookies?
+              Får vi använda statistik och personalisering?
             </h2>
             <p className="mt-2 text-[15px] leading-6 text-brand-700">
-              Vi använder Google Analytics för att forsta hur sokningen och
-              sajten anvands. Du kan godkanna eller neka statistikcookies.
+              Vi använder statistik för att förstå hur sajten används och
+              personalisering för att på sikt kunna spara sökhistorik och visa
+              relevanta föremål i För dig. Du väljer själv nivån.
             </p>
           </div>
 
           <div className="flex flex-col gap-2 sm:min-w-[250px] sm:max-w-[250px]">
             <button
               type="button"
-              onClick={() => handleChoice("accepted")}
+              onClick={() => handleChoice(CONSENT_PRESET_ALL)}
               className="inline-flex min-h-12 items-center justify-center rounded-3xl bg-brand-950 px-4 py-3 text-[15px] font-semibold text-white shadow-[0_10px_24px_rgba(25,20,13,0.18)] transition-colors hover:bg-brand-800"
             >
-              Godkann statistik
+              Godkänn alla
             </button>
             <button
               type="button"
-              onClick={() => handleChoice("rejected")}
+              onClick={() => handleChoice(CONSENT_PRESET_ANALYTICS_ONLY)}
               className="inline-flex min-h-11 items-center justify-center rounded-3xl border border-brand-300 bg-white px-4 py-2.5 text-[15px] font-semibold text-brand-700 transition-colors hover:border-brand-400 hover:text-brand-900"
             >
-              Neka
+              Endast statistik
+            </button>
+            <button
+              type="button"
+              onClick={() => handleChoice(CONSENT_PRESET_ESSENTIAL_ONLY)}
+              className="inline-flex min-h-11 items-center justify-center rounded-3xl border border-brand-300 bg-white px-4 py-2.5 text-[15px] font-semibold text-brand-700 transition-colors hover:border-brand-400 hover:text-brand-900"
+            >
+              Endast nödvändiga
             </button>
           </div>
         </div>

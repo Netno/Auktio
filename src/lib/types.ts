@@ -144,6 +144,8 @@ export interface SearchParams {
   categories?: string[];
   city?: string;
   houseId?: string;
+  endTimeFrom?: string;
+  endTimeTo?: string;
   hasBids?: boolean;
   soldOnly?: boolean;
   minPrice?: number;

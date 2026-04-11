@@ -96,6 +96,19 @@ export type AiUsageDashboardData = {
     averageLatencyMs: number;
     estimatedCostSek: number | null;
   }>;
+  operations: Array<{
+    operation: string;
+    requests: number;
+    success: number;
+    errors: number;
+    cacheHits: number;
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    hasUnreportedTokenMetrics: boolean;
+    averageLatencyMs: number;
+    estimatedCostSek: number | null;
+  }>;
   startedAt: string | null;
 };
 
@@ -326,6 +339,22 @@ export async function getAiUsageDashboardData(
       estimatedCostSek: number | null;
     }
   >();
+  const operationMap = new Map<
+    string,
+    {
+      operation: string;
+      requests: number;
+      success: number;
+      errors: number;
+      cacheHits: number;
+      inputTokens: number;
+      outputTokens: number;
+      totalTokens: number;
+      hasUnreportedTokenMetrics: boolean;
+      totalLatencyMs: number;
+      estimatedCostSek: number | null;
+    }
+  >();
 
   let totalEstimatedCostSek = 0;
   let hasEstimatedCost = false;
@@ -434,6 +463,34 @@ export async function getAiUsageDashboardData(
         (modelEntry.estimatedCostSek ?? 0) + rowEstimatedCost;
     }
     modelMap.set(row.model, modelEntry);
+
+    const operationEntry = operationMap.get(row.operation) ?? {
+      operation: row.operation,
+      requests: 0,
+      success: 0,
+      errors: 0,
+      cacheHits: 0,
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      hasUnreportedTokenMetrics: false,
+      totalLatencyMs: 0,
+      estimatedCostSek: null as number | null,
+    };
+    operationEntry.requests += 1;
+    operationEntry.success += row.status === "success" ? 1 : 0;
+    operationEntry.errors += row.status === "error" ? 1 : 0;
+    operationEntry.cacheHits += row.cacheHit ? 1 : 0;
+    operationEntry.inputTokens += row.inputTokens ?? 0;
+    operationEntry.outputTokens += row.outputTokens ?? 0;
+    operationEntry.totalTokens += row.totalTokens ?? 0;
+    operationEntry.hasUnreportedTokenMetrics ||= !row.tokenMetricsReported;
+    operationEntry.totalLatencyMs += row.latencyMs;
+    if (rowEstimatedCost != null) {
+      operationEntry.estimatedCostSek =
+        (operationEntry.estimatedCostSek ?? 0) + rowEstimatedCost;
+    }
+    operationMap.set(row.operation, operationEntry);
   }
 
   totals.averageLatencyMs =
@@ -459,6 +516,22 @@ export async function getAiUsageDashboardData(
         requests: entry.requests,
         success: entry.success,
         errors: entry.errors,
+        totalTokens: entry.totalTokens,
+        hasUnreportedTokenMetrics: entry.hasUnreportedTokenMetrics,
+        averageLatencyMs:
+          entry.requests > 0 ? entry.totalLatencyMs / entry.requests : 0,
+        estimatedCostSek: entry.estimatedCostSek,
+      }))
+      .sort((a, b) => b.requests - a.requests),
+    operations: Array.from(operationMap.values())
+      .map((entry) => ({
+        operation: entry.operation,
+        requests: entry.requests,
+        success: entry.success,
+        errors: entry.errors,
+        cacheHits: entry.cacheHits,
+        inputTokens: entry.inputTokens,
+        outputTokens: entry.outputTokens,
         totalTokens: entry.totalTokens,
         hasUnreportedTokenMetrics: entry.hasUnreportedTokenMetrics,
         averageLatencyMs:

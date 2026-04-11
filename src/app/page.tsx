@@ -1,7 +1,13 @@
 import { Suspense } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 import { HomePageClient } from "@/components/HomePageClient";
+import { canAccessRecommendationsForSession } from "@/lib/recommendations-access";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+  const canAccessRecommendations = canAccessRecommendationsForSession(session);
+
   return (
     <Suspense
       fallback={
@@ -12,7 +18,7 @@ export default function Page() {
         </div>
       }
     >
-      <HomePageClient />
+      <HomePageClient canAccessRecommendations={canAccessRecommendations} />
     </Suspense>
   );
 }

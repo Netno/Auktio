@@ -5,6 +5,8 @@ import { signOut, useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUp,
+  ChevronDown,
+  ChevronUp,
   ChevronRight,
   Clock3,
   Heart,
@@ -15,6 +17,7 @@ import {
   Rows3,
   Search,
   SlidersHorizontal,
+  Sparkles,
   TrendingUp,
   User2,
   X,
@@ -23,12 +26,18 @@ import { BrowseAuthSheet } from "@/components/BrowseAuthSheet";
 import { FilterBar } from "@/components/FilterBar";
 import { Header } from "@/components/Header";
 import { LotGrid } from "@/components/LotGrid";
+import { RecommendationsSection } from "@/components/RecommendationsSection";
 import { SearchHero } from "@/components/SearchHero";
 import { StatsBar } from "@/components/StatsBar";
 import { CATEGORY_ORDER } from "@/config/sources";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useSearch } from "@/hooks/use-search";
 import { useSearchSuggestions } from "@/hooks/use-search-suggestions";
+import {
+  CONSENT_UPDATED_EVENT,
+  hasPersonalizationConsent,
+  readConsentPreferences,
+} from "@/lib/consent";
 import { normalizeSearchText } from "@/lib/search-language";
 import type {
   Lot,
@@ -44,6 +53,33 @@ const MOBILE_FILTER_BAR_HEIGHT = 48;
 
 type MobileViewMode = "grid" | "list";
 type AuthSheetKind = "favorite" | "favorites";
+
+interface HomePageClientProps {
+  canAccessRecommendations?: boolean;
+}
+
+type SearchLogSource =
+  | "search_bar"
+  | "autocomplete"
+  | "category_pill"
+  | "filter_change";
+
+type PendingSearchLog = {
+  eventId: number;
+  source: SearchLogSource;
+  queryText: string | null;
+  selectedCategories: string[];
+};
+
+type RecommendationsPayload = {
+  lots?: Lot[];
+  topCategories?: string[];
+  sourceBreakdown?: Record<string, unknown>;
+  avgPriceRange?: Record<string, unknown>;
+  updatedAt?: string | null;
+  refreshed?: boolean;
+  error?: string;
+};
 
 function getDisplayName(email: string | null | undefined, fullName?: string) {
   if (fullName?.trim()) {
@@ -207,8 +243,52 @@ function readStoredStringList(key: string) {
   }
 }
 
-export function HomePageClient() {
+function normalizeSearchLogCategories(categories: string[]) {
+  return Array.from(
+    new Set(
+      categories
+        .map((category) => normalizeSearchText(category))
+        .filter((category) => category.length > 0),
+    ),
+  ).sort((left, right) => left.localeCompare(right, "sv-SE"));
+}
+
+function haveSameSearchLogCategories(left: string[], right: string[]) {
+  const normalizedLeft = normalizeSearchLogCategories(left);
+  const normalizedRight = normalizeSearchLogCategories(right);
+
+  return JSON.stringify(normalizedLeft) === JSON.stringify(normalizedRight);
+}
+
+function buildSearchLogFilters(params: {
+  status: SearchStatus;
+  sortBy: SortOption;
+  selectedAuctionIds: number[];
+  selectedCity: string;
+  selectedHouseId: string;
+  hasBids: boolean;
+  soldOnly: boolean;
+  minPrice: number | undefined;
+  maxPrice: number | undefined;
+}) {
+  return {
+    status: params.status,
+    sortBy: params.sortBy,
+    auctionIds: params.selectedAuctionIds,
+    city: params.selectedCity || undefined,
+    houseId: params.selectedHouseId || undefined,
+    hasBids: params.hasBids || undefined,
+    soldOnly: params.soldOnly || undefined,
+    minPrice: params.minPrice,
+    maxPrice: params.maxPrice,
+  };
+}
+
+export function HomePageClient({
+  canAccessRecommendations = false,
+}: HomePageClientProps) {
   const { data: session } = useSession();
+  const canAccessPersonalizedFeatures = canAccessRecommendations;
   const [showFavsOnly, setShowFavsOnly] = useState(false);
   const [pendingMobileResultsJump, setPendingMobileResultsJump] =
     useState(false);
@@ -222,12 +302,39 @@ export function HomePageClient() {
   const [authSheetKind, setAuthSheetKind] = useState<AuthSheetKind | null>(
     null,
   );
+  const [latestSearchLogId, setLatestSearchLogId] = useState<number | null>(
+    null,
+  );
+  const [pendingSearchLog, setPendingSearchLog] =
+    useState<PendingSearchLog | null>(null);
   const [displayLots, setDisplayLots] = useState<Lot[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
+  const [personalizationConsentGranted, setPersonalizationConsentGranted] =
+    useState(() => hasPersonalizationConsent(readConsentPreferences()));
+  const [recommendationLots, setRecommendationLots] = useState<Lot[]>([]);
+  const [recommendationTopCategories, setRecommendationTopCategories] =
+    useState<string[]>([]);
+  const [recommendationSourceBreakdown, setRecommendationSourceBreakdown] =
+    useState<Record<string, unknown>>({});
+  const [recommendationAvgPriceRange, setRecommendationAvgPriceRange] =
+    useState<Record<string, unknown>>({});
+  const [recommendationUpdatedAt, setRecommendationUpdatedAt] = useState<
+    string | null
+  >(null);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsRefreshed, setRecommendationsRefreshed] =
+    useState(false);
+  const [recommendationsError, setRecommendationsError] = useState<
+    string | null
+  >(null);
+  const [recommendationsOpen, setRecommendationsOpen] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement | null>(null);
   const lastScrollYRef = useRef(0);
+  const pendingSearchLogIdRef = useRef(0);
+  const activeSearchLogRequestIdRef = useRef<number | null>(null);
+  const activeRecommendationsRequestRef = useRef(0);
   const {
     favorites,
     toggleFavorite,
@@ -237,7 +344,7 @@ export function HomePageClient() {
     count: favCount,
     isAuthenticated,
     isPendingAuth,
-  } = useFavorites();
+  } = useFavorites({ enabled: canAccessPersonalizedFeatures });
   const {
     lots,
     total,
@@ -439,13 +546,17 @@ export function HomePageClient() {
       { href: "/auctions", label: "Auktioner" },
     ];
 
+    if (session?.user && canAccessPersonalizedFeatures) {
+      items.push({ href: "/mina-sidor", label: "Mina Sidor" });
+    }
+
     if (session?.user?.role === "admin" || session?.user?.role === "owner") {
       items.push({ href: "/admin", label: "Admin" });
       items.push({ href: "/ai-usage", label: "AI-statistik" });
     }
 
     return items;
-  }, [session?.user?.role]);
+  }, [canAccessPersonalizedFeatures, session?.user]);
   const mobileDisplayName = getDisplayName(
     session?.user?.email ?? null,
     typeof session?.user?.name === "string" ? session.user.name : undefined,
@@ -463,6 +574,122 @@ export function HomePageClient() {
     !avatarLoadFailed && typeof session?.user?.image === "string"
       ? session.user.image
       : null;
+  const shouldShowRecommendations =
+    canAccessRecommendations &&
+    isAuthenticated &&
+    personalizationConsentGranted &&
+    !showFavsOnly;
+  const canShowRecommendationsEntry =
+    canAccessRecommendations && isAuthenticated && !showFavsOnly;
+  const recommendationsPanelId = "home-recommendations-panel";
+  const recommendationsCountLabel = recommendationsLoading
+    ? null
+    : recommendationLots.length > 0
+      ? String(recommendationLots.length)
+      : null;
+
+  const loadRecommendations = useCallback(
+    async (forceRefresh = false) => {
+      if (!canAccessRecommendations || !isAuthenticated) {
+        return;
+      }
+
+      const requestId = activeRecommendationsRequestRef.current + 1;
+      activeRecommendationsRequestRef.current = requestId;
+      setRecommendationsLoading(true);
+      setRecommendationsError(null);
+
+      try {
+        const response = await fetch(
+          `/api/recommendations${forceRefresh ? "?refresh=true" : ""}`,
+          { cache: "no-store" },
+        );
+        const payload = (await response.json()) as RecommendationsPayload;
+
+        if (activeRecommendationsRequestRef.current !== requestId) {
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Kunde inte ladda För dig.");
+        }
+
+        setRecommendationLots(Array.isArray(payload.lots) ? payload.lots : []);
+        setRecommendationTopCategories(
+          Array.isArray(payload.topCategories) ? payload.topCategories : [],
+        );
+        setRecommendationSourceBreakdown(
+          payload.sourceBreakdown && typeof payload.sourceBreakdown === "object"
+            ? payload.sourceBreakdown
+            : {},
+        );
+        setRecommendationAvgPriceRange(
+          payload.avgPriceRange && typeof payload.avgPriceRange === "object"
+            ? payload.avgPriceRange
+            : {},
+        );
+        setRecommendationUpdatedAt(
+          typeof payload.updatedAt === "string" ? payload.updatedAt : null,
+        );
+        setRecommendationsRefreshed(payload.refreshed === true);
+      } catch (error) {
+        if (activeRecommendationsRequestRef.current !== requestId) {
+          return;
+        }
+
+        setRecommendationsError(
+          error instanceof Error ? error.message : "Kunde inte ladda För dig.",
+        );
+      } finally {
+        if (activeRecommendationsRequestRef.current === requestId) {
+          setRecommendationsLoading(false);
+        }
+      }
+    },
+    [canAccessRecommendations, isAuthenticated],
+  );
+
+  useEffect(() => {
+    const syncConsent = () => {
+      setPersonalizationConsentGranted(
+        hasPersonalizationConsent(readConsentPreferences()),
+      );
+    };
+
+    syncConsent();
+
+    const handleConsentUpdate = () => syncConsent();
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key == null || event.key === "auktio-consent-v1") {
+        syncConsent();
+      }
+    };
+
+    window.addEventListener(CONSENT_UPDATED_EVENT, handleConsentUpdate);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener(CONSENT_UPDATED_EVENT, handleConsentUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldShowRecommendations) {
+      setRecommendationLots([]);
+      setRecommendationsError(null);
+      setRecommendationsLoading(false);
+      return;
+    }
+
+    void loadRecommendations(false);
+  }, [loadRecommendations, shouldShowRecommendations]);
+
+  useEffect(() => {
+    if (!canShowRecommendationsEntry) {
+      setRecommendationsOpen(false);
+    }
+  }, [canShowRecommendationsEntry]);
 
   const persistRecentSearch = useCallback((value: string) => {
     const trimmedValue = value.trim();
@@ -489,6 +716,32 @@ export function HomePageClient() {
     });
   }, []);
 
+  const queueSearchLog = useCallback(
+    (nextEvent: {
+      source: SearchLogSource;
+      queryText?: string | null;
+      selectedCategories?: string[];
+    }) => {
+      const trimmedQuery = nextEvent.queryText?.trim() ?? "";
+      const normalizedCategories = normalizeSearchLogCategories(
+        nextEvent.selectedCategories ?? [],
+      );
+
+      if (!trimmedQuery && normalizedCategories.length === 0) {
+        return;
+      }
+
+      pendingSearchLogIdRef.current += 1;
+      setPendingSearchLog({
+        eventId: pendingSearchLogIdRef.current,
+        source: nextEvent.source,
+        queryText: trimmedQuery || null,
+        selectedCategories: normalizedCategories,
+      });
+    },
+    [],
+  );
+
   const scrollToResults = useCallback(() => {
     if (typeof window === "undefined") {
       return;
@@ -514,7 +767,12 @@ export function HomePageClient() {
   }, []);
 
   const handleToggleFavoritesMode = useCallback(async () => {
+    if (!canAccessPersonalizedFeatures) {
+      return;
+    }
+
     if (showFavsOnly) {
+      setPage(1);
       setShowFavsOnly(false);
       return;
     }
@@ -527,13 +785,24 @@ export function HomePageClient() {
     const canOpenFavorites = await openFavorites();
 
     if (canOpenFavorites) {
+      setPage(1);
       setShowFavsOnly(true);
       setMobileMenuOpen(false);
     }
-  }, [isAuthenticated, openFavorites, showFavsOnly]);
+  }, [
+    canAccessPersonalizedFeatures,
+    isAuthenticated,
+    openFavorites,
+    setPage,
+    showFavsOnly,
+  ]);
 
   const handleFavoriteToggle = useCallback(
     async (lotId: number) => {
+      if (!canAccessPersonalizedFeatures) {
+        return;
+      }
+
       if (!isAuthenticated) {
         setAuthSheetKind("favorite");
         return;
@@ -541,8 +810,27 @@ export function HomePageClient() {
 
       await toggleFavorite(lotId);
     },
-    [isAuthenticated, toggleFavorite],
+    [canAccessPersonalizedFeatures, isAuthenticated, toggleFavorite],
   );
+
+  const handleToggleRecommendationsPanel = useCallback(() => {
+    const nextOpen = !recommendationsOpen;
+
+    setRecommendationsOpen(nextOpen);
+
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      setMobileHeaderVisible(true);
+      setMobileMenuOpen(false);
+      setMobileSearchOpen(false);
+      setMobileFiltersOpen(false);
+
+      if (nextOpen) {
+        requestAnimationFrame(() => {
+          scrollToResults();
+        });
+      }
+    }
+  }, [recommendationsOpen, scrollToResults]);
 
   const applySingleCategory = useCallback(
     (nextCategory: string | null) => {
@@ -568,23 +856,34 @@ export function HomePageClient() {
       persistRecentSearch(trimmedQuery);
     }
 
+    queueSearchLog({
+      source: "search_bar",
+      queryText: trimmedQuery,
+      selectedCategories,
+    });
+
     if (typeof window !== "undefined" && window.innerWidth < 640) {
       setPendingMobileResultsJump(true);
       setMobileSearchOpen(false);
     }
-  }, [persistRecentSearch, query]);
+  }, [persistRecentSearch, query, queueSearchLog, selectedCategories]);
 
   const handleSuggestionSelect = useCallback(
     (suggestion: SearchSuggestion) => {
       setQuery(suggestion.query);
       persistRecentSearch(suggestion.query);
+      queueSearchLog({
+        source: "autocomplete",
+        queryText: suggestion.query,
+        selectedCategories,
+      });
 
       if (typeof window !== "undefined" && window.innerWidth < 640) {
         setPendingMobileResultsJump(true);
         setMobileSearchOpen(false);
       }
     },
-    [persistRecentSearch, setQuery],
+    [persistRecentSearch, queueSearchLog, selectedCategories, setQuery],
   );
 
   const handleRecentSearchSelect = useCallback(
@@ -601,10 +900,17 @@ export function HomePageClient() {
     (category: string | null) => {
       setShowFavsOnly(false);
       applySingleCategory(category);
+      if (category) {
+        queueSearchLog({
+          source: "category_pill",
+          queryText: query,
+          selectedCategories: [category],
+        });
+      }
       setMobileSearchOpen(false);
       setPendingMobileResultsJump(true);
     },
-    [applySingleCategory],
+    [applySingleCategory, query, queueSearchLog],
   );
 
   const handleQuickHouseSelect = useCallback(
@@ -621,6 +927,25 @@ export function HomePageClient() {
     [setHouseId],
   );
 
+  const handleSearchResultClick = useCallback(
+    async (lotId: number, positionInResults: number) => {
+      if (!latestSearchLogId) {
+        return;
+      }
+
+      void fetch("/api/search/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          searchId: latestSearchLogId,
+          lotId,
+          positionInResults,
+        }),
+      });
+    },
+    [latestSearchLogId],
+  );
+
   const applyDidYouMean = useCallback(() => {
     if (!didYouMean) {
       return;
@@ -630,6 +955,111 @@ export function HomePageClient() {
     persistRecentSearch(didYouMean);
     scrollToSearchTop();
   }, [didYouMean, persistRecentSearch, scrollToSearchTop, setQuery]);
+
+  useEffect(() => {
+    if (!pendingSearchLog || loading) {
+      return;
+    }
+
+    if (activeSearchLogRequestIdRef.current === pendingSearchLog.eventId) {
+      return;
+    }
+
+    const normalizedPendingQuery = normalizeSearchText(
+      pendingSearchLog.queryText ?? "",
+    );
+    const normalizedSettledQuery = normalizeSearchText(settledQuery);
+
+    if (normalizedPendingQuery !== normalizedSettledQuery) {
+      return;
+    }
+
+    if (
+      !haveSameSearchLogCategories(
+        selectedCategories,
+        pendingSearchLog.selectedCategories,
+      )
+    ) {
+      return;
+    }
+
+    if (!hasPersonalizationConsent(readConsentPreferences())) {
+      setPendingSearchLog(null);
+      return;
+    }
+
+    let cancelled = false;
+    activeSearchLogRequestIdRef.current = pendingSearchLog.eventId;
+
+    const filtersApplied = buildSearchLogFilters({
+      status,
+      sortBy,
+      selectedAuctionIds,
+      selectedCity,
+      selectedHouseId,
+      hasBids,
+      soldOnly,
+      minPrice,
+      maxPrice,
+    });
+
+    void fetch("/api/search/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        queryText: pendingSearchLog.queryText,
+        selectedCategories: pendingSearchLog.selectedCategories,
+        filtersApplied,
+        resultCount: total,
+        source: pendingSearchLog.source,
+      }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          return null;
+        }
+
+        return (await response.json()) as { searchId?: number | null };
+      })
+      .then((payload) => {
+        if (cancelled) {
+          return;
+        }
+
+        setLatestSearchLogId(
+          typeof payload?.searchId === "number" ? payload.searchId : null,
+        );
+      })
+      .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
+        activeSearchLogRequestIdRef.current = null;
+        setPendingSearchLog((current) =>
+          current?.eventId === pendingSearchLog.eventId ? null : current,
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    hasBids,
+    loading,
+    maxPrice,
+    minPrice,
+    pendingSearchLog,
+    selectedAuctionIds,
+    selectedCategories,
+    selectedCity,
+    selectedHouseId,
+    settledQuery,
+    soldOnly,
+    sortBy,
+    status,
+    total,
+  ]);
 
   useEffect(() => {
     setRecentSearches(readStoredStringList(RECENT_SEARCHES_STORAGE_KEY));
@@ -774,11 +1204,16 @@ export function HomePageClient() {
   }, [hasMoreResults, loading, loadingMore, page, setPage]);
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f7f1eb_0%,#fbf8f6_26%,#f8f4f0_100%)]">
+    <div
+      className="min-h-screen bg-[linear-gradient(180deg,#f7f1eb_0%,#fbf8f6_26%,#f8f4f0_100%)]"
+      data-recommendations-access={
+        canAccessRecommendations ? "enabled" : "disabled"
+      }
+    >
       <div className="sm:hidden">
         <div className="fixed inset-x-0 top-0 z-[60] border-b border-brand-200/80 bg-[#fcfaf8] shadow-[0_10px_24px_rgba(93,69,40,0.06)]">
           <div
-            className="mx-auto flex h-[50px] max-w-[1360px] items-center gap-2 px-3 transition-transform duration-200 ease-out"
+            className="mx-auto flex h-[50px] max-w-[1360px] items-center justify-between gap-2 px-3 transition-transform duration-200 ease-out"
             style={{
               paddingLeft: "calc(0.75rem + env(safe-area-inset-left, 0px))",
               paddingRight: "calc(1rem + env(safe-area-inset-right, 0px))",
@@ -884,7 +1319,30 @@ export function HomePageClient() {
               <span className="max-[430px]:hidden">Filter</span>
             </button>
 
-            <div className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {canShowRecommendationsEntry ? (
+              <button
+                type="button"
+                onClick={handleToggleRecommendationsPanel}
+                aria-expanded={recommendationsOpen}
+                aria-controls={recommendationsPanelId}
+                aria-label="Visa För dig"
+                className={`inline-flex min-h-8 shrink-0 items-center gap-1 rounded-full border px-2.5 py-1.5 text-[11px] font-medium transition-colors ${
+                  recommendationsOpen
+                    ? "border-accent-600 bg-accent-50 text-accent-900"
+                    : "border-brand-200 bg-white text-brand-800"
+                }`}
+              >
+                <Sparkles size={13} />
+                <span className="max-[430px]:hidden">För dig</span>
+                {recommendationsCountLabel ? (
+                  <span className="rounded-full bg-white/80 px-1.5 py-px text-[10px] font-semibold text-current">
+                    {recommendationsCountLabel}
+                  </span>
+                ) : null}
+              </button>
+            ) : null}
+
+            <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <div className="flex gap-2 pr-1">
                 <button
                   type="button"
@@ -1156,21 +1614,23 @@ export function HomePageClient() {
                 ))}
               </div>
 
-              <div className="mt-5 rounded-2xl border border-brand-200 bg-brand-50 p-3">
-                <button
-                  type="button"
-                  onClick={() => void handleToggleFavoritesMode()}
-                  className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-3 text-left text-sm font-medium text-brand-900"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <Heart size={15} className="text-accent-500" />
-                    Bevakade objekt
-                  </span>
-                  <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] text-brand-600">
-                    {favCount}
-                  </span>
-                </button>
-              </div>
+              {canAccessPersonalizedFeatures ? (
+                <div className="mt-5 rounded-2xl border border-brand-200 bg-brand-50 p-3">
+                  <button
+                    type="button"
+                    onClick={() => void handleToggleFavoritesMode()}
+                    className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-3 text-left text-sm font-medium text-brand-900"
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <Heart size={15} className="text-accent-500" />
+                      Bevakade objekt
+                    </span>
+                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] text-brand-600">
+                      {favCount}
+                    </span>
+                  </button>
+                </div>
+              ) : null}
 
               <div className="mt-5 space-y-2">
                 {isAuthenticated ? (
@@ -1440,11 +1900,15 @@ export function HomePageClient() {
 
       <div className="hidden sm:block">
         <Header
-          favoritesCount={favCount}
-          showFavsOnly={showFavsOnly}
-          onToggleFavs={() => {
-            void handleToggleFavoritesMode();
-          }}
+          favoritesCount={canAccessPersonalizedFeatures ? favCount : undefined}
+          showFavsOnly={canAccessPersonalizedFeatures ? showFavsOnly : false}
+          onToggleFavs={
+            canAccessPersonalizedFeatures
+              ? () => {
+                  void handleToggleFavoritesMode();
+                }
+              : undefined
+          }
         />
       </div>
 
@@ -1467,7 +1931,7 @@ export function HomePageClient() {
         id="search-results-top"
         className="relative mx-auto max-w-[1360px] px-3 pb-20 pt-[112px] sm:px-6 sm:pt-0"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-[84px] -z-10 h-40 sm:hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-[84px] -z-10 h-40 overflow-x-clip sm:hidden">
           <div className="absolute left-[-14%] top-0 h-28 w-28 rounded-full bg-accent-100/80 blur-3xl" />
           <div className="absolute right-[-8%] top-6 h-32 w-32 rounded-full bg-gold-100/70 blur-3xl" />
         </div>
@@ -1566,6 +2030,34 @@ export function HomePageClient() {
               onSetPageSize={setPageSize}
               onClearFilters={clearFilters}
               activeFilterCount={activeFilterCount}
+              utilitySlot={
+                canShowRecommendationsEntry ? (
+                  <button
+                    type="button"
+                    onClick={handleToggleRecommendationsPanel}
+                    aria-expanded={recommendationsOpen}
+                    aria-controls={recommendationsPanelId}
+                    className={`inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border px-3 whitespace-nowrap text-[12px] font-medium transition-all ${
+                      recommendationsOpen
+                        ? "border-accent-600 bg-accent-50 text-accent-900"
+                        : "border-brand-200 bg-white text-brand-600 hover:border-brand-400"
+                    }`}
+                  >
+                    <Sparkles size={14} />
+                    <span>För dig</span>
+                    {recommendationsCountLabel ? (
+                      <span className="rounded-full bg-white px-2 py-px text-[11px] font-semibold text-current">
+                        {recommendationsCountLabel}
+                      </span>
+                    ) : null}
+                    {recommendationsOpen ? (
+                      <ChevronUp size={14} className="text-current" />
+                    ) : (
+                      <ChevronDown size={14} className="text-current" />
+                    )}
+                  </button>
+                ) : null
+              }
             />
           )}
         </div>
@@ -1587,6 +2079,51 @@ export function HomePageClient() {
                 Tryck för att ersätta sökningen och prova igen.
               </p>
             </div>
+          </div>
+        ) : null}
+
+        {canShowRecommendationsEntry && recommendationsOpen ? (
+          <div className="mb-4">
+            {personalizationConsentGranted ? (
+              <RecommendationsSection
+                sectionId={recommendationsPanelId}
+                lots={recommendationLots}
+                loading={recommendationsLoading}
+                errorMessage={recommendationsError}
+                topCategories={recommendationTopCategories}
+                sourceBreakdown={recommendationSourceBreakdown}
+                avgPriceRange={recommendationAvgPriceRange}
+                updatedAt={recommendationUpdatedAt}
+                refreshed={recommendationsRefreshed}
+                isFavorite={isFavorite}
+                onToggleFavorite={handleFavoriteToggle}
+                onRefresh={() => void loadRecommendations(true)}
+                viewMode={mobileViewMode}
+              />
+            ) : (
+              <div
+                id={recommendationsPanelId}
+                className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-5 text-sm text-amber-900 shadow-card"
+              >
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-700">
+                  <Sparkles size={13} />
+                  För dig är pausad
+                </div>
+                <p className="mt-3 max-w-2xl leading-6 text-amber-900/85">
+                  Personalisering är inte aktiv i den här webbläsaren. Aktivera
+                  den i banner-valet eller via Mina Sidor för att visa
+                  rekommendationer igen.
+                </p>
+                <div className="mt-4">
+                  <Link
+                    href="/mina-sidor"
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 text-[13px] font-medium text-amber-950 transition hover:bg-amber-100"
+                  >
+                    Öppna Mina Sidor
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         ) : null}
 
@@ -1628,8 +2165,10 @@ export function HomePageClient() {
               loading={loading}
               loadingMore={loadingMore}
               status={showFavsOnly ? "all" : status}
+              showFavoriteButton={canAccessPersonalizedFeatures}
               isFavorite={isFavorite}
               onToggleFavorite={handleFavoriteToggle}
+              onResultClick={handleSearchResultClick}
               viewMode={mobileViewMode}
               relatedCategories={relatedCategories}
               onCategorySelect={handleQuickCategorySelect}
@@ -1662,25 +2201,27 @@ export function HomePageClient() {
         </button>
       </div>
 
-      <BrowseAuthSheet
-        open={authSheetKind != null}
-        title={
-          authSheetKind === "favorite"
-            ? "Logga in för att bevaka detta objekt"
-            : "Logga in för att se dina bevakningar"
-        }
-        description={
-          authSheetKind === "favorite"
-            ? "När du är inloggad kan du spara objekt och komma tillbaka till dem senare. Har du inget konto skapas det första gången du fortsätter."
-            : "Dina bevakade objekt sparas på kontot och följer med mellan enheter. Har du inget konto skapas det första gången du fortsätter."
-        }
-        confirmLabel="Logga in"
-        secondaryLabel="Registrera dig"
-        confirmBusy={isPendingAuth}
-        onClose={() => setAuthSheetKind(null)}
-        onConfirm={() => void signInToContinue()}
-        onSecondaryAction={() => void signInToContinue()}
-      />
+      {canAccessPersonalizedFeatures ? (
+        <BrowseAuthSheet
+          open={authSheetKind != null}
+          title={
+            authSheetKind === "favorite"
+              ? "Logga in för att bevaka detta objekt"
+              : "Logga in för att se dina bevakningar"
+          }
+          description={
+            authSheetKind === "favorite"
+              ? "När du är inloggad kan du spara objekt och komma tillbaka till dem senare. Har du inget konto skapas det första gången du fortsätter."
+              : "Dina bevakade objekt sparas på kontot och följer med mellan enheter. Har du inget konto skapas det första gången du fortsätter."
+          }
+          confirmLabel="Logga in"
+          secondaryLabel="Registrera dig"
+          confirmBusy={isPendingAuth}
+          onClose={() => setAuthSheetKind(null)}
+          onConfirm={() => void signInToContinue()}
+          onSecondaryAction={() => void signInToContinue()}
+        />
+      ) : null}
     </div>
   );
 }

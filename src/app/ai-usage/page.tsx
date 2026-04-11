@@ -85,6 +85,23 @@ function formatTimestampLabel(value: string) {
   });
 }
 
+function formatOperationLabel(value: string) {
+  switch (value) {
+    case "search-intent-parse":
+      return "Sökintent-parser";
+    case "rag-answer":
+      return "RAG-svar";
+    case "embed-query":
+      return "Sökembedding";
+    case "embed-document":
+      return "Dokumentembedding";
+    case "embed-batch":
+      return "Batch-embedding";
+    default:
+      return value;
+  }
+}
+
 export default async function AiUsagePage() {
   const session = await getServerSession(authOptions);
 
@@ -346,7 +363,62 @@ export default async function AiUsagePage() {
           </div>
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[1.1fr_1.4fr]">
+        <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+          <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-slate-950/30">
+            <h2 className="text-xl font-semibold text-white">Operationer</h2>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-800">
+              <table className="min-w-full divide-y divide-slate-800 text-sm">
+                <thead className="bg-slate-950/40 text-slate-400">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">
+                      Operation
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium">Anrop</th>
+                    <th className="px-4 py-3 text-right font-medium">Input</th>
+                    <th className="px-4 py-3 text-right font-medium">Output</th>
+                    <th className="px-4 py-3 text-right font-medium">Tokens</th>
+                    <th className="px-4 py-3 text-right font-medium">
+                      Kostnad
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 bg-slate-900/30 text-slate-200">
+                  {report.operations.map((row) => (
+                    <tr key={row.operation}>
+                      <td className="px-4 py-3">
+                        {formatOperationLabel(row.operation)}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {formatInteger(row.requests)}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {formatTokenCount(
+                          row.inputTokens,
+                          row.hasUnreportedTokenMetrics,
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {formatTokenCount(
+                          row.outputTokens,
+                          row.hasUnreportedTokenMetrics,
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {formatTokenCount(
+                          row.totalTokens,
+                          row.hasUnreportedTokenMetrics,
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right text-amber-300">
+                        {formatCurrencySek(row.estimatedCostSek)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-slate-950/30">
             <h2 className="text-xl font-semibold text-white">Modeller</h2>
             <div className="mt-4 overflow-hidden rounded-2xl border border-slate-800">

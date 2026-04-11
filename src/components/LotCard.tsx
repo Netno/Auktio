@@ -22,14 +22,21 @@ import {
   formatAmount,
   formatBidAmount,
   formatDateTimeStamp,
+  getLotImageSources,
   imgSize,
 } from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
 interface LotCardProps {
   lot: Lot;
+  showFavoriteButton?: boolean;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  onResultClick?: (
+    lotId: number,
+    positionInResults: number,
+  ) => void | Promise<void>;
+  resultPosition?: number;
   imagePriority?: boolean;
   onCategorySelect?: (category: string) => void;
   onHouseSelect?: (houseId: string) => void;
@@ -96,8 +103,11 @@ function getTouchDistance(touches: React.TouchList) {
 
 export function LotCard({
   lot,
+  showFavoriteButton = true,
   isFavorite,
   onToggleFavorite,
+  onResultClick,
+  resultPosition = 0,
   imagePriority = false,
   onCategorySelect,
   onHouseSelect,
@@ -174,11 +184,7 @@ export function LotCard({
   const tl = lot.endTime ? timeLeft(lot.endTime) : null;
   const shouldShowDescriptionTooltip = (lot.description?.length ?? 0) > 110;
 
-  const images = lot.images?.length
-    ? lot.images
-    : lot.thumbnailUrl
-      ? [lot.thumbnailUrl]
-      : [];
+  const images = getLotImageSources(lot.images, lot.thumbnailUrl);
   const primaryImageSource = images[imgIndex];
   const primaryImageCandidates = primaryImageSource
     ? Array.from(
@@ -792,6 +798,11 @@ export function LotCard({
         href={lot.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => {
+          if (resultPosition > 0) {
+            void onResultClick?.(lot.id, resultPosition);
+          }
+        }}
         onClickCapture={(e) => {
           if (!suppressClickRef.current) return;
           e.preventDefault();
@@ -908,13 +919,14 @@ export function LotCard({
           )}
 
           {/* Favorite button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggleFavorite(lot.id);
-            }}
-            className={`absolute top-2.5 right-2.5 z-10 w-[34px] h-[34px]
+          {showFavoriteButton ? (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleFavorite(lot.id);
+              }}
+              className={`absolute top-2.5 right-2.5 z-10 w-[34px] h-[34px]
             rounded-full flex items-center justify-center
             backdrop-blur-md transition-all hover:scale-110
             ${
@@ -922,9 +934,10 @@ export function LotCard({
                 ? "bg-accent-500/90 text-white"
                 : "bg-white/90 text-brand-400 hover:text-accent-500"
             }`}
-          >
-            <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
+            >
+              <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
+            </button>
+          ) : null}
 
           {(zoomImage || (lot.isActive && tl)) && (
             <>
@@ -951,12 +964,12 @@ export function LotCard({
 
                 {lot.isActive && tl ? (
                   <span
-                    className={`rounded-full border px-2.5 py-1 text-[11px] font-medium text-white shadow-[0_6px_14px_rgba(13,13,12,0.3)] backdrop-blur-md ${
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-medium shadow-[0_6px_14px_rgba(13,13,12,0.3)] backdrop-blur-md ${
                       tl.ended
-                        ? "border-white/16 bg-brand-800/90"
+                        ? "border-white/16 bg-brand-800/90 text-white"
                         : tl.urgent
-                          ? "border-accent-400/40 bg-accent-700/96"
-                          : "border-white/16 bg-brand-800/90"
+                          ? "border-[#efb1ab]/85 bg-[#ffe2df]/95 text-[#7a1f1b]"
+                          : "border-white/16 bg-brand-800/90 text-white"
                     }`}
                   >
                     {tl.text}

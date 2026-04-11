@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   CONSENT_UPDATED_EVENT,
-  readConsentChoice,
-  type ConsentChoice,
+  hasAnalyticsConsent,
+  readConsentPreferences,
+  type ConsentPreferences,
 } from "@/lib/consent";
 
 declare global {
@@ -25,21 +26,20 @@ export function GoogleAnalyticsTracker({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const lastTrackedPathRef = useRef<string | null>(null);
-  const [consentChoice, setConsentChoice] = useState<ConsentChoice | null>(
-    null,
-  );
+  const [consentPreferences, setConsentPreferences] =
+    useState<ConsentPreferences | null>(null);
 
   useEffect(() => {
-    setConsentChoice(readConsentChoice());
+    setConsentPreferences(readConsentPreferences());
 
     const handleConsentUpdate = (event: Event) => {
-      const detail = (event as CustomEvent<ConsentChoice>).detail;
-      setConsentChoice(detail);
+      const detail = (event as CustomEvent<ConsentPreferences>).detail;
+      setConsentPreferences(detail);
     };
 
     const handleStorage = (event: StorageEvent) => {
       if (event.key == null || event.key === "auktio-consent-v1") {
-        setConsentChoice(readConsentChoice());
+        setConsentPreferences(readConsentPreferences());
       }
     };
 
@@ -53,7 +53,7 @@ export function GoogleAnalyticsTracker({
   }, []);
 
   useEffect(() => {
-    if (consentChoice !== "accepted") {
+    if (!hasAnalyticsConsent(consentPreferences)) {
       return;
     }
 
@@ -75,7 +75,7 @@ export function GoogleAnalyticsTracker({
       page_location: window.location.href,
       page_title: document.title,
     });
-  }, [consentChoice, measurementId, pathname, searchParams]);
+  }, [consentPreferences, measurementId, pathname, searchParams]);
 
   return null;
 }

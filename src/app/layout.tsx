@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
+import { AnonymousActivityMigration } from "@/components/AnonymousActivityMigration";
+import { AnonymousSessionBootstrap } from "@/components/AnonymousSessionBootstrap";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
@@ -76,13 +78,15 @@ export default function RootLayout({
                 ad_user_data: 'denied',
                 ad_personalization: 'denied',
                 functionality_storage: 'granted',
-                personalization_storage: 'granted',
+                personalization_storage: 'denied',
                 security_storage: 'granted',
                 wait_for_update: 500
               });
               gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
             `}
           </Script>
+          <AnonymousSessionBootstrap />
+          <AnonymousActivityMigration />
           <Suspense fallback={null}>
             <GoogleAnalyticsTracker measurementId={GA_MEASUREMENT_ID} />
           </Suspense>

@@ -39,6 +39,7 @@ interface FilterBarProps {
   onClearFilters: () => void;
   activeFilterCount: number;
   topPagination?: ReactNode;
+  utilitySlot?: ReactNode;
 }
 
 const PRICE_MIN = 0;
@@ -72,6 +73,7 @@ export function FilterBar({
   onClearFilters,
   activeFilterCount,
   topPagination,
+  utilitySlot,
 }: FilterBarProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [expandedFilters, setExpandedFilters] = useState(false);
@@ -282,6 +284,8 @@ export function FilterBar({
         )}
 
         <div className="grid grid-cols-[1fr_auto] gap-2 md:flex md:flex-nowrap md:items-center md:justify-self-end md:justify-end">
+          {utilitySlot}
+
           <button
             type="button"
             onClick={() => setExpandedFilters(!expandedFilters)}

@@ -3,10 +3,36 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import {
+  hasPersonalizationConsent,
+  readConsentPreferences,
+} from "@/lib/consent";
 
 const STORAGE_KEY = "auktio_favorites";
 
-export function useFavorites() {
+type UseFavoritesOptions = {
+  enabled?: boolean;
+};
+
+function readStoredFavoriteLotIds() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+
+    if (!stored) {
+      return [];
+    }
+
+    return (JSON.parse(stored) as number[]).filter(
+      (lotId) => Number.isInteger(lotId) && lotId > 0,
+    );
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return [];
+  }
+}
+
+export function useFavorites(options: UseFavoritesOptions = {}) {
+  const { enabled = true } = options;
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,20 +53,48 @@ export function useFavorites() {
   }, [nextPath]);
 
   useEffect(() => {
-    if (status === "loading") {
+    if (!enabled) {
+      setFavorites(new Set());
+      setLoaded(true);
       return;
     }
 
-    if (status !== "authenticated") {
-      setFavorites(new Set());
-      setLoaded(true);
+    if (status === "loading") {
       return;
     }
 
     let cancelled = false;
 
     async function loadFavorites() {
+      const storedLotIds = readStoredFavoriteLotIds();
+      const canImportStoredFavorites =
+        status === "authenticated" ||
+        hasPersonalizationConsent(readConsentPreferences());
+      let didImportStoredFavorites = false;
+
       try {
+        let mergedLotIds: number[] = storedLotIds;
+
+        if (storedLotIds.length > 0 && canImportStoredFavorites) {
+          const importResponse = await fetch("/api/favorites", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lotIds: storedLotIds }),
+          });
+
+          if (importResponse.ok) {
+            const importPayload = (await importResponse.json()) as {
+              lotIds?: number[];
+            };
+
+            mergedLotIds = Array.isArray(importPayload.lotIds)
+              ? importPayload.lotIds
+              : mergedLotIds;
+            didImportStoredFavorites = true;
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        }
+
         const response = await fetch("/api/favorites", { cache: "no-store" });
 
         if (!response.ok) {
@@ -48,38 +102,13 @@ export function useFavorites() {
         }
 
         const payload = (await response.json()) as { lotIds?: number[] };
-        let mergedLotIds = Array.isArray(payload.lotIds) ? payload.lotIds : [];
-
-        try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-
-          if (stored) {
-            const localLotIds = JSON.parse(stored) as number[];
-            const validLocalLotIds = localLotIds.filter(
-              (lotId) => Number.isInteger(lotId) && lotId > 0,
-            );
-
-            if (validLocalLotIds.length > 0) {
-              const importResponse = await fetch("/api/favorites", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ lotIds: validLocalLotIds }),
-              });
-
-              if (importResponse.ok) {
-                const importPayload = (await importResponse.json()) as {
-                  lotIds?: number[];
-                };
-                mergedLotIds = Array.isArray(importPayload.lotIds)
-                  ? importPayload.lotIds
-                  : mergedLotIds;
-              }
-            }
-
-            localStorage.removeItem(STORAGE_KEY);
-          }
-        } catch {
-          localStorage.removeItem(STORAGE_KEY);
+        if (
+          Array.isArray(payload.lotIds) &&
+          (payload.lotIds.length > 0 ||
+            mergedLotIds.length === 0 ||
+            didImportStoredFavorites)
+        ) {
+          mergedLotIds = payload.lotIds;
         }
 
         if (!cancelled) {
@@ -87,7 +116,7 @@ export function useFavorites() {
         }
       } catch {
         if (!cancelled) {
-          setFavorites(new Set());
+          setFavorites(new Set(storedLotIds));
         }
       } finally {
         if (!cancelled) {
@@ -101,10 +130,14 @@ export function useFavorites() {
     return () => {
       cancelled = true;
     };
-  }, [status]);
+  }, [enabled, status]);
 
   const toggleFavorite = useCallback(
     async (lotId: number) => {
+      if (!enabled) {
+        return false;
+      }
+
       if (status !== "authenticated") {
         return false;
       }
@@ -145,12 +178,12 @@ export function useFavorites() {
         return false;
       }
     },
-    [favorites, status],
+    [enabled, favorites, status],
   );
 
   const openFavorites = useCallback(
-    async () => status === "authenticated",
-    [status],
+    async () => enabled && status === "authenticated",
+    [enabled, status],
   );
 
   const isFavorite = useCallback(
@@ -166,7 +199,7 @@ export function useFavorites() {
     signInToContinue,
     isFavorite,
     loaded,
-    isAuthenticated: status === "authenticated",
+    isAuthenticated: enabled && status === "authenticated",
     isPendingAuth: submitting || status === "loading",
   };
 }

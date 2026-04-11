@@ -196,6 +196,16 @@ const OBJECT_FAMILY_ALIASES: Record<string, string[]> = {
     "slev",
   ],
   spegel: ["spegel", "väggspegel", "vaggspegel", "golvspegel"],
+  klocka: [
+    "klocka",
+    "klockor",
+    "ur",
+    "armbandsur",
+    "herrarmbandsur",
+    "damarmbandsur",
+    "fickur",
+    "väggur",
+  ],
   lampa: [
     "lampa",
     "golvlampa",

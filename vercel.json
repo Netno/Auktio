@@ -2,8 +2,20 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/ingest",
+      "path": "/api/ingest/batch-1",
       "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/ingest/batch-2",
+      "schedule": "5 19 * * *"
+    },
+    {
+      "path": "/api/ingest/batch-3",
+      "schedule": "10 19 * * *"
+    },
+    {
+      "path": "/api/ingest/batch-4",
+      "schedule": "15 19 * * *"
     },
     {
       "path": "/api/ingest/sold-prices",

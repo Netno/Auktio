@@ -19,10 +19,16 @@ const DEFAULT_FETCH_HEADERS = {
     "Mozilla/5.0 (compatible; AuktioIngest/1.0; +https://www.auktio.se)",
   "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.8",
 } as const;
+const HOUSE_SCOPED_CONFLICT_COLUMNS = "house_id,id";
 
 type IngestRunOptions = {
   syncFeed?: boolean;
   refreshSoldPrices?: boolean;
+};
+
+export type FeedSourceRange = {
+  startIndex?: number;
+  endIndexExclusive?: number;
 };
 
 const DEFAULT_INGEST_RUN_OPTIONS: Required<IngestRunOptions> = {
@@ -52,8 +58,24 @@ export async function ingestAllFeeds(): Promise<IngestResult[]> {
   return runIngestAcrossSources(DEFAULT_INGEST_RUN_OPTIONS);
 }
 
+export async function ingestFeedsInRange(
+  sourceRange: FeedSourceRange,
+  options: IngestRunOptions = DEFAULT_INGEST_RUN_OPTIONS,
+): Promise<IngestResult[]> {
+  return runIngestAcrossSources(options, sourceRange);
+}
+
 export async function ingestFeedDataOnly(): Promise<IngestResult[]> {
   return runIngestAcrossSources({ syncFeed: true, refreshSoldPrices: false });
+}
+
+export async function ingestFeedDataRange(
+  sourceRange: FeedSourceRange,
+): Promise<IngestResult[]> {
+  return ingestFeedsInRange(sourceRange, {
+    syncFeed: true,
+    refreshSoldPrices: false,
+  });
 }
 
 export async function refreshAllSoldPrices(): Promise<IngestResult[]> {
@@ -83,11 +105,13 @@ export async function ingestSourceById(
 
 async function runIngestAcrossSources(
   options: IngestRunOptions,
+  sourceRange?: FeedSourceRange,
 ): Promise<IngestResult[]> {
   const results: IngestResult[] = [];
   const resolvedOptions = { ...DEFAULT_INGEST_RUN_OPTIONS, ...options };
+  const sources = getSourcesForRange(sourceRange);
 
-  for (const source of FEED_SOURCES) {
+  for (const source of sources) {
     console.log(`[ingest] Starting: ${source.name} (${source.id})`);
     const result = await ingestFeed(source.id, source.feedUrl, resolvedOptions);
     results.push(result);
@@ -97,6 +121,20 @@ async function runIngestAcrossSources(
   }
 
   return results;
+}
+
+function getSourcesForRange(sourceRange?: FeedSourceRange) {
+  if (!sourceRange) {
+    return FEED_SOURCES;
+  }
+
+  const startIndex = Math.max(0, sourceRange.startIndex ?? 0);
+  const endIndexExclusive = Math.min(
+    FEED_SOURCES.length,
+    Math.max(startIndex, sourceRange.endIndexExclusive ?? FEED_SOURCES.length),
+  );
+
+  return FEED_SOURCES.slice(startIndex, endIndexExclusive);
 }
 
 /**
@@ -155,8 +193,9 @@ async function fetchWithRetry(
  * Compute a simple hash of the lot data that changes when content changes.
  * Used to skip re-upserting lots that haven't changed since last sync.
  */
-function computeLotHash(lot: FeedLot): string {
+function computeLotHash(lot: FeedLot, houseId?: string): string {
   const normalizedCategories = normalizeLotCategories({
+    sourceId: houseId,
     rawCategories: lot.category,
     title: lot.title,
     description: lot.description,
@@ -225,7 +264,10 @@ async function ingestFeed(
       const allFeedLotIds = feed.auctions.flatMap((a) =>
         a.lots.map((l) => l.id),
       );
-      const existingLotStates = await getExistingLotStates(allFeedLotIds);
+      const existingLotStates = await getExistingLotStates(
+        houseId,
+        allFeedLotIds,
+      );
 
       for (const auction of feed.auctions) {
         await supabase.from("auc_auctions").upsert(
@@ -241,12 +283,12 @@ async function ingestFeed(
             image_url: auction.image?.[0] ?? null,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "id" },
+          { onConflict: HOUSE_SCOPED_CONFLICT_COLUMNS },
         );
 
         const changedLots: FeedLot[] = [];
         for (const lot of auction.lots) {
-          const newHash = computeLotHash(lot);
+          const newHash = computeLotHash(lot, houseId);
           if (existingLotStates.get(lot.id)?.content_hash === newHash) {
             lotsSkipped++;
           } else {
@@ -266,12 +308,12 @@ async function ingestFeed(
               houseId,
               existingLotStates.get(lot.id)?.categories,
             ),
-            content_hash: computeLotHash(lot),
+            content_hash: computeLotHash(lot, houseId),
           }));
 
           const { error } = await supabase
             .from("auc_lots")
-            .upsert(lotRows, { onConflict: "id" })
+            .upsert(lotRows, { onConflict: HOUSE_SCOPED_CONFLICT_COLUMNS })
             .select("id");
 
           if (error) {
@@ -355,6 +397,7 @@ async function ingestFeed(
  * Load existing content hashes for given lot IDs to detect unchanged lots.
  */
 async function getExistingLotStates(
+  houseId: string,
   lotIds: number[],
 ): Promise<Map<number, ExistingLotState>> {
   const map = new Map<number, ExistingLotState>();
@@ -366,6 +409,7 @@ async function getExistingLotStates(
     const { data } = await supabase
       .from("auc_lots")
       .select("id, content_hash, categories")
+      .eq("house_id", houseId)
       .in("id", chunk);
     for (const row of data ?? []) {
       map.set(row.id, {
@@ -455,7 +499,7 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
         const existing = existingLots.get(lot.id);
         if (!existing) return null;
 
-        const contentHash = computeLotHash(lot);
+        const contentHash = computeLotHash(lot, houseId);
         const soldPrice = lot.price.amount ?? null;
 
         if (
@@ -484,7 +528,7 @@ async function ingestPriceBankFeed(houseId: string, feedUrl: string) {
     for (const batch of chunkArray(changedRows, 50)) {
       const { error } = await supabase
         .from("auc_lots")
-        .upsert(batch, { onConflict: "id" });
+        .upsert(batch, { onConflict: HOUSE_SCOPED_CONFLICT_COLUMNS });
 
       if (error) {
         console.error(
@@ -654,6 +698,7 @@ async function refreshEndedLotsFromSite(houseId: string) {
             sold_price: offer.soldPrice,
             updated_at: new Date().toISOString(),
           })
+          .eq("house_id", houseId)
           .eq("id", lot.id);
 
         if (updateError) {
@@ -706,6 +751,7 @@ function normalizeLot(
 ) {
   const description = stripHtml(lot.description);
   const incomingCategories = normalizeLotCategories({
+    sourceId: houseId,
     rawCategories: lot.category,
     title: lot.title,
     description,

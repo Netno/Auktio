@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, LogIn, LogOut, User2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
+import { canAccessPersonalization } from "@/lib/recommendations-access";
 
 type GoogleProviderConfig = {
   id: string;
@@ -174,8 +175,16 @@ export function AuthControls() {
 
   if (!googleProvider) {
     return (
-      <div className="hidden h-9 items-center rounded-lg border border-white/10 bg-white/[0.05] px-3 text-[12px] font-medium text-white/45 lg:inline-flex">
-        Google-login ej aktiv
+      <div className="hidden items-center gap-3 lg:inline-flex">
+        <div className="h-9 rounded-lg border border-white/10 bg-white/[0.05] px-3 text-[12px] font-medium leading-9 text-white/45">
+          Google-login ej aktiv
+        </div>
+        <a
+          href={`/auth/email?next=${encodeURIComponent(nextPath)}`}
+          className="text-[12px] font-medium text-white/72 transition hover:text-white"
+        >
+          E-post i stället
+        </a>
       </div>
     );
   }
@@ -200,6 +209,9 @@ export function AuthControls() {
       !avatarLoadFailed && typeof session.user.image === "string"
         ? session.user.image
         : null;
+    const canAccessPersonalizedFeatures = canAccessPersonalization(
+      session.user.role,
+    );
 
     return (
       <div
@@ -311,6 +323,15 @@ export function AuthControls() {
                 </dl>
               </div>
 
+              {canAccessPersonalizedFeatures ? (
+                <a
+                  href="/min-data"
+                  className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl border border-brand-200 bg-white px-3 text-[12px] font-medium text-brand-800 transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
+                >
+                  Min data
+                </a>
+              ) : null}
+
               <button
                 type="button"
                 onClick={handleSignOut}
@@ -348,6 +369,12 @@ export function AuthControls() {
           Logga in
         </span>
       </button>
+      <a
+        href={`/auth/email?next=${encodeURIComponent(nextPath)}`}
+        className="mt-1.5 inline-flex text-[11px] text-white/72 transition hover:text-white"
+      >
+        Logga in med e-post i stället
+      </a>
       {errorMessage && (
         <div className="mt-1 text-[11px] text-rose-300">{errorMessage}</div>
       )}
