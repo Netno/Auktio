@@ -259,28 +259,30 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     allLots,
   });
 
-  const [houses, ingestRuns, lotAudit, users, reviewLots] = await Promise.all([
-    getAdminHouseOptions(),
-    getAdminIngestRuns({ houseId, status: syncStatus, limit: 40 }),
-    getAdminLotAudit({
-      houseId,
-      onlyActive,
-      missingCategories,
-      missingAiTags,
-      missingImageDescription,
-      missingEmbedding,
-      missingMatch,
-      limit: 150,
-    }),
-    listAppUsers(200),
-    reviewQuery
-      ? searchAdminCategoryReviewLots({
-          query: reviewQuery,
-          houseId,
-          limit: 20,
-        })
-      : Promise.resolve([]),
-  ]);
+  const [houses, ingestRunData, lotAudit, users, reviewLots] =
+    await Promise.all([
+      getAdminHouseOptions(),
+      getAdminIngestRuns({ houseId, status: syncStatus, limit: 40 }),
+      getAdminLotAudit({
+        houseId,
+        onlyActive,
+        missingCategories,
+        missingAiTags,
+        missingImageDescription,
+        missingEmbedding,
+        missingMatch,
+        limit: 150,
+      }),
+      listAppUsers(200),
+      reviewQuery
+        ? searchAdminCategoryReviewLots({
+            query: reviewQuery,
+            houseId,
+            limit: 20,
+          })
+        : Promise.resolve([]),
+    ]);
+  const ingestRuns = ingestRunData.runs;
 
   const houseName = houseId
     ? (houses.find((house) => house.id === houseId)?.name ?? houseId)
@@ -618,14 +620,31 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               Ingest-körningar
             </div>
             <div className="mt-1 text-2xl font-semibold text-brand-900">
-              {formatInteger(ingestRuns.length)}
+              {formatInteger(ingestRunData.matchingTotal)}
             </div>
           </div>
 
-          {lotAudit.matchingTotal > lotAudit.lots.length && (
+          {(lotAudit.matchingTotal > lotAudit.lots.length ||
+            ingestRunData.matchingTotal > ingestRuns.length) && (
             <div className="rounded-2xl border border-brand-200 bg-brand-50 px-3 py-3 text-[12px] text-brand-600 md:col-span-2 xl:col-span-6">
-              Visar de första {formatInteger(lotAudit.lots.length)} av{" "}
-              {formatInteger(lotAudit.matchingTotal)} matchande lotter.
+              {lotAudit.matchingTotal > lotAudit.lots.length && (
+                <span>
+                  Visar de första {formatInteger(lotAudit.lots.length)} av{" "}
+                  {formatInteger(lotAudit.matchingTotal)} matchande lotter.
+                </span>
+              )}
+              {lotAudit.matchingTotal > lotAudit.lots.length &&
+              ingestRunData.matchingTotal > ingestRuns.length
+                ? " "
+                : null}
+              {ingestRunData.matchingTotal > ingestRuns.length && (
+                <span>
+                  Ingest-tabellen visar de senaste{" "}
+                  {formatInteger(ingestRuns.length)} av{" "}
+                  {formatInteger(ingestRunData.matchingTotal)} matchande
+                  körningar.
+                </span>
+              )}
             </div>
           )}
         </section>

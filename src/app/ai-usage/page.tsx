@@ -60,6 +60,23 @@ function formatHourLabel(value: string) {
   });
 }
 
+function formatHourAxisLabel(value: string) {
+  if (LOCAL_HOUR_KEY_PATTERN.test(value)) {
+    return value.slice(11, 16);
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleTimeString("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function formatDateLabel(value: string) {
   if (LOCAL_DAY_KEY_PATTERN.test(value)) {
     return value;
@@ -72,6 +89,24 @@ function formatDateLabel(value: string) {
 
   return date.toLocaleDateString("sv-SE", {
     timeZone: REPORT_TIME_ZONE,
+  });
+}
+
+function formatDayAxisLabel(value: string) {
+  if (LOCAL_DAY_KEY_PATTERN.test(value)) {
+    const [, month, day] = value.split("-");
+    return `${day}/${month}`;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString("sv-SE", {
+    timeZone: REPORT_TIME_ZONE,
+    day: "2-digit",
+    month: "2-digit",
   });
 }
 
@@ -397,8 +432,8 @@ export default async function AiUsagePage() {
                       ? row.estimatedCostSek.toFixed(2).replace(".", ",")
                       : "–"}
                   </div>
-                  <div className="text-center text-xs text-slate-400">
-                    {row.date.slice(5)}
+                  <div className="whitespace-nowrap text-center text-[10px] text-slate-400">
+                    {formatDayAxisLabel(row.date)}
                   </div>
                 </div>
               ))}
@@ -434,8 +469,8 @@ export default async function AiUsagePage() {
                       ? row.estimatedCostSek.toFixed(2).replace(".", ",")
                       : "–"}
                   </div>
-                  <div className="text-center text-[10px] text-slate-400">
-                    {formatHourLabel(row.hour)}
+                  <div className="whitespace-nowrap text-center text-[10px] text-slate-400">
+                    {formatHourAxisLabel(row.hour)}
                   </div>
                 </div>
               ))}
@@ -561,7 +596,9 @@ export default async function AiUsagePage() {
                     .reverse()
                     .map((row) => (
                       <tr key={row.date}>
-                        <td className="px-4 py-3">{row.date}</td>
+                        <td className="whitespace-nowrap px-4 py-3">
+                          {formatDateLabel(row.date)}
+                        </td>
                         <td className="px-4 py-3 text-right text-amber-300">
                           {formatCurrencySek(row.estimatedCostSek)}
                         </td>

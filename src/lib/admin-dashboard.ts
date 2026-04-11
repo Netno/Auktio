@@ -47,6 +47,11 @@ export type IngestRunSummary = {
   errorMessage: string | null;
 };
 
+export type AdminIngestRunsResult = {
+  matchingTotal: number;
+  runs: IngestRunSummary[];
+};
+
 export type MissingLotSummary = {
   scopeTotal: number;
   missingCategories: number;
@@ -334,6 +339,7 @@ export async function getAdminIngestRuns(filters?: {
     .from("auc_sync_log")
     .select(
       "id, house_id, status, lots_added, lots_updated, lots_skipped, lots_removed, duration_ms, started_at, error_message, auc_auction_houses(name)",
+      { count: "exact" },
     )
     .not("status", "like", "ai-%")
     .order("started_at", { ascending: false })
@@ -347,25 +353,28 @@ export async function getAdminIngestRuns(filters?: {
     query = query.eq("status", filters.status);
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error(`[admin] Failed to load ingest runs: ${error.message}`);
   }
 
-  return ((data ?? []) as IngestRunRow[]).map((row) => ({
-    id: row.id,
-    houseId: row.house_id,
-    houseName: row.auc_auction_houses?.name ?? row.house_id ?? "Okänt hus",
-    status: row.status,
-    lotsAdded: row.lots_added ?? 0,
-    lotsUpdated: row.lots_updated ?? 0,
-    lotsSkipped: row.lots_skipped ?? 0,
-    lotsRemoved: row.lots_removed ?? 0,
-    durationMs: row.duration_ms ?? 0,
-    startedAt: row.started_at,
-    errorMessage: row.error_message,
-  })) satisfies IngestRunSummary[];
+  return {
+    matchingTotal: count ?? 0,
+    runs: ((data ?? []) as IngestRunRow[]).map((row) => ({
+      id: row.id,
+      houseId: row.house_id,
+      houseName: row.auc_auction_houses?.name ?? row.house_id ?? "Okänt hus",
+      status: row.status,
+      lotsAdded: row.lots_added ?? 0,
+      lotsUpdated: row.lots_updated ?? 0,
+      lotsSkipped: row.lots_skipped ?? 0,
+      lotsRemoved: row.lots_removed ?? 0,
+      durationMs: row.duration_ms ?? 0,
+      startedAt: row.started_at,
+      errorMessage: row.error_message,
+    })) satisfies IngestRunSummary[],
+  } satisfies AdminIngestRunsResult;
 }
 
 function isMissingArray(value: string[] | null | undefined) {
