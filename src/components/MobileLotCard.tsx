@@ -11,11 +11,17 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { formatBidAmount, imgSize, timeLeft } from "@/lib/utils";
+import {
+  formatBidAmount,
+  getLotImageSources,
+  imgSize,
+  timeLeft,
+} from "@/lib/utils";
 import type { Lot } from "@/lib/types";
 
 interface MobileLotCardProps {
   lot: Lot;
+  showFavoriteButton?: boolean;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
   onResultClick?: (
@@ -65,6 +71,7 @@ function getEyebrowLabel(lot: Lot) {
 
 export function MobileLotCard({
   lot,
+  showFavoriteButton = true,
   isFavorite,
   onToggleFavorite,
   onResultClick,
@@ -72,11 +79,7 @@ export function MobileLotCard({
   onCategorySelect,
   onHouseSelect,
 }: MobileLotCardProps) {
-  const images = lot.images?.length
-    ? lot.images
-    : lot.thumbnailUrl
-      ? [lot.thumbnailUrl]
-      : [];
+  const images = getLotImageSources(lot.images, lot.thumbnailUrl);
   const [imageIndex, setImageIndex] = useState(0);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
@@ -227,22 +230,24 @@ export function MobileLotCard({
             </div>
           )}
 
-          <button
-            type="button"
-            aria-label={isFavorite ? "Ta bort bevakning" : "Bevaka objekt"}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              void onToggleFavorite(lot.id);
-            }}
-            className={`absolute right-2 top-2 inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-[0_8px_18px_rgba(13,13,12,0.28)] backdrop-blur-md transition-colors ${
-              isFavorite
-                ? "border-accent-300/28 bg-accent-600/97 text-white"
-                : "border-white/18 bg-brand-800/92 text-white hover:bg-brand-800/96"
-            }`}
-          >
-            <Heart size={15} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
+          {showFavoriteButton ? (
+            <button
+              type="button"
+              aria-label={isFavorite ? "Ta bort bevakning" : "Bevaka objekt"}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                void onToggleFavorite(lot.id);
+              }}
+              className={`absolute right-2 top-2 inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-[0_8px_18px_rgba(13,13,12,0.28)] backdrop-blur-md transition-colors ${
+                isFavorite
+                  ? "border-accent-300/28 bg-accent-600/97 text-white"
+                  : "border-white/18 bg-brand-800/92 text-white hover:bg-brand-800/96"
+              }`}
+            >
+              <Heart size={15} fill={isFavorite ? "currentColor" : "none"} />
+            </button>
+          ) : null}
 
           {zoomImageSource || countdownLabel ? (
             <>
@@ -267,12 +272,12 @@ export function MobileLotCard({
 
                 {countdownLabel ? (
                   <span
-                    className={`inline-flex min-h-7 items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_6px_14px_rgba(13,13,12,0.24)] backdrop-blur-md ${
+                    className={`inline-flex min-h-7 items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-[0_6px_14px_rgba(13,13,12,0.24)] backdrop-blur-md ${
                       countdownLabel.ended
-                        ? "border-white/16 bg-brand-800/87"
+                        ? "border-white/16 bg-brand-800/87 text-white"
                         : countdownLabel.urgent
-                          ? "border-accent-300/28 bg-accent-600/97"
-                          : "border-white/16 bg-brand-800/87"
+                          ? "border-[#efb1ab]/85 bg-[#ffe2df]/95 text-[#7a1f1b]"
+                          : "border-white/16 bg-brand-800/87 text-white"
                     }`}
                   >
                     {countdownLabel.text}

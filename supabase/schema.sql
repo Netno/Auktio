@@ -45,8 +45,8 @@ create table if not exists auc_auction_houses (
 -- AUCTIONS (auction events/sessions)
 -- ============================================
 create table if not exists auc_auctions (
-  id            bigint primary key,         -- from feed
-  house_id      text references auc_auction_houses(id) on delete cascade,
+  id            bigint not null,            -- from feed (house-scoped)
+  house_id      text not null references auc_auction_houses(id) on delete cascade,
   title         text not null,
   description   text,
   url           text,
@@ -57,6 +57,7 @@ create table if not exists auc_auctions (
   created_at    timestamptz default now(),
   updated_at    timestamptz default now(),
 
+  primary key (house_id, id),
   unique(house_id, id)
 );
 
@@ -65,8 +66,8 @@ create table if not exists auc_auctions (
 -- ============================================
 create table if not exists auc_lots (
   id              bigint primary key,         -- from feed
-  auction_id      bigint references auc_auctions(id) on delete cascade,
-  house_id        text references auc_auction_houses(id) on delete cascade,
+  auction_id      bigint not null,
+  house_id        text not null references auc_auction_houses(id) on delete cascade,
   serial_number   bigint,
   title           text not null,
   description     text,
@@ -118,6 +119,9 @@ create table if not exists auc_lots (
   created_at      timestamptz default now(),
   updated_at      timestamptz default now(),
 
+  foreign key (house_id, auction_id)
+    references auc_auctions(house_id, id)
+    on delete cascade,
   unique(house_id, id)
 );
 
@@ -455,9 +459,11 @@ create index if not exists idx_auc_lots_embedding on auc_lots using ivfflat(embe
 create index if not exists idx_auc_lots_active on auc_lots(end_time desc) where availability is null;
 create index if not exists idx_auc_lots_categories on auc_lots using gin(categories);
 create index if not exists idx_auc_lots_house on auc_lots(house_id, end_time desc);
+create index if not exists idx_auc_lots_house_auction on auc_lots(house_id, auction_id);
 create index if not exists idx_auc_lots_city on auc_lots(city);
 create index if not exists idx_auc_lots_price on auc_lots(current_bid) where availability is null;
 create index if not exists idx_auc_lots_end_time on auc_lots(end_time desc) where availability is null;
+create index if not exists idx_auc_auctions_house_time on auc_auctions(house_id, start_time, end_time);
 
 create index if not exists idx_auc_price_history_lot on auc_price_history(lot_id, recorded_at desc);
 create index if not exists idx_auc_favorites_device on auc_favorites(device_id);

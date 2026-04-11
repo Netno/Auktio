@@ -15,7 +15,6 @@ import { createServerClient } from "./supabase";
 import { extractGeminiUsageMetadata, logAiUsage } from "./ai-usage-log";
 import { generateQueryEmbedding } from "./embeddings";
 import { formatDate, formatSEK } from "./utils";
-import { FEED_SOURCES } from "@/config/sources";
 import {
   buildSwedishWordRoots as buildWordRoots,
   expandSwedishSemanticQueryTerms as expandSemanticTerms,
@@ -23,6 +22,12 @@ import {
   normalizeSearchText as normalizeText,
   normalizeSwedishSearchQuery as normalizeSearchQuery,
 } from "@/lib/search-language";
+import {
+  isBroadBrowseQuery,
+  resolveSearchIntent,
+  type DetectedAuctionHouseIntent,
+  type SearchIntent,
+} from "@/lib/search-intent";
 import {
   buildQueryScoringTerms,
   buildQueryTextMatchClauses,
@@ -56,29 +61,6 @@ const TOP_K_FULLTEXT = 10;
 
 /** Maximum lots to include in the final LLM context (after dedup + re-rank) */
 const MAX_CONTEXT_LOTS = 12;
-
-const RETRIEVAL_NOISE_TERMS = new Set([
-  "alla",
-  "visa",
-  "föremål",
-  "foremal",
-  "objekt",
-  "auktion",
-  "auktioner",
-  "slutar",
-  "slut",
-  "avslutas",
-  "avslutade",
-  "idag",
-  "imorgon",
-  "ikvall",
-  "ikväll",
-  "kvall",
-  "kväll",
-  "snart",
-  "denna",
-  "vecka",
-]);
 
 export interface RAGRequest {
   query: string;
@@ -119,221 +101,8 @@ export interface RAGSourceLot {
   similarity?: number;
 }
 
-interface DetectedAuctionHouse {
-  id: string;
-  name: string;
-  aliases: string[];
-}
-
-interface DerivedRetrievalIntent {
-  includeEnded: boolean;
-  endTimeFrom?: string;
-  endTimeTo?: string;
-  prefersBrowse: boolean;
-}
-
-const HOUSE_MATCHERS: DetectedAuctionHouse[] = FEED_SOURCES.map((source) => {
-  const aliases = new Set<string>();
-  const normalizedName = normalizeText(source.name);
-  const normalizedId = normalizeText(source.id.replace(/-/g, " "));
-  const nameWithoutSuffix = normalizedName
-    .replace(/\s+auktioner?$/u, "")
-    .trim();
-
-  aliases.add(normalizedName);
-  aliases.add(normalizedId);
-
-  if (nameWithoutSuffix.length >= 3) {
-    aliases.add(nameWithoutSuffix);
-  }
-
-  const firstToken = nameWithoutSuffix.split(" ")[0];
-  if (firstToken && firstToken.length >= 4) {
-    aliases.add(firstToken);
-  }
-
-  return {
-    id: source.id,
-    name: source.name,
-    aliases: Array.from(aliases).sort((a, b) => b.length - a.length),
-  };
-});
-
-const BROAD_BROWSE_TERMS = [
-  "fynd",
-  "prisvard",
-  "prisvärd",
-  "billig",
-  "billigt",
-  "billiga",
-  "rekommendera",
-  "tips",
-  "intressant",
-  "intressanta",
-  "visa",
-  "bra",
-  "sammanfatta",
-  "jamfor",
-  "jämför",
-];
-
-function detectAuctionHouse(query: string): DetectedAuctionHouse | null {
-  const normalizedQuery = ` ${normalizeText(query)} `;
-
-  for (const house of HOUSE_MATCHERS) {
-    if (house.aliases.some((alias) => normalizedQuery.includes(` ${alias} `))) {
-      return house;
-    }
-  }
-
-  return null;
-}
-
-function getAuctionHouseAliasTokens(house: DetectedAuctionHouse | null) {
-  if (!house) return new Set<string>();
-
-  return new Set(
-    house.aliases
-      .flatMap((alias) => alias.split(" "))
-      .map((token) => token.trim())
-      .filter((token) => token.length >= 3),
-  );
-}
-
-function stripAuctionHouseTerms(
-  query: string,
-  house: DetectedAuctionHouse | null,
-) {
-  const normalizedQuery = normalizeSearchQuery(query);
-  if (!house) return normalizedQuery;
-
-  const aliasTokens = getAuctionHouseAliasTokens(house);
-  const stripped = normalizedQuery
-    .split(" ")
-    .filter((token) => token && !aliasTokens.has(token))
-    .join(" ")
-    .trim();
-
-  return stripped || normalizedQuery;
-}
-
-function isBroadBrowseQuery(query: string) {
-  const normalizedQuery = normalizeSearchQuery(query);
-  return BROAD_BROWSE_TERMS.some((term) => normalizedQuery.includes(term));
-}
-
-function getTimeZoneOffsetMs(date: Date, timeZone: string) {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hour12: false,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-  const parts = formatter.formatToParts(date);
-  const values = Object.fromEntries(
-    parts.map((part) => [part.type, part.value]),
-  );
-  const asUtc = Date.UTC(
-    Number(values.year),
-    Number(values.month) - 1,
-    Number(values.day),
-    Number(values.hour),
-    Number(values.minute),
-    Number(values.second),
-  );
-
-  return asUtc - date.getTime();
-}
-
-function getStockholmDayRange(dayOffset: number) {
-  const now = new Date();
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Stockholm",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const [year, month, day] = formatter
-    .format(now)
-    .split("-")
-    .map((value) => Number(value));
-
-  const utcGuess = Date.UTC(year, month - 1, day + dayOffset, 0, 0, 0, 0);
-  const start = new Date(
-    utcGuess - getTimeZoneOffsetMs(new Date(utcGuess), "Europe/Stockholm"),
-  );
-  const nextGuess = Date.UTC(year, month - 1, day + dayOffset + 1, 0, 0, 0, 0);
-  const end = new Date(
-    nextGuess - getTimeZoneOffsetMs(new Date(nextGuess), "Europe/Stockholm"),
-  );
-
-  return { start, end };
-}
-
-function stripRetrievalNoiseTerms(query: string) {
-  return normalizeSearchQuery(query)
-    .split(" ")
-    .filter((token) => token && !RETRIEVAL_NOISE_TERMS.has(token))
-    .join(" ")
-    .trim();
-}
-
-function deriveRetrievalIntent(
-  query: string,
-  includeEnded: boolean | undefined,
-): DerivedRetrievalIntent {
-  const normalized = normalizeSearchQuery(query);
-  const residualQuery = stripRetrievalNoiseTerms(query);
-  const intent: DerivedRetrievalIntent = {
-    includeEnded: Boolean(includeEnded),
-    prefersBrowse: false,
-  };
-
-  if (
-    /\b(slutpris|såld|sålda|avslutad|avslutade|avslutats|klubbat|klubbad)\b/u.test(
-      normalized,
-    )
-  ) {
-    intent.includeEnded = true;
-  }
-
-  if (normalized.includes("idag")) {
-    const range = getStockholmDayRange(0);
-    intent.endTimeFrom = range.start.toISOString();
-    intent.endTimeTo = range.end.toISOString();
-    intent.prefersBrowse = true;
-  } else if (normalized.includes("imorgon")) {
-    const range = getStockholmDayRange(1);
-    intent.endTimeFrom = range.start.toISOString();
-    intent.endTimeTo = range.end.toISOString();
-    intent.prefersBrowse = true;
-  } else if (normalized.includes("ikvall") || normalized.includes("ikväll")) {
-    const range = getStockholmDayRange(0);
-    intent.endTimeFrom = new Date().toISOString();
-    intent.endTimeTo = range.end.toISOString();
-    intent.prefersBrowse = true;
-  } else if (normalized.includes("snart")) {
-    intent.endTimeFrom = new Date().toISOString();
-    intent.endTimeTo = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
-    intent.prefersBrowse = true;
-  } else if (normalized.includes("vecka")) {
-    intent.endTimeFrom = new Date().toISOString();
-    intent.endTimeTo = new Date(
-      Date.now() + 7 * 24 * 60 * 60 * 1000,
-    ).toISOString();
-    intent.prefersBrowse = true;
-  }
-
-  if (!residualQuery || /\b(alla|visa)\b/u.test(normalized)) {
-    intent.prefersBrowse = true;
-  }
-
-  return intent;
-}
+type DetectedAuctionHouse = DetectedAuctionHouseIntent;
+type DerivedRetrievalIntent = SearchIntent;
 
 function buildNoContextAnswer(
   userQuery: string,
@@ -448,7 +217,10 @@ function getLexicalMatch(lot: RAGSourceLot, queryTerms: string[]) {
 export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   const startTime = Date.now();
   const supabase = createServerClient();
-  const detectedCategory = detectCategoryIntent(request.query);
+  const derivedIntent = await resolveSearchIntent(request.query, {
+    includeEnded: request.includeEnded,
+  });
+  const detectedCategory = detectCategoryIntent(derivedIntent.retrievalQuery);
   const shouldTreatAsCategoryBrowse = Boolean(detectedCategory);
   const effectiveRequest =
     request.categories?.length || !detectedCategory
@@ -458,26 +230,29 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
           query: shouldTreatAsCategoryBrowse ? "" : request.query,
           categories: [detectedCategory],
         };
-  const detectedAuctionHouse = detectAuctionHouse(request.query);
-  const retrievalQuery = stripAuctionHouseTerms(
-    effectiveRequest.query,
-    detectedAuctionHouse,
-  );
-  const rankingQuery = stripRetrievalNoiseTerms(
-    retrievalQuery || effectiveRequest.query,
-  );
+  const detectedAuctionHouse = derivedIntent.matchedAuctionHouse;
+  const rankingQuery = derivedIntent.retrievalQuery;
   const semanticSeedQuery =
-    rankingQuery || retrievalQuery || effectiveRequest.query;
-  const derivedIntent = deriveRetrievalIntent(
-    effectiveRequest.query,
-    effectiveRequest.includeEnded,
-  );
+    rankingQuery || derivedIntent.queryWithoutHouse || request.query;
+  const retrievalQuery = semanticSeedQuery;
+  const finalRequest =
+    effectiveRequest.categories?.length ||
+    retrievalQuery === effectiveRequest.query
+      ? effectiveRequest
+      : {
+          ...effectiveRequest,
+          query: retrievalQuery,
+        };
+  const shouldUseSemanticRetrieval = Boolean(finalRequest.query?.trim());
 
   let vectorResults: RAGSourceLot[] = [];
   let fulltextResults: RAGSourceLot[] = [];
   let mergedLots: RAGSourceLot[] = [];
 
-  if (!derivedIntent.prefersBrowse || rankingQuery) {
+  if (
+    shouldUseSemanticRetrieval &&
+    (!derivedIntent.prefersBrowse || rankingQuery)
+  ) {
     const expandedSemanticQuery = buildExpandedSemanticQuery(semanticSeedQuery);
 
     // ─── Step 1: Generate query embedding ───
@@ -490,13 +265,13 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
       retrieveByVector(
         supabase,
         queryEmbedding,
-        effectiveRequest,
+        finalRequest,
         detectedAuctionHouse,
         derivedIntent,
       ),
       retrieveByFulltext(
         supabase,
-        effectiveRequest,
+        finalRequest,
         detectedAuctionHouse,
         semanticSeedQuery,
         derivedIntent,
@@ -516,7 +291,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   if (contextLots.length < 6 || derivedIntent.prefersBrowse) {
     const browseFallbackLots = await retrieveBrowseFallbackLots(
       supabase,
-      effectiveRequest,
+      finalRequest,
       detectedAuctionHouse,
       derivedIntent,
       semanticSeedQuery,
@@ -535,7 +310,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   ) {
     const fallbackLots = await retrieveHouseBrowseFallbackLots(
       supabase,
-      effectiveRequest,
+      finalRequest,
       detectedAuctionHouse,
       derivedIntent,
       semanticSeedQuery,
@@ -562,7 +337,7 @@ export async function executeRAG(request: RAGRequest): Promise<RAGResponse> {
   }
 
   // ─── Step 4: Generate answer with Gemini ───
-  const answer = await generateAnswer(effectiveRequest.query, contextLots);
+  const answer = await generateAnswer(request.query, contextLots);
 
   return {
     answer,

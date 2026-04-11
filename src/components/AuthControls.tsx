@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, LogIn, LogOut, User2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
+import { canAccessPersonalization } from "@/lib/recommendations-access";
 
 type GoogleProviderConfig = {
   id: string;
@@ -208,6 +209,9 @@ export function AuthControls() {
       !avatarLoadFailed && typeof session.user.image === "string"
         ? session.user.image
         : null;
+    const canAccessPersonalizedFeatures = canAccessPersonalization(
+      session.user.role,
+    );
 
     return (
       <div
@@ -319,12 +323,14 @@ export function AuthControls() {
                 </dl>
               </div>
 
-              <a
-                href="/min-data"
-                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl border border-brand-200 bg-white px-3 text-[12px] font-medium text-brand-800 transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
-              >
-                Min data
-              </a>
+              {canAccessPersonalizedFeatures ? (
+                <a
+                  href="/min-data"
+                  className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-xl border border-brand-200 bg-white px-3 text-[12px] font-medium text-brand-800 transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
+                >
+                  Min data
+                </a>
+              ) : null}
 
               <button
                 type="button"

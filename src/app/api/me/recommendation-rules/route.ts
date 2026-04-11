@@ -9,9 +9,13 @@ import {
 import { type CreateRecommendationRuleInput } from "@/lib/mina-sidor";
 import { refreshUserRecommendationMatches } from "@/lib/user-recommendation-matches";
 import { refreshUserAlertMatches } from "@/lib/user-alert-matches";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 async function requireUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions);
+  if (!canAccessPersonalizationForSession(session)) {
+    return null;
+  }
   return session?.user?.id ?? null;
 }
 

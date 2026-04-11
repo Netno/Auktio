@@ -10,6 +10,7 @@ interface LotGridProps {
   loading: boolean;
   loadingMore?: boolean;
   status: SearchStatus;
+  showFavoriteButton?: boolean;
   isFavorite: (id: number) => boolean;
   onToggleFavorite: (id: number) => void | Promise<void>;
   onResultClick?: (
@@ -28,6 +29,7 @@ export function LotGrid({
   loading,
   loadingMore = false,
   status,
+  showFavoriteButton = true,
   isFavorite,
   onToggleFavorite,
   onResultClick,
@@ -139,6 +141,7 @@ export function LotGrid({
             <MobileLotListRow
               key={lot.id}
               lot={lot}
+              showFavoriteButton={showFavoriteButton}
               isFavorite={isFavorite(lot.id)}
               onToggleFavorite={onToggleFavorite}
               onResultClick={onResultClick}
@@ -150,6 +153,7 @@ export function LotGrid({
             <MobileLotCard
               key={lot.id}
               lot={lot}
+              showFavoriteButton={showFavoriteButton}
               isFavorite={isFavorite(lot.id)}
               onToggleFavorite={onToggleFavorite}
               onResultClick={onResultClick}
@@ -166,6 +170,7 @@ export function LotGrid({
           <LotCard
             key={lot.id}
             lot={lot}
+            showFavoriteButton={showFavoriteButton}
             isFavorite={isFavorite(lot.id)}
             onToggleFavorite={onToggleFavorite}
             onResultClick={onResultClick}

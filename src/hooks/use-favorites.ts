@@ -10,6 +10,10 @@ import {
 
 const STORAGE_KEY = "auktio_favorites";
 
+type UseFavoritesOptions = {
+  enabled?: boolean;
+};
+
 function readStoredFavoriteLotIds() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -27,7 +31,8 @@ function readStoredFavoriteLotIds() {
   }
 }
 
-export function useFavorites() {
+export function useFavorites(options: UseFavoritesOptions = {}) {
+  const { enabled = true } = options;
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,6 +53,12 @@ export function useFavorites() {
   }, [nextPath]);
 
   useEffect(() => {
+    if (!enabled) {
+      setFavorites(new Set());
+      setLoaded(true);
+      return;
+    }
+
     if (status === "loading") {
       return;
     }
@@ -119,10 +130,14 @@ export function useFavorites() {
     return () => {
       cancelled = true;
     };
-  }, [status]);
+  }, [enabled, status]);
 
   const toggleFavorite = useCallback(
     async (lotId: number) => {
+      if (!enabled) {
+        return false;
+      }
+
       if (status !== "authenticated") {
         return false;
       }
@@ -163,12 +178,12 @@ export function useFavorites() {
         return false;
       }
     },
-    [favorites, status],
+    [enabled, favorites, status],
   );
 
   const openFavorites = useCallback(
-    async () => status === "authenticated",
-    [status],
+    async () => enabled && status === "authenticated",
+    [enabled, status],
   );
 
   const isFavorite = useCallback(
@@ -184,7 +199,7 @@ export function useFavorites() {
     signInToContinue,
     isFavorite,
     loaded,
-    isAuthenticated: status === "authenticated",
+    isAuthenticated: enabled && status === "authenticated",
     isPendingAuth: submitting || status === "loading",
   };
 }

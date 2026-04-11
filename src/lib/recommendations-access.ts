@@ -14,6 +14,10 @@ export function canAccessRecommendations(role: unknown) {
   return canAccessAdmin(role);
 }
 
+export function canAccessPersonalization(role: unknown) {
+  return canAccessRecommendations(role);
+}
+
 export function canAccessRecommendationsForSession(
   session: RecommendationsSessionLike,
 ) {
@@ -22,4 +26,10 @@ export function canAccessRecommendationsForSession(
   }
 
   return canAccessRecommendations(session.user.role);
+}
+
+export function canAccessPersonalizationForSession(
+  session: RecommendationsSessionLike,
+) {
+  return canAccessRecommendationsForSession(session);
 }

@@ -171,3 +171,17 @@ export function imgSize(
   if (!url) return undefined;
   return url.replace(/_(sm|med|lg)\.(jpe?g|png|webp)/i, `_${size}.$2`);
 }
+
+export function getLotImageSources(
+  images: Array<string | null | undefined> | null | undefined,
+  thumbnailUrl: string | null | undefined,
+): string[] {
+  return Array.from(
+    new Set(
+      [thumbnailUrl, ...(images ?? [])].filter(
+        (value): value is string =>
+          typeof value === "string" && value.trim().length > 0,
+      ),
+    ),
+  );
+}

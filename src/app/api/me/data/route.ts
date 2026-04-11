@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth-options";
 import { createServerClient } from "@/lib/supabase";
 import { isMissingSupabaseTableError } from "@/lib/supabase-table-errors";
 import { getUserPreferenceSettings } from "@/lib/user-preference-settings";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 function getSessionUserId(
   session:
@@ -21,6 +22,11 @@ function getSessionUserId(
 
 export async function GET() {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
 
   if (!userId) {
@@ -96,6 +102,11 @@ export async function GET() {
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
 
   if (!userId) {

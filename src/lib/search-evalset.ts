@@ -37,6 +37,16 @@ export const SEARCH_EVALSET: readonly SearchEvalCase[] = [
     unacceptableTerms: ["ljusstake", "brosch", "gevär"],
   },
   {
+    id: "regression-watch-2",
+    query: "armbandsklockor",
+    bucket: "regression-check",
+    focus:
+      "Compound watch words should resolve through general category/object matching, not one-off hardcoding.",
+    expectedConcepts: [],
+    expectedTerms: ["armbandsur", "klocka"],
+    unacceptableTerms: ["väggur", "poster"],
+  },
+  {
     id: "garden-browse-3",
     query: "utomhusmöbler",
     bucket: "concrete-object",

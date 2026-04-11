@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { ANONYMOUS_SESSION_COOKIE_NAME } from "@/lib/anonymous-session";
 import { authOptions } from "@/lib/auth-options";
 import { migrateAnonymousActivityToUser } from "@/lib/anonymous-activity-migration";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 function getSessionUserId(
   session:
@@ -20,6 +21,11 @@ function getSessionUserId(
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
   const sessionId =
     request.cookies.get(ANONYMOUS_SESSION_COOKIE_NAME)?.value ?? null;

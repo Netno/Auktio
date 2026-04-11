@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { canAccessPersonalization } from "@/lib/recommendations-access";
 
 export function AnonymousActivityMigration() {
   const { data: session, status } = useSession();
@@ -11,6 +12,10 @@ export function AnonymousActivityMigration() {
     const userId = session?.user?.id;
 
     if (status !== "authenticated" || !userId) {
+      return;
+    }
+
+    if (!canAccessPersonalization(session?.user?.role)) {
       return;
     }
 

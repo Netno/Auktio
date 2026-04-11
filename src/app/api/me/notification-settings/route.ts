@@ -7,9 +7,13 @@ import {
   updateUserNotificationSettings,
 } from "@/lib/user-notification-settings";
 import { type UpdateNotificationSettingsInput } from "@/lib/mina-sidor";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 async function requireUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions);
+  if (!canAccessPersonalizationForSession(session)) {
+    return null;
+  }
   return session?.user?.id ?? null;
 }
 

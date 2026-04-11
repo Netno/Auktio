@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { updateUserPreferenceSettings } from "@/lib/user-preference-settings";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 function getSessionUserId(
   session:
@@ -19,6 +20,11 @@ function getSessionUserId(
 
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
 
   if (!userId) {

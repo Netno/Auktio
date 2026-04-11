@@ -24,6 +24,7 @@ interface RecommendationsSectionProps {
   onToggleFavorite: (lotId: number) => void | Promise<void>;
   onRefresh: () => void | Promise<void>;
   viewMode: "grid" | "list";
+  sectionId?: string;
 }
 
 function formatNumber(value: unknown) {
@@ -73,6 +74,7 @@ export function RecommendationsSection({
   onToggleFavorite,
   onRefresh,
   viewMode,
+  sectionId,
 }: RecommendationsSectionProps) {
   const activeFavoriteCount = formatNumber(sourceBreakdown.activeFavoriteCount);
   const soldFavoriteCount = formatNumber(sourceBreakdown.soldFavoriteCount);
@@ -81,20 +83,23 @@ export function RecommendationsSection({
   const updatedAtLabel = formatUpdatedAt(updatedAt);
 
   return (
-    <section className="mb-6 rounded-[28px] border border-brand-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(247,241,235,0.96))] p-4 shadow-[0_18px_44px_rgba(93,69,40,0.08)] sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <section
+      id={sectionId}
+      className="rounded-2xl border border-brand-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(247,241,235,0.96))] p-4 shadow-card sm:p-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-700">
             <Sparkles size={13} />
             För dig
           </div>
-          <h2 className="mt-3 font-serif text-[1.85rem] leading-tight text-brand-950 sm:text-[2.15rem]">
-            Personliga rekommendationer från ditt beteende
+          <h2 className="mt-3 text-lg font-semibold leading-tight text-brand-950 sm:text-xl">
+            Personliga rekommendationer
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-brand-700">
-            Den här ytan använder dina bevakningar och meningsfulla sökningar
-            för att hitta aktiva objekt som liknar det du verkar vilja köpa
-            eller följa.
+          <p className="mt-1 max-w-xl text-sm leading-6 text-brand-700">
+            Bygger på dina bevakningar och meningsfulla sökningar, men ligger nu
+            som ett valbart lager ovanpå sökflödet i stället för att ta över
+            resultatsidan direkt.
           </p>
         </div>
 
@@ -110,7 +115,7 @@ export function RecommendationsSection({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {topCategories.slice(0, 6).map((category) => (
           <span
             key={category}
@@ -126,7 +131,7 @@ export function RecommendationsSection({
         ) : null}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2 text-[12px] text-brand-600">
+      <div className="mt-3 flex flex-wrap gap-2 text-[12px] text-brand-600">
         {activeFavoriteCount ? (
           <span className="rounded-full bg-white px-3 py-1.5">
             Aktiva favoriter: {activeFavoriteCount}
@@ -150,7 +155,7 @@ export function RecommendationsSection({
         ) : null}
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4">
         {loading ? (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (

@@ -10,6 +10,19 @@ const GENERIC_CATEGORY_TERMS = new Set([
   "generelt",
 ]);
 
+const SOURCE_CATEGORY_OVERRIDES: Record<string, Record<string, string[]>> = {
+  "probus-auktioner": {
+    "militära pistoler och gevär": ["Vapen", "Militaria"],
+    "civila pistoler och gevär": ["Vapen"],
+    blankvapen: ["Vapen"],
+    "huggare stickert baj stång": ["Vapen", "Militaria"],
+    ordnar: ["Militaria"],
+    militaria: ["Militaria"],
+    "small sword": ["Vapen"],
+    orientaliskt: ["Vapen"],
+  },
+};
+
 const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
   {
     category: "Möbler",
@@ -291,12 +304,17 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
     category: "Militaria",
     terms: [
       "militaria",
+      "militara",
+      "militära",
       "uniform",
       "helmet",
       "hjalm",
       "hjälm",
       "bayonett",
       "bajonett",
+      "ordnar",
+      "ordenstecken",
+      "medaljer",
       "orden",
       "medal",
     ],
@@ -308,8 +326,15 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "weapon",
       "waffe",
       "waffen",
+      "gevär",
+      "gevar",
+      "pistol",
+      "pistoler",
       "gewehr",
       "flinte",
+      "flintlås",
+      "flintlas",
+      "flintlock",
       "pistole",
       "pistolen",
       "revolver",
@@ -317,6 +342,15 @@ const CATEGORY_RULES: Array<{ category: string; terms: string[] }> = [
       "shotgun",
       "gun",
       "guns",
+      "svärd",
+      "svard",
+      "sabel",
+      "sabre",
+      "dolk",
+      "dagger",
+      "blankvapen",
+      "stickert",
+      "bajonett",
       "jagd",
       "holster",
       "munition",
@@ -576,6 +610,31 @@ function getStrongSingleTermCategories(
     .map((rule) => rule.category);
 }
 
+function getSourceOverrideCategories(
+  sourceId: string | undefined,
+  rawCategories: string[] | null | undefined,
+) {
+  if (!sourceId) {
+    return [];
+  }
+
+  const sourceOverrides = SOURCE_CATEGORY_OVERRIDES[sourceId];
+  if (!sourceOverrides) {
+    return [];
+  }
+
+  const resolved = new Set<string>();
+
+  for (const rawCategory of rawCategories ?? []) {
+    const normalizedRawCategory = normalizeCategoryValue(rawCategory);
+    for (const category of sourceOverrides[normalizedRawCategory] ?? []) {
+      resolved.add(category);
+    }
+  }
+
+  return Array.from(resolved);
+}
+
 function reconcileCategories(
   categories: string[],
   textScores: Array<{ category: string; score: number }>,
@@ -658,11 +717,12 @@ function reconcileCategories(
 }
 
 export function normalizeLotCategories(params: {
+  sourceId?: string;
   rawCategories: string[] | null | undefined;
   title: string | null | undefined;
   description: string | null | undefined;
 }): string[] {
-  const { rawCategories, title, description } = params;
+  const { sourceId, rawCategories, title, description } = params;
 
   const normalizedRawCategories = (rawCategories ?? [])
     .map((category) => normalizeCategoryValue(category))
@@ -676,6 +736,15 @@ export function normalizeLotCategories(params: {
       .filter(Boolean)
       .join(" "),
   );
+
+  const sourceOverrideCategories = getSourceOverrideCategories(
+    sourceId,
+    rawCategories,
+  );
+
+  if (sourceOverrideCategories.length > 0) {
+    return sourceOverrideCategories;
+  }
 
   const rawCategoryScores = getCategoryScores(rawCategoryTerms);
   const textScores = getCategoryScores(textTerms);

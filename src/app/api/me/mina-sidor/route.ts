@@ -10,6 +10,7 @@ import { getUserNotificationSettings } from "@/lib/user-notification-settings";
 import { listUserRecommendationRules } from "@/lib/user-recommendation-rules";
 import { refreshUserAlertMatches } from "@/lib/user-alert-matches";
 import { type MinaSidorPayload } from "@/lib/mina-sidor";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 type SearchLogRow = {
   id: number;
@@ -41,6 +42,9 @@ function extractProfilePriceValue(
 
 async function requireUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions);
+  if (!canAccessPersonalizationForSession(session)) {
+    return null;
+  }
   return session?.user?.id ?? null;
 }
 

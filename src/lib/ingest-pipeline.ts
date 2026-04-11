@@ -2,7 +2,13 @@ import {
   generateMissingEmbeddings,
   type EmbeddingResult,
 } from "./embedding-ingester";
-import { ingestAllFeeds, ingestFeedDataOnly } from "./feed-ingester";
+import {
+  ingestAllFeeds,
+  ingestFeedDataOnly,
+  ingestFeedDataRange,
+  ingestFeedsInRange,
+  type FeedSourceRange,
+} from "./feed-ingester";
 import {
   generateMissingSubjectTags,
   type SubjectEnrichmentResult,
@@ -22,6 +28,11 @@ export interface IngestPipelineResult {
   timestamp: string;
 }
 
+export interface IngestPipelineOptions {
+  sourceRange?: FeedSourceRange;
+  runPostProcessing?: boolean;
+}
+
 function buildStepErrorResult<T extends Record<string, number>>(
   base: T,
   error: unknown,
@@ -34,14 +45,22 @@ function buildStepErrorResult<T extends Record<string, number>>(
 
 export async function runIngestPipeline(
   mode: IngestPipelineMode = "feed",
+  options: IngestPipelineOptions = {},
 ): Promise<IngestPipelineResult> {
+  const { sourceRange, runPostProcessing = true } = options;
   const feedResults =
-    mode === "full" ? await ingestAllFeeds() : await ingestFeedDataOnly();
+    mode === "full"
+      ? sourceRange
+        ? await ingestFeedsInRange(sourceRange)
+        : await ingestAllFeeds()
+      : sourceRange
+        ? await ingestFeedDataRange(sourceRange)
+        : await ingestFeedDataOnly();
 
   let subjectResult: PipelineStepResult<SubjectEnrichmentResult> | null = null;
   let embeddingResult: PipelineStepResult<EmbeddingResult> | null = null;
 
-  if (process.env.GEMINI_API_KEY) {
+  if (runPostProcessing && process.env.GEMINI_API_KEY) {
     try {
       subjectResult = await generateMissingSubjectTags();
     } catch (subjectError) {

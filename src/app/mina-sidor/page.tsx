@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { MinaSidorPageClient } from "@/components/MinaSidorPageClient";
 import { type MinaSidorTab } from "@/lib/mina-sidor";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 const VALID_TABS: MinaSidorTab[] = [
   "overview",
@@ -26,6 +27,10 @@ export default async function MinaSidorPage({
 
   if (!session?.user?.id) {
     redirect("/auth/email?next=/mina-sidor");
+  }
+
+  if (!canAccessPersonalizationForSession(session)) {
+    redirect("/");
   }
 
   const requestedTab = searchParams?.tab;

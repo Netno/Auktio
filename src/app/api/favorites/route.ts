@@ -14,6 +14,7 @@ import {
   removeUserFavorite,
 } from "@/lib/user-favorites";
 import { markUserInterestProfileDirty } from "@/lib/user-recommendation-matches";
+import { canAccessPersonalizationForSession } from "@/lib/recommendations-access";
 
 function getSessionUserId(
   session:
@@ -38,27 +39,28 @@ function getAnonymousSessionId(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
-  const anonymousSessionId = getAnonymousSessionId(request);
 
   if (userId) {
-    if (anonymousSessionId) {
-      await consumeAnonymousFavoritesIntoUser(userId, anonymousSessionId);
-    }
-
     const lotIds = await listUserFavoriteLotIds(userId);
     return NextResponse.json({ ok: true, lotIds });
   }
 
-  const lotIds = anonymousSessionId
-    ? await listAnonymousFavoriteLotIds(anonymousSessionId)
-    : [];
-
-  return NextResponse.json({ ok: true, lotIds });
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
   const anonymousSessionId = getAnonymousSessionId(request);
 
@@ -113,6 +115,11 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
+  if (!canAccessPersonalizationForSession(session)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const userId = getSessionUserId(session);
   const anonymousSessionId = getAnonymousSessionId(request);
 
